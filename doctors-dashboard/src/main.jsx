@@ -7,13 +7,14 @@ import RootLayout from './assets/layouts/RootLayout.jsx'
 import SchedulePage from './assets/pages/SchedulePage.jsx'
 import MessagePage from './assets/pages/MessagePage.jsx'
 import MedicinesPage from './assets/pages/MedicinesPage.jsx'
+import PatientsPage from './assets/pages/PatientsPage.jsx'
 
 
 const router = createBrowserRouter(
   [{
     element:<RootLayout/>,
     children:[
-        { path:"/",
+        { path:"/dashboard",
           element:<App/>
         },
         { path:"/schedule",
@@ -21,6 +22,9 @@ const router = createBrowserRouter(
         },
         { path:"/messages",
           element:<MessagePage/>
+        },
+        { path:"/patients",
+          element:<PatientsPage/>
         },
         { path:"/medicines",
           element:<MedicinesPage/>
