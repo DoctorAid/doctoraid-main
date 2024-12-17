@@ -8,9 +8,13 @@ function RootLayout(params) {
     return(
        
         <main>
-            
+
+            <div className="flex">
             <Navigation/>
             <Outlet/>
+            </div>
+            
+          
             
             
         </main>
