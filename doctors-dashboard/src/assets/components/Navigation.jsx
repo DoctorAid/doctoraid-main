@@ -1,5 +1,6 @@
 import { LogOut } from 'lucide-react';
 import React from 'react'
+import NavigationTabs from './NavigationTabs';
 
 function Navigation() {
   return (
@@ -19,24 +20,7 @@ function Navigation() {
           </div>
         </div>
 
-        <div className='flex flex-col gap-8 items-center text-white justify-end'>
-          <div className='flex h-10 w-40 bg-black items-center justify-center cursor-pointer rounded-l-md'>
-            <p>Dashboard</p>
-          </div>
-          <div className='flex h-10 w-40 bg-black items-center justify-center cursor-pointer'>
-            <p>Schedule</p>
-          </div>
-          <div className='flex h-10 w-40 bg-black items-center justify-center cursor-pointer'>
-            <p>Patients</p>
-          </div>
-          <div className='flex h-10 w-40 bg-black items-center justify-center cursor-pointer'>
-            <p>Messages</p>
-          </div>
-          <div className='flex h-10 w-40 bg-black items-center justify-center cursor-pointer'>
-            <div>Medicines</div>
-          </div>
-
-        </div>
+        <NavigationTabs/>
 
         <div className='flex items-center text-white justify-center'>
           <div className='flex justify-between gap-2 cursor-pointer'>
