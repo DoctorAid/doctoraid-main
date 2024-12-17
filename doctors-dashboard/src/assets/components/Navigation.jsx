@@ -14,9 +14,11 @@ function Navigation() {
         </div>
 
         <div className='flex flex-col gap-2 justify-center items-center'>
-          <div className="w-[179px] h-[179px] bg-[#c4c4c4] rounded-full" />
+          <div className="w-[179px] h-[179px] bg-[#c4c4c4] rounded-full overflow-hidden" >
+            <img src='/Images/doc-image.png' className="w-full h-full object-cover"/>
+          </div>
           <div className='font-semibold text-yellow-50'>
-            <p>Dr.Lakshaman Disanayake</p>
+            <p>Dr.Lakshaman Dissanayake</p>
           </div>
         </div>
 
