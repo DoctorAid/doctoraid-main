@@ -16,7 +16,7 @@ function Navigation() {
         <div className='flex flex-col gap-2 justify-center items-center'>
           <div className="w-[179px] h-[179px] bg-[#c4c4c4] rounded-full" />
           <div className='font-semibold text-yellow-50'>
-            <p>Dr.Blah Blah</p>
+            <p>Dr.Lakshaman Disanayake</p>
           </div>
         </div>
 
