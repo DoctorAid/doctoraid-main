@@ -4,8 +4,8 @@ import NavigationTabs from './NavigationTabs';
 
 function Navigation() {
   return (
-    <div className='bg-black rounded-l-[30px] bg-[#FAFAF9] h-[100vh]'>
-     <div className="flex flex-col w-[16.625rem] h-[100vh] py-8 gap-20 bg-[#295567] rounded-[30px]">
+    <div className='rounded-l-[30px] bg-[#FAFAF9] h-screeen '>
+     <div className="flex flex-col w-[16.625rem] h-[100%] py-8 gap-20 bg-[#295567] rounded-[30px]">
 
         
         <div className='flex flex-col items-center justify-center'>
