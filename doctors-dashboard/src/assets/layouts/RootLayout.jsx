@@ -9,7 +9,7 @@ function RootLayout(params) {
        
         <main>
 
-            <div className="flex px-2 py-2">
+            <div className="flex px-8 py-8 ">
             <Navigation/>
             <Outlet/>
             </div>

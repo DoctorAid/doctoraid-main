@@ -2,7 +2,7 @@ import React from 'react'
 
 function PatientsPage() {
   return (
-    <div className='flex bg-white w-full items-center justify-center text-black'>
+    <div className='flex bg-[#FAFAF9]  w-full items-center justify-center text-black'>
 
 
        <div>

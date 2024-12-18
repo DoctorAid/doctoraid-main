@@ -12,7 +12,7 @@ function NavigationTabs() {
         <Link
           key={item}
           className={`flex h-10 w-64 items-center text-start justify-center cursor-pointer rounded-l-2xl ${
-            activeItem === item ? 'bg-white text-[#295567]' : 'bg-[#295567]'
+            activeItem === item ? 'bg-[#FAFAF9] text-[#295567]' : 'bg-[#295567]'
           }`}
           onClick={() => setActiveItem(item)}
           to={`/${item.toLowerCase()}`}
