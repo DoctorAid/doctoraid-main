@@ -5,7 +5,8 @@ import NavigationTabs from './NavigationTabs';
 function Navigation() {
   return (
     <div>
-      <div className="flex flex-col w-[266px] h-auto py-8 gap-20 bg-[#295567] rounded-[30px]">
+     <div className="flex flex-col w-[16.625rem] h-[53.75rem] py-8 gap-20 bg-[#295567] rounded-[30px]">
+
         
         <div className='flex flex-col items-center justify-center'>
           <div className="flex items-center absolute">
