@@ -28,5 +28,10 @@
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.16",
     "vite": "^6.0.1"
-  }
+  },
+  "description": "The Doctor's Dashboard is a web application designed for doctors to efficiently manage patients and their medical records in dispensaries. This is the front-end component of the DoctorAid project, built with a focus on usability, responsiveness, and seamless integration with the back-end.",
+  "main": "eslint.config.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

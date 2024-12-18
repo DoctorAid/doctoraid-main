@@ -8,6 +8,7 @@ import SchedulePage from './assets/pages/SchedulePage.jsx'
 import MessagePage from './assets/pages/MessagePage.jsx'
 import MedicinesPage from './assets/pages/MedicinesPage.jsx'
 import PatientsPage from './assets/pages/PatientsPage.jsx'
+import ErrorPage from './assets/pages/ErrorPage.jsx'
 
 
 const router = createBrowserRouter(
@@ -28,6 +29,10 @@ const router = createBrowserRouter(
         },
         { path:"/medicines",
           element:<MedicinesPage/>
+        },
+        {
+          path: "*", // Catch all unmatched routes
+          element: <ErrorPage />,
         },
         
     ]
