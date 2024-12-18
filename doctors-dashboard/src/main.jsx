@@ -31,8 +31,8 @@ const router = createBrowserRouter(
           element:<MedicinesPage/>
         },
         {
-          path: "*", // Catch all unmatched routes
-          element: <ErrorPage />,
+          path: "/", // Catch all unmatched routes
+          element: <App />,
         },
         
     ]
