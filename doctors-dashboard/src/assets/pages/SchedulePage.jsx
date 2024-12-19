@@ -12,11 +12,7 @@ function SchedulePage() {
         <div className='flex bg-[#3bcf3b] w-full h-[50%]'>
         <p>Section 02</p>
         </div>
-        
-        
-        
         </div>
-     
     </div>
 
    
