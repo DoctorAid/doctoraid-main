@@ -8,39 +8,59 @@ function SchedulePage() {
       {/* left side */}
       <div className=' flex flex-col sm:flex-wrap justify-between w-full h-full'>
         {/* header */}
-        <div className=' w-full h-[10%]'>
+        <div className=' sm:flex-wrap w-full h-[15%]'>
 
           {/* header 01  */}
-          <div className="text-black text-[26px] font-bold font-['Raleway'] leading-normal">Current Session</div>
+          <div className="text-black sm:text-xl text-3xl font-bold font-['Raleway'] leading-normal">Current Session</div>
           {/* header 02  */}
-          <div className='flex justify-between'>
+          <div className='flex sm:flex-wrap justify-between '>
 
             {/* header date */}
-            <div className="flex items-center w-[88px] h-[88px] bg-[#295567] rounded-[10px]">
-              <div className="w-[84px] h-[60px] text-center"><span class="text-[#fefaf6] text-[32px] font-bold font-['Raleway'] leading-7">
+            <div className="flex items-center bg-[#295567] rounded-[10px]">
+              <div className="h-20 w-20 text-center"><span class="text-[#fefaf6] text-3xl font-bold font-['Raleway'] ">
                 20<br/></span>
-                <span class="text-[#fefaf6] text-[32px] font-normal font-['Raleway'] leading-7">Sun</span>
+                <span class="text-[#fefaf6] text-3xl font-normal font-['Raleway'] ">Sun</span>
               </div>
             </div>
 
-            <div className='flex flex-col justify-center'>
+            <div className='flex flex-col items-center  justify-end'>
               <div><span class="text-[#152945] text-2xl font-bold font-['Raleway']">Totol Slots</span>
-                  <span class="text-black text-2xl font-medium font-['Raleway'] leading-normal"> - </span>
-                  <span class="text-black text-2xl font-normal font-['Raleway'] leading-normal">172</span>
+                  <span class="text-black text-2xl font-medium font-['Raleway'] "> - </span>
+                  <span class="text-black text-2xl font-normal font-['Raleway'] ">172</span>
               </div>
-              <div className="w-[181px] items-center justify-center h-10 bg-[#cdffcd] rounded-[10px]">
-                <div><span class="text-[#295567] text-2xl font-bold font-['Raleway'] leading-normal">Booked - </span>
-                      <span class="text-[#295567] text-2xl font-normal font-['Raleway'] leading-normal">20</span>
+              <div className="flex px-8 items-center justify-center h-10 bg-[#cdffcd] rounded-[10px]">
+                <div><span class="text-[#295567] text-2xl lg:text-xl font-bold font-['Raleway'] ">Booked - </span>
+                      <span class="text-[#295567] text-2xl lg:text-xlfont-normal font-['Raleway'] ">20</span>
                 </div>
               </div>
             </div>
+
+
+
+            <div className='flex items-end'>
+              <div className="rounded-[8px] h-8 w-48 flex items-center justify-center border p-1 border-[#295567]">
+              <div><span class="text-[#295567] w-5 text-2xl lg:text-xl font-bold font-['Raleway'] leading-normal">Available - </span>
+              <span class="text-[#295567] text-2xl font-normal font-['Raleway'] leading-normal">120<br/></span></div>
+              </div>
+            </div>
+            
+
+
+
+            <div className='flex flex-col'>
+              <div className='text-4xl font-bold'>ID</div>
+              <div className="text-center text-[#6394b5] text-5xl font-bold font-['Instrument Sans']">#2241206</div>
+            </div>
+
+
+
           </div>
 
           
 
-          <div className=''></div>
+        
 
-          <div className=''></div>
+         
         </div>
 
         <div className='bg-[#e531d6] w-full h-[50%]'>
@@ -53,7 +73,7 @@ function SchedulePage() {
       </div>
 
         {/* right side */}
-      <div className='flex flex-col gap-2 bg-[#3gcf3b] w-full h-full'>
+      <div className='flex flex-col gap-2 bg-[#3gcf3b] w-[60%] h-full'>
         <div className='flex bg-[#3bff3b] w-full h-[50%]'>
         <p>Section 02</p>
         </div>
