@@ -23,7 +23,8 @@ function DashboardNavigation() {
             <FaSearch className="text-black text-sm ml-2" />
           </div>
         </div>
-        <div className='bg-[#643a3a] w-full h-full flex items-center justify-center'><p>Section 03</p></div>
+        <div className='bg-[#ddc03e] w-full h-full flex items-center justify-center'><p>Section 03</p></div>
+
     </div>
   );
 }
