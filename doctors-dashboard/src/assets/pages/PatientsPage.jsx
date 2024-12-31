@@ -5,7 +5,7 @@ function PatientsPage() {
     <div className="flex bg-[#FAFAF9] w-full h-screen items-start justify-between text-black p-6 gap-4">
       {/* Placeholder for Session's Patient List */}
       <div className="flex-1 bg-white p-4 rounded-lg shadow-md">
-        <p>Session's List</p>
+        <p>Session's Patient List</p>
       </div>
 
       {/* Placeholder for On-going Section */}
