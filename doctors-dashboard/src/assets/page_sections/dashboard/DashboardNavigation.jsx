@@ -1,4 +1,5 @@
 import React from 'react';
+import { Bell, Settings, Plus } from 'lucide-react'; // importing bell icon, setting icon and plus icon from luicde react
 import { FaSearch } from 'react-icons/fa'; // Importing FontAwesome search icon
 
 function DashboardNavigation() {
@@ -23,7 +24,23 @@ function DashboardNavigation() {
             <FaSearch className="text-black text-sm ml-2" />
           </div>
         </div>
-        <div className='bg-[#ddc03e] w-full h-full flex items-center justify-center'><p>Section 03</p></div>
+        <div className='flex items-center gap-4'>
+          {/* adding a new patient*/}
+          <button className='flex items-center bg-[#5c9df6] text-white px-4 py-2 rounded-full hover:bg-[#4a8be1] focus:outline-none focus:ring-2 focus:ring-[#5c9df6]/50 shadow-md'>
+            <span className='text-sm font-semibold mr2'>Add a new Patient</span>
+            <Plus className='w-5 h-5'/>
+          </button>
+
+          {/* Bell icon */}
+          <button className='p-2 text-gray-600 hover:text-gray-800 focus:outline-none'>
+            <Bell className='w-6 h-6'/>
+          </button>
+
+          {/* Settings icon */}
+          <button className='p-2 text-gray-600 hover:text-gray-800 focus:outline-none'>
+            <Settings className='w-6 h-6'/>
+          </button>
+        </div>
 
     </div>
   );
