@@ -5,7 +5,7 @@ function TimeSlot(props) {
     return (
 
      
-         <button className='bg-[#33373baa] text-center rounded-md '>
+         <button className='bg-[#b6e44baa] text-center rounded-md '>
           {props.timeSlot.time}
           
           </button>
@@ -15,17 +15,26 @@ function TimeSlot(props) {
     )
 
   else{
-    return(
+    if(props.timeSlot.status === "Booked")
+      return(
+        <button className='bg-[#5b6674aa] text-center rounded-md '
+                onClick={() => props.onClick(props.timeSlot.id)}>
+        {props.timeSlot.time}
+ 
+        </button> 
+      )
+   
+    else{
+      return(
      
-      <button className='bg-[#e2ec21aa] text-center rounded-md '
-              onClick={() => props.onClick(props.timeSlot.id)}>
-       {props.timeSlot.time}
-       
-       </button>
-
+        <button className='bg-[#2082ecaa] text-center rounded-md '
+                onClick={() => props.onClick(props.timeSlot.id)}>
+         {props.timeSlot.time}
+         
+        </button>
   
-
-    )
+      )
+    }
   }
 }
 
