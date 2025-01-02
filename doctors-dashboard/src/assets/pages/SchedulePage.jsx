@@ -7,63 +7,80 @@ function SchedulePage() {
 
   const timeSlots = [
     {
+      id: 1,
       time: "02:00 PM",
       status: "Booked"
     },
     {
+      id: 2,
       time: "02:00 PM",
       status: "Booked"
     },
     {
+      id: 3,
       time: "02:15 PM",
       status: "Available"
     },
     {
+      id: 4,
       time: "02:30 PM",
       status: "Booked"
     },
     {
+      id: 5,
       time: "02:45 PM",
       status: "Available"
     },
     {
+      id: 6,
       time: "03:00 PM",
       status: "Booked"
     },
     {
+      id: 7,
       time: "03:15 PM",
       status: "Available"
     },
     {
+      id: 8,
       time: "03:30 PM",
       status: "Booked"
     },
     {
+      id: 9,
       time: "03:45 PM",
       status: "Available"
     },
     {
+      id: 10,
       time: "04:00 PM",
       status: "Booked"
     },
     {
+      id: 11,
       time: "04:15 PM",
       status: "Available"
     },
     {
+      id: 12,
       time: "04:30 PM",
       status: "Booked"
     },
     {
+      id: 13,
       time: "04:45 PM",
       status: "Available"
     },
     {
+      id: 14,
       time: "05:00 PM",
       status: "Booked"
     }
   ];
   
+  const HandleTabClick = (id) => {
+    setSelectSlot(id);
+  };
   return (
     <div className='flex flex-col gap-5 bg-[#FAFAF9] w-full  px-2 py-2 items-start justify-start text-black'>
     <div className='flex justify-around gap-2 w-full h-[100%]  items-center px-1 py-1'>
