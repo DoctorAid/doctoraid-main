@@ -39,7 +39,7 @@ function SchedulePage() {
 
             <div className='flex items-end'>
               <div className="rounded-[8px] h-8 w-48 flex items-center justify-center border p-1 border-[#295567]">
-              <div><span class="text-[#295567] w-5 text-2xl lg:text-xl font-bold font-['Raleway'] leading-normal">Available - </span>
+              <div><span class="text-[#295567] font-semibold w-5 text-2xl lg:text-xl font-bold font-['Raleway'] leading-normal">Available - </span>
               <span class="text-[#295567] text-2xl font-normal font-['Raleway'] leading-normal">120<br/></span></div>
               </div>
             </div>
@@ -63,10 +63,76 @@ function SchedulePage() {
          
         </div>
 
-        <div className='bg-[#e531d6] w-full h-[50%]'>
-          <p>Section 01</p>
+        <div className='bg-[#f2eaf1] w-full h-[50%] grid-cols-4 grid gap-1 '>
+        <div className='bg-red-500'>1</div>
+  <div className='bg-blue-500'>2</div>
+  <div className='bg-green-500'>3</div>
+  <div className='bg-yellow-500'>4</div>
+  <div className='bg-purple-500'>5</div>
+  <div className='bg-red-500'>1</div>
+  <div className='bg-blue-500'>2</div>
+  <div className='bg-green-500'>3</div>
+  <div className='bg-yellow-500'>4</div>
+  <div className='bg-purple-500'>5</div>
+  <div className='bg-red-500'>1</div>
+  <div className='bg-blue-500'>2</div>
+  <div className='bg-green-500'>3</div>
+  <div className='bg-yellow-500'>4</div>
+  <div className='bg-purple-500'>5</div>
+  <div className='bg-red-500'>1</div>
+  <div className='bg-blue-500'>2</div>
+  <div className='bg-green-500'>3</div>
+  <div className='bg-yellow-500'>4</div>
+  <div className='bg-purple-500'>5</div>
+  <div className='bg-red-500'>1</div>
+  <div className='bg-blue-500'>2</div>
+  <div className='bg-green-500'>3</div>
+  <div className='bg-yellow-500'>4</div>
+  <div className='bg-purple-500'>5</div>
+  <div className='bg-red-500'>1</div>
+  <div className='bg-blue-500'>2</div>
+  <div className='bg-green-500'>3</div>
+  <div className='bg-yellow-500'>4</div>
+  <div className='bg-purple-500'>5</div>
+  <div className='bg-red-500'>1</div>
+  <div className='bg-blue-500'>2</div>
+  <div className='bg-green-500'>3</div>
+  <div className='bg-yellow-500'>4</div>
+  <div className='bg-purple-500'>5</div>
+  <div className='bg-red-500'>1</div>
+  <div className='bg-blue-500'>2</div>
+  <div className='bg-green-500'>3</div>
+  <div className='bg-yellow-500'>4</div>
+  <div className='bg-purple-500'>5</div>
+  <div className='bg-red-500'>1</div>
+  <div className='bg-blue-500'>2</div>
+  <div className='bg-green-500'>3</div>
+  <div className='bg-yellow-500'>4</div>
+  <div className='bg-purple-500'>5</div>
+  <div className='bg-red-500'>1</div>
+  <div className='bg-blue-500'>2</div>
+  <div className='bg-green-500'>3</div>
+  <div className='bg-yellow-500'>4</div>
+  <div className='bg-purple-500'>5</div>
+  <div className='bg-red-500'>1</div>
+  <div className='bg-blue-500'>2</div>
+  <div className='bg-green-500'>3</div>
+  <div className='bg-yellow-500'>4</div>
+  <div className='bg-purple-500'>5</div>
+  <div className='bg-red-500'>1</div>
+  <div className='bg-blue-500'>2</div>
+  <div className='bg-green-500'>3</div>
+  <div className='bg-yellow-500'>4</div>
+  <div className='bg-purple-500'>5</div>
+  <div className='bg-red-500'>1</div>
+  <div className='bg-blue-500'>2</div>
+  <div className='bg-green-500'>3</div>
+  <div className='bg-yellow-500'>4</div>
+  <div className='bg-purple-500'>5</div>
+  
+          
         </div>
-        <div className='bg-[#d22632] w-full h-[30%]'>
+        <div className='bg-[#edebeb] w-full h-[30%]'>
           <p>Section 01</p>
         </div>
         
