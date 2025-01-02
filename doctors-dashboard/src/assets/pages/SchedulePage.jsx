@@ -71,8 +71,59 @@ function SchedulePage() {
       id: "13",
       time: "05:00 PM",
       status: "Booked"
+    },
+    {
+      id: "14",
+      time: "05:15 PM",
+      status: "Available"
+    },
+    {
+      id: "15",
+      time: "05:30 PM",
+      status: "Booked"
+    },
+    {
+      id: "16",
+      time: "05:45 PM",
+      status: "Available"
+    },
+    {
+      id: "17",
+      time: "06:00 PM",
+      status: "Booked"
+    },
+    {
+      id: "18",
+      time: "06:15 PM",
+      status: "Available"
+    },
+    {
+      id: "19",
+      time: "06:30 PM",
+      status: "Booked"
+    },
+    {
+      id: "20",
+      time: "06:45 PM",
+      status: "Available"
+    },
+    {
+      id: "21",
+      time: "07:00 PM",
+      status: "Booked"
+    },
+    {
+      id: "22",
+      time: "07:15 PM",
+      status: "Available"
+    },
+    {
+      id: "23",
+      time: "07:30 PM",
+      status: "Booked"
     }
   ];
+  
   
   
   const HandleTabClick = (id) => {
