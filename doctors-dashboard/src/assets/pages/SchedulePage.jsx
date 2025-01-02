@@ -20,7 +20,7 @@ function SchedulePage() {
     {
       id: "3",
       time: "02:30 PM",
-      status: "Booked"
+      status: "Available"
     },
     {
       id: "4",
@@ -40,7 +40,7 @@ function SchedulePage() {
     {
       id: "7",
       time: "03:30 PM",
-      status: "Booked"
+      status: "Available"
     },
     {
       id: "8",
@@ -70,7 +70,7 @@ function SchedulePage() {
     {
       id: "13",
       time: "05:00 PM",
-      status: "Booked"
+      status: "Available"
     },
     {
       id: "14",
@@ -100,7 +100,7 @@ function SchedulePage() {
     {
       id: "19",
       time: "06:30 PM",
-      status: "Booked"
+      status: "Available"
     },
     {
       id: "20",
