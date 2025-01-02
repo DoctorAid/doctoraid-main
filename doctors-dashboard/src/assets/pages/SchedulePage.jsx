@@ -1,10 +1,16 @@
 import React from 'react'
 import { useState, useEffect } from "react";
 import TimeSlot from '../components/TimeSlot';
+import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
+import { TextField } from '@mui/material';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
 
 
 function SchedulePage() {
   const [SelectedSlot, setSelectedSlot] = useState("");
+  const [selectedDate, setSelectedDate] = useState(dayjs());
 
   const timeSlots = [
     {
@@ -219,10 +225,18 @@ function SchedulePage() {
         {/* right side */}
       <div className='flex flex-col gap-2 bg-[#3gcf3b] w-[60%] h-full'>
         <div className='flex bg-[#3bff3b] w-full h-[50%]'>
-        <p>Section 02</p>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <StaticDatePicker
+        displayStaticWrapperAs="desktop"
+        value={selectedDate}
+        onChange={(newValue) => setSelectedDate(newValue)}
+        renderInput={(params) => <TextField {...params} />}
+      />
+    </LocalizationProvider>
         </div>
         <div className='flex bg-[#3bcf3b] w-full h-[50%]'>
         <p>Section 02</p>
+     
         </div>
         </div>
     </div>
