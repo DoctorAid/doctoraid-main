@@ -1,68 +1,69 @@
 import React from 'react'
-
-
-
-const timeSlots = [
-  {
-    time: "02:00 PM",
-    status: "Booked"
-  },
-  {
-    time: "02:00 PM",
-    status: "Booked"
-  },
-  {
-    time: "02:15 PM",
-    status: "Available"
-  },
-  {
-    time: "02:30 PM",
-    status: "Booked"
-  },
-  {
-    time: "02:45 PM",
-    status: "Available"
-  },
-  {
-    time: "03:00 PM",
-    status: "Booked"
-  },
-  {
-    time: "03:15 PM",
-    status: "Available"
-  },
-  {
-    time: "03:30 PM",
-    status: "Booked"
-  },
-  {
-    time: "03:45 PM",
-    status: "Available"
-  },
-  {
-    time: "04:00 PM",
-    status: "Booked"
-  },
-  {
-    time: "04:15 PM",
-    status: "Available"
-  },
-  {
-    time: "04:30 PM",
-    status: "Booked"
-  },
-  {
-    time: "04:45 PM",
-    status: "Available"
-  },
-  {
-    time: "05:00 PM",
-    status: "Booked"
-  }
-];
+import { useState, useEffect } from "react";
 
 
 function SchedulePage() {
+  const [SelectedSlot, setSelectSlot] = useState("");
+
+  const timeSlots = [
+    {
+      time: "02:00 PM",
+      status: "Booked"
+    },
+    {
+      time: "02:00 PM",
+      status: "Booked"
+    },
+    {
+      time: "02:15 PM",
+      status: "Available"
+    },
+    {
+      time: "02:30 PM",
+      status: "Booked"
+    },
+    {
+      time: "02:45 PM",
+      status: "Available"
+    },
+    {
+      time: "03:00 PM",
+      status: "Booked"
+    },
+    {
+      time: "03:15 PM",
+      status: "Available"
+    },
+    {
+      time: "03:30 PM",
+      status: "Booked"
+    },
+    {
+      time: "03:45 PM",
+      status: "Available"
+    },
+    {
+      time: "04:00 PM",
+      status: "Booked"
+    },
+    {
+      time: "04:15 PM",
+      status: "Available"
+    },
+    {
+      time: "04:30 PM",
+      status: "Booked"
+    },
+    {
+      time: "04:45 PM",
+      status: "Available"
+    },
+    {
+      time: "05:00 PM",
+      status: "Booked"
+    }
+  ];
+  
   return (
     <div className='flex flex-col gap-5 bg-[#FAFAF9] w-full  px-2 py-2 items-start justify-start text-black'>
     <div className='flex justify-around gap-2 w-full h-[100%]  items-center px-1 py-1'>
