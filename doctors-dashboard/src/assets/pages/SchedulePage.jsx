@@ -64,71 +64,68 @@ function SchedulePage() {
         </div>
 
         <div className='bg-[#f2eaf1] w-full h-[50%] grid-cols-4 grid gap-1 overflow-auto'>
-        <div className='bg-red-500'>1</div>
-  <div className='bg-blue-500'>2</div>
-  <div className='bg-green-500'>3</div>
-  <div className='bg-yellow-500'>4</div>
-  <div className='bg-purple-500'>5</div>
-  <div className='bg-red-500'>1</div>
-  <div className='bg-blue-500'>2</div>
-  <div className='bg-green-500'>3</div>
-  <div className='bg-yellow-500'>4</div>
-  <div className='bg-purple-500'>5</div>
-  <div className='bg-red-500'>1</div>
-  <div className='bg-blue-500'>2</div>
-  <div className='bg-green-500'>3</div>
-  <div className='bg-yellow-500'>4</div>
-  <div className='bg-purple-500'>5</div>
-  <div className='bg-red-500'>1</div>
-  <div className='bg-blue-500'>2</div>
-  <div className='bg-green-500'>3</div>
-  <div className='bg-yellow-500'>4</div>
-  <div className='bg-purple-500'>5</div>
-  <div className='bg-red-500'>1</div>
-  <div className='bg-blue-500'>2</div>
-  <div className='bg-green-500'>3</div>
-  <div className='bg-yellow-500'>4</div>
-  <div className='bg-purple-500'>5</div>
-  <div className='bg-red-500'>1</div>
-  <div className='bg-blue-500'>2</div>
-  <div className='bg-green-500'>3</div>
-  <div className='bg-yellow-500'>4</div>
-  <div className='bg-purple-500'>5</div>
-  <div className='bg-red-500'>1</div>
-  <div className='bg-blue-500'>2</div>
-  <div className='bg-green-500'>3</div>
-  <div className='bg-yellow-500'>4</div>
-  <div className='bg-purple-500'>5</div>
-  <div className='bg-red-500'>1</div>
-  <div className='bg-blue-500'>2</div>
-  <div className='bg-green-500'>3</div>
-  <div className='bg-yellow-500'>4</div>
-  <div className='bg-purple-500'>5</div>
-  <div className='bg-red-500'>1</div>
-  <div className='bg-blue-500'>2</div>
-  <div className='bg-green-500'>3</div>
-  <div className='bg-yellow-500'>4</div>
-  <div className='bg-purple-500'>5</div>
-  <div className='bg-red-500'>1</div>
-  <div className='bg-blue-500'>2</div>
-  <div className='bg-green-500'>3</div>
-  <div className='bg-yellow-500'>4</div>
-  <div className='bg-purple-500'>5</div>
-  <div className='bg-red-500'>1</div>
-  <div className='bg-blue-500'>2</div>
-  <div className='bg-green-500'>3</div>
-  <div className='bg-yellow-500'>4</div>
-  <div className='bg-purple-500'>5</div>
-  <div className='bg-red-500'>1</div>
-  <div className='bg-blue-500'>2</div>
-  <div className='bg-green-500'>3</div>
-  <div className='bg-yellow-500'>4</div>
-  <div className='bg-purple-500'>5</div>
-  <div className='bg-red-500'>1</div>
-  <div className='bg-blue-500'>2</div>
-  <div className='bg-green-500'>3</div>
-  <div className='bg-yellow-500'>4</div>
-  <div className='bg-purple-500'>5</div>
+        <div className='bg-[#e94cd4] flex flex-col justify-center '>
+          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
+        </div>
+        <div className='bg-red-500 flex flex-col justify-center '>
+          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
+        </div>
+        <div className='bg-[#6173db] flex flex-col justify-center '>
+          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
+        </div>
+        <div className='bg-red-500 flex flex-col justify-center '>
+          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
+        </div>
+        <div className='bg-[#3eda33] flex flex-col justify-center '>
+          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
+        </div>
+        <div className='bg-[#bee84c] flex flex-col justify-center '>
+          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
+        </div>
+        <div className='bg-[#1d1751] flex flex-col justify-center '>
+          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
+        </div>
+        <div className='bg-red-500 flex flex-col justify-center '>
+          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
+        </div>
+        <div className='bg-[#6173db] flex flex-col justify-center '>
+          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
+        </div>
+        <div className='bg-red-500 flex flex-col justify-center '>
+          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
+        </div>
+        <div className='bg-[#3eda33] flex flex-col justify-center '>
+          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
+        </div>
+        <div className='bg-[#bee84c] flex flex-col justify-center '>
+          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
+        </div>
+        <div className='bg-[#1d1751] flex flex-col justify-center '>
+          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
+        </div>
+        <div className='bg-red-500 flex flex-col justify-center '>
+          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
+        </div>
+        <div className='bg-[#6173db] flex flex-col justify-center '>
+          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
+        </div>
+        <div className='bg-red-500 flex flex-col justify-center '>
+          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
+        </div>
+        <div className='bg-[#3eda33] flex flex-col justify-center '>
+          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
+        </div>
+        <div className='bg-[#bee84c] flex flex-col justify-center '>
+          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
+        </div>
+        <div className='bg-[#1d1751] flex flex-col justify-center '>
+          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
+        </div>
+        
+       
+  
+  
+ 
   
           
         </div>
