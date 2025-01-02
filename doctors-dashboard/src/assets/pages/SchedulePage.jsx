@@ -63,7 +63,7 @@ function SchedulePage() {
          
         </div>
 
-        <div className='bg-[#f2eaf1] w-full h-[50%] grid-cols-4 grid gap-1 '>
+        <div className='bg-[#f2eaf1] w-full h-[50%] grid-cols-4 grid gap-1 overflow-auto'>
         <div className='bg-red-500'>1</div>
   <div className='bg-blue-500'>2</div>
   <div className='bg-green-500'>3</div>
