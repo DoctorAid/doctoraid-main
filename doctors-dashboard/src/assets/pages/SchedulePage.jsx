@@ -1,85 +1,82 @@
 import React from 'react'
 import { useState, useEffect } from "react";
+import TimeSlot from '../components/TimeSlot';
 
 
 function SchedulePage() {
-  const [SelectedSlot, setSelectSlot] = useState("");
+  const [SelectedSlot, setSelectedSlot] = useState("");
 
   const timeSlots = [
     {
-      id: 1,
+      id: "1",
       time: "02:00 PM",
       status: "Booked"
     },
     {
-      id: 2,
-      time: "02:00 PM",
-      status: "Booked"
-    },
-    {
-      id: 3,
+      id: "2",
       time: "02:15 PM",
       status: "Available"
     },
     {
-      id: 4,
+      id: "3",
       time: "02:30 PM",
       status: "Booked"
     },
     {
-      id: 5,
+      id: "4",
       time: "02:45 PM",
       status: "Available"
     },
     {
-      id: 6,
+      id: "5",
       time: "03:00 PM",
       status: "Booked"
     },
     {
-      id: 7,
+      id: "6",
       time: "03:15 PM",
       status: "Available"
     },
     {
-      id: 8,
+      id: "7",
       time: "03:30 PM",
       status: "Booked"
     },
     {
-      id: 9,
+      id: "8",
       time: "03:45 PM",
       status: "Available"
     },
     {
-      id: 10,
+      id: "9",
       time: "04:00 PM",
       status: "Booked"
     },
     {
-      id: 11,
+      id: "10",
       time: "04:15 PM",
       status: "Available"
     },
     {
-      id: 12,
+      id: "11",
       time: "04:30 PM",
       status: "Booked"
     },
     {
-      id: 13,
+      id: "12",
       time: "04:45 PM",
       status: "Available"
     },
     {
-      id: 14,
+      id: "13",
       time: "05:00 PM",
       status: "Booked"
     }
   ];
   
+  
   const HandleTabClick = (id) => {
-    setSelectSlot(id);
+    setSelectedSlot(id);
   };
   return (
     <div className='flex flex-col gap-5 bg-[#FAFAF9] w-full  px-2 py-2 items-start justify-start text-black'>
@@ -144,64 +141,17 @@ function SchedulePage() {
         </div>
 
         <div className='bg-[#f2eaf1] w-full h-[50%] grid-cols-4 grid gap-1 overflow-auto'>
-        <div className='bg-[#e94cd4] flex flex-col justify-center '>
-          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
-        </div>
-        <div className='bg-red-500 flex flex-col justify-center '>
-          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
-        </div>
-        <div className='bg-[#6173db] flex flex-col justify-center '>
-          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
-        </div>
-        <div className='bg-red-500 flex flex-col justify-center '>
-          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
-        </div>
-        <div className='bg-[#3eda33] flex flex-col justify-center '>
-          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
-        </div>
-        <div className='bg-[#bee84c] flex flex-col justify-center '>
-          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
-        </div>
-        <div className='bg-[#1d1751] flex flex-col justify-center '>
-          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
-        </div>
-        <div className='bg-red-500 flex flex-col justify-center '>
-          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
-        </div>
-        <div className='bg-[#6173db] flex flex-col justify-center '>
-          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
-        </div>
-        <div className='bg-red-500 flex flex-col justify-center '>
-          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
-        </div>
-        <div className='bg-[#3eda33] flex flex-col justify-center '>
-          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
-        </div>
-        <div className='bg-[#bee84c] flex flex-col justify-center '>
-          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
-        </div>
-        <div className='bg-[#1d1751] flex flex-col justify-center '>
-          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
-        </div>
-        <div className='bg-red-500 flex flex-col justify-center '>
-          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
-        </div>
-        <div className='bg-[#6173db] flex flex-col justify-center '>
-          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
-        </div>
-        <div className='bg-red-500 flex flex-col justify-center '>
-          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
-        </div>
-        <div className='bg-[#3eda33] flex flex-col justify-center '>
-          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
-        </div>
-        <div className='bg-[#bee84c] flex flex-col justify-center '>
-          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
-        </div>
-        <div className='bg-[#1d1751] flex flex-col justify-center '>
-          <div className='bg-slate-50 text-center rounded-xl'>40.22PM</div>
-        </div>
-        
+        {timeSlots.map((el)=>{
+          return(
+            <TimeSlot
+              selectedSlotId={SelectedSlot}
+              timeSlot ={el}
+              onClick = {HandleTabClick}
+            />
+
+          );
+        })}
+       
        
   
   
