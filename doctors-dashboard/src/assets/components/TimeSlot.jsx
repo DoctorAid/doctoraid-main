@@ -17,7 +17,7 @@ function TimeSlot(props) {
   else{
     return(
      
-      <button className='bg-[#7eb6fbaa] text-center rounded-md '
+      <button className='bg-[#e2ec21aa] text-center rounded-md '
               onClick={() => props.onClick(props.timeSlot.id)}>
        {props.timeSlot.time}
        
