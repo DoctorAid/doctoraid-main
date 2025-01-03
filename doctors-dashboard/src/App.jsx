@@ -23,43 +23,43 @@ function App() {
           <h2 className='text-lg font-semibold mb-4 text-black'>Consultation History</h2>
 
           {/* Consultation Item 1 */}
-          <div className='w-full border-b pb-3 mb-3'>
-            <p className='text-sm text-black'><span className='font-semibold'>Last Checked</span> <span className='font-normal'>10 Dec 2024</span></p>
-            <p className='text-sm text-black'><span className='font-semibold'>Observation</span> <span className='font-normal'>Fever, Fatigue</span></p>
-            <p className='text-sm text-black'><span className='font-semibold'>Prescription</span> <span className='font-normal'>Paracetamol, Vitamin C</span></p>
-            <p className='text-sm text-black'><span className='font-semibold'>Note</span> <span className='font-normal'>Rest and hydrate properly.</span></p>
+          <div className='w-full border-b-[1px] border-[#7da4f2] pb-3 mb-3'>
+            <p className='text-sm text-black'><span className='font-bold'>Last Checked</span> <span className='font-normal'>10 Dec 2023</span></p>
+            <p className='text-sm text-black'><span className='font-bold'>Observation</span> <span className='font-normal'>Fever, Fatigue</span></p>
+            <p className='text-sm text-black'><span className='font-bold'>Prescription</span> <span className='font-normal'>Paracetamol, Vitamin C</span></p>
+            <p className='text-sm text-black'><span className='font-bold'>Note</span> <span className='font-normal'>Rest and hydrate properly.</span></p>
           </div>
 
           {/* Consultation Item 2 */}
-          <div className='w-full border-b pb-3 mb-3'>
-            <p className='text-sm text-black'><span className='font-semibold'>Last Checked</span> <span className='font-normal'>22 Nov 2024</span></p>
-            <p className='text-sm text-black'><span className='font-semibold'>Observation</span> <span className='font-normal'>Cough, Sore Throat</span></p>
-            <p className='text-sm text-black'><span className='font-semibold'>Prescription</span> <span className='font-normal'>Cough Syrup, Warm Fluids</span></p>
-            <p className='text-sm text-black'><span className='font-semibold'>Note</span> <span className='font-normal'>Avoid cold drinks and spicy food.</span></p>
+          <div className='w-full border-b-[1px] border-[#7da4f2] pb-3 mb-3'>
+            <p className='text-sm text-black'><span className='font-bold'>Last Checked</span> <span className='font-normal'>22 Nov 2023</span></p>
+            <p className='text-sm text-black'><span className='font-bold'>Observation</span> <span className='font-normal'>Cough, Sore Throat</span></p>
+            <p className='text-sm text-black'><span className='font-bold'>Prescription</span> <span className='font-normal'>Cough Syrup, Warm Fluids</span></p>
+            <p className='text-sm text-black'><span className='font-bold'>Note</span> <span className='font-normal'>Avoid cold drinks and spicy food.</span></p>
           </div>
 
           {/* Consultation Item 3 */}
-          <div className='w-full border-b pb-3 mb-3'>
-            <p className='text-sm text-black'><span className='font-semibold'>Last Checked</span> <span className='font-normal'>05 Oct 2024</span></p>
-            <p className='text-sm text-black'><span className='font-semibold'>Observation</span> <span className='font-normal'>Headache, Dizziness</span></p>
-            <p className='text-sm text-black'><span className='font-semibold'>Prescription</span> <span className='font-normal'>Pain Reliever, Electrolytes</span></p>
-            <p className='text-sm text-black'><span className='font-semibold'>Note</span> <span className='font-normal'>Reduce screen time and stress.</span></p>
+          <div className='w-full border-b-[1px] border-[#7da4f2] pb-3 mb-3'>
+            <p className='text-sm text-black'><span className='font-bold'>Last Checked</span> <span className='font-normal'>05 Oct 2023</span></p>
+            <p className='text-sm text-black'><span className='font-bold'>Observation</span> <span className='font-normal'>Headache, Dizziness</span></p>
+            <p className='text-sm text-black'><span className='font-bold'>Prescription</span> <span className='font-normal'>Pain Reliever, Electrolytes</span></p>
+            <p className='text-sm text-black'><span className='font-bold'>Note</span> <span className='font-normal'>Reduce screen time and stress.</span></p>
           </div>
 
           {/* Consultation Item 4 */}
-          <div className='w-full border-b pb-3 mb-3'>
-            <p className='text-sm text-black'><span className='font-semibold'>Last Checked</span> <span className='font-normal'>12 Sep 2024</span></p>
-            <p className='text-sm text-black'><span className='font-semibold'>Observation</span> <span className='font-normal'>Allergy, Itching</span></p>
-            <p className='text-sm text-black'><span className='font-semibold'>Prescription</span> <span className='font-normal'>Antihistamines, Skin Cream</span></p>
-            <p className='text-sm text-black'><span className='font-semibold'>Note</span> <span className='font-normal'>Avoid allergens and moisturize skin.</span></p>
+          <div className='w-full border-b-[1px] border-[#7da4f2] pb-3 mb-3'>
+            <p className='text-sm text-black'><span className='font-bold'>Last Checked</span> <span className='font-normal'>12 Sep 2023</span></p>
+            <p className='text-sm text-black'><span className='font-bold'>Observation</span> <span className='font-normal'>Allergy, Itching</span></p>
+            <p className='text-sm text-black'><span className='font-bold'>Prescription</span> <span className='font-normal'>Antihistamines, Skin Cream</span></p>
+            <p className='text-sm text-black'><span className='font-bold'>Note</span> <span className='font-normal'>Avoid allergens and moisturize skin.</span></p>
           </div>
 
           {/* Consultation Item 5 */}
-          <div className='w-full border-b pb-3 mb-3'>
-            <p className='text-sm text-black'><span className='font-semibold'>Last Checked</span> <span className='font-normal'>25 Aug 2024</span></p>
-            <p className='text-sm text-black'><span className='font-semibold'>Observation</span> <span className='font-normal'>Back Pain, Muscle Stiffness</span></p>
-            <p className='text-sm text-black'><span className='font-semibold'>Prescription</span> <span className='font-normal'>Pain Balm, Physiotherapy</span></p>
-            <p className='text-sm text-black'><span className='font-semibold'>Note</span> <span className='font-normal'>Stretch regularly and avoid lifting heavy objects.</span></p>
+          <div className='w-full border-b-[1px] border-[#7da4f2] pb-3 mb-3'>
+            <p className='text-sm text-black'><span className='font-bold'>Last Checked</span> <span className='font-normal'>25 Aug 2023</span></p>
+            <p className='text-sm text-black'><span className='font-bold'>Observation</span> <span className='font-normal'>Back Pain, Muscle Stiffness</span></p>
+            <p className='text-sm text-black'><span className='font-bold'>Prescription</span> <span className='font-normal'>Pain Balm, Physiotherapy</span></p>
+            <p className='text-sm text-black'><span className='font-bold'>Note</span> <span className='font-normal'>Stretch regularly and avoid lifting heavy objects.</span></p>
           </div>
         </div>
       </div>
