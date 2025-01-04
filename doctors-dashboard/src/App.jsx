@@ -1,11 +1,10 @@
-import React from 'react'
-import DashboardNavigation from './assets/page_sections/dashboard/DashboardNavigation'
+import React from 'react';
+import DashboardNavigation from './assets/page_sections/dashboard/DashboardNavigation';
 
 function App() {
   return (
     <div className='flex flex-col gap-5 bg-[#FAFAF9] w-full px-2 py-2 items-start justify-start text-black'>
-      
-      <DashboardNavigation/>
+      <DashboardNavigation />
 
       {/* Top Section */}
       <div className='flex justify-around gap-2 w-full h-[40%] bg-[#93b1ec] items-center px-1 py-1'>
@@ -24,107 +23,107 @@ function App() {
 
           {/* Consultation Item 1 */}
           <div className='w-full border-b-[1px] border-[#7da4f2] pb-3 mb-3'>
-            <div className='flex'>
-              <p className='text-sm font-semibold mr-5'>Last Checked</p>
-              <p className='text-sm font-normal'>10 Dec 2023</p>
+            <div className='flex mb-3'>
+              <p className='text-sm font-semibold w-28'>Last Checked</p>
+              <p className='text-sm font-normal text-[#616161]'>
+                10 Dec 2023 Prescription{' '}
+                <span className='text-blue-500 underline hover:text-blue-700 cursor-pointer'>
+                  #12345
+                </span>
+              </p>
+            </div>
+            <div className='flex mb-3'>
+              <p className='text-sm font-semibold w-28'>Observation</p>
+              <p className='text-sm font-normal text-[#616161]'>Fever, Fatigue</p>
+            </div>
+            <div className='flex mb-3'>
+              <p className='text-sm font-semibold w-28'>Prescription</p>
+              <p className='text-sm font-normal text-[#616161]'>Paracetamol, Vitamin C</p>
             </div>
             <div className='flex'>
-              <p className='text-sm font-semibold mr-5'>Observation</p>
-              <p className='text-sm font-normal'>Fever, Fatigue</p>
-            </div>
-            <div className='flex'>
-              <p className='text-sm font-semibold mr-5'>Prescription</p>
-              <p className='text-sm font-normal'>Paracetamol, Vitamin C</p>
-            </div>
-            <div className='flex'>
-              <p className='text-sm font-semibold mr-5'>Note</p>
-              <p className='text-sm font-normal'>Rest and hydrate properly.</p>
+              <p className='text-sm font-semibold w-28'>Note</p>
+              <p className='text-sm font-normal text-[#616161]'>Rest and hydrate properly.</p>
             </div>
           </div>
 
           {/* Consultation Item 2 */}
           <div className='w-full border-b-[1px] border-[#7da4f2] pb-3 mb-3'>
-            <div className='flex'>
-              <p className='text-sm font-semibold mr-5'>Last Checked</p>
-              <p className='text-sm font-normal'>22 Nov 2023</p>
+            <div className='flex mb-3'>
+              <p className='text-sm font-semibold w-28'>Last Checked</p>
+              <p className='text-sm font-normal text-[#616161]'>
+                22 Nov 2023 Prescription{' '}
+                <span className='text-blue-500 underline hover:text-blue-700 cursor-pointer'>
+                  #23456
+                </span>
+              </p>
+            </div>
+            <div className='flex mb-3'>
+              <p className='text-sm font-semibold w-28'>Observation</p>
+              <p className='text-sm font-normal text-[#616161]'>Cough, Sore Throat</p>
+            </div>
+            <div className='flex mb-3'>
+              <p className='text-sm font-semibold w-28'>Prescription</p>
+              <p className='text-sm font-normal text-[#616161]'>Cough Syrup, Warm Fluids</p>
             </div>
             <div className='flex'>
-              <p className='text-sm font-semibold mr-5'>Observation</p>
-              <p className='text-sm font-normal'>Cough, Sore Throat</p>
-            </div>
-            <div className='flex'>
-              <p className='text-sm font-semibold mr-5'>Prescription</p>
-              <p className='text-sm font-normal'>Cough Syrup, Warm Fluids</p>
-            </div>
-            <div className='flex'>
-              <p className='text-sm font-semibold mr-5'>Note</p>
-              <p className='text-sm font-normal'>Avoid cold drinks and spicy food.</p>
+              <p className='text-sm font-semibold w-28'>Note</p>
+              <p className='text-sm font-normal text-[#616161]'>Avoid cold drinks and spicy food.</p>
             </div>
           </div>
 
           {/* Consultation Item 3 */}
           <div className='w-full border-b-[1px] border-[#7da4f2] pb-3 mb-3'>
-            <div className='flex'>
-              <p className='text-sm font-semibold mr-5'>Last Checked</p>
-              <p className='text-sm font-normal'>05 Oct 2023</p>
+            <div className='flex mb-3'>
+              <p className='text-sm font-semibold w-28'>Last Checked</p>
+              <p className='text-sm font-normal text-[#616161]'>
+                05 Oct 2023 Prescription{' '}
+                <span className='text-blue-500 underline hover:text-blue-700 cursor-pointer'>
+                  #34567
+                </span>
+              </p>
+            </div>
+            <div className='flex mb-3'>
+              <p className='text-sm font-semibold w-28'>Observation</p>
+              <p className='text-sm font-normal text-[#616161]'>Headache, Dizziness</p>
+            </div>
+            <div className='flex mb-3'>
+              <p className='text-sm font-semibold w-28'>Prescription</p>
+              <p className='text-sm font-normal text-[#616161]'>Pain Reliever, Electrolytes</p>
             </div>
             <div className='flex'>
-              <p className='text-sm font-semibold mr-5'>Observation</p>
-              <p className='text-sm font-normal'>Headache, Dizziness</p>
-            </div>
-            <div className='flex'>
-              <p className='text-sm font-semibold mr-5'>Prescription</p>
-              <p className='text-sm font-normal'>Pain Reliever, Electrolytes</p>
-            </div>
-            <div className='flex'>
-              <p className='text-sm font-semibold mr-5'>Note</p>
-              <p className='text-sm font-normal'>Reduce screen time and stress.</p>
+              <p className='text-sm font-semibold w-28'>Note</p>
+              <p className='text-sm font-normal text-[#616161]'>Reduce screen time and stress.</p>
             </div>
           </div>
 
           {/* Consultation Item 4 */}
           <div className='w-full border-b-[1px] border-[#7da4f2] pb-3 mb-3'>
-            <div className='flex'>
-              <p className='text-sm font-semibold mr-5'>Last Checked</p>
-              <p className='text-sm font-normal'>12 Sep 2023</p>
+            <div className='flex mb-3'>
+              <p className='text-sm font-semibold w-28'>Last Checked</p>
+              <p className='text-sm font-normal text-[#616161]'>
+                12 Sep 2023 Prescription{' '}
+                <span className='text-blue-500 underline hover:text-blue-700 cursor-pointer'>
+                  #45678
+                </span>
+              </p>
             </div>
-            <div className='flex'>
-              <p className='text-sm font-semibold mr-5'>Observation</p>
-              <p className='text-sm font-normal'>Allergy, Itching</p>
+            <div className='flex mb-3'>
+              <p className='text-sm font-semibold w-28'>Observation</p>
+              <p className='text-sm font-normal text-[#616161]'>Allergy, Itching</p>
             </div>
-            <div className='flex'>
-              <p className='text-sm font-semibold mr-5'>Prescription</p>
-              <p className='text-sm font-normal'>Antihistamines, Skin Cream</p>
+            <div className='flex mb-3'>
+              <p className='text-sm font-semibold w-28'>Prescription</p>
+              <p className='text-sm font-normal text-[#616161]'>Antihistamines, Skin Cream</p>
             </div>
-            <div className='flex'>
-              <p className='text-sm font-semibold mr-5'>Note</p>
-              <p className='text-sm font-normal'>Avoid allergens and moisturize skin.</p>
-            </div>
-          </div>
-
-          {/* Consultation Item 5 */}
-          <div className='w-full border-b-[1px] border-[#7da4f2] pb-3 mb-3'>
-            <div className='flex'>
-              <p className='text-sm font-semibold mr-5'>Last Checked</p>
-              <p className='text-sm font-normal'>25 Aug 2023</p>
-            </div>
-            <div className='flex'>
-              <p className='text-sm font-semibold mr-5'>Observation</p>
-              <p className='text-sm font-normal'>Back Pain, Muscle Stiffness</p>
-            </div>
-            <div className='flex'>
-              <p className='text-sm font-semibold mr-5'>Prescription</p>
-              <p className='text-sm font-normal'>Pain Balm, Physiotherapy</p>
-            </div>
-            <div className='flex'>
-              <p className='text-sm font-semibold mr-5'>Note</p>
-              <p className='text-sm font-normal'>Stretch regularly and avoid lifting heavy objects.</p>
+            <div className='flex items-start'>
+              <p className='text-sm font-semibold w-28 flex-shrink-0'>Note</p>
+              <p className='text-sm font-normal text-[#616161]'>Stretch regularly and avoid lifting heavy objects.</p>
             </div>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
