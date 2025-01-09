@@ -28,7 +28,7 @@ function App() {
               <p className='text-sm font-normal text-[#616161]'>
                 10 Dec 2023 Prescription{' '}
                 <span className='text-blue-500 underline hover:text-blue-700 cursor-pointer'>
-                  #12345
+                #2241206
                 </span>
               </p>
             </div>
@@ -53,7 +53,7 @@ function App() {
               <p className='text-sm font-normal text-[#616161]'>
                 22 Nov 2023 Prescription{' '}
                 <span className='text-blue-500 underline hover:text-blue-700 cursor-pointer'>
-                  #23456
+                #2241206
                 </span>
               </p>
             </div>
@@ -78,7 +78,7 @@ function App() {
               <p className='text-sm font-normal text-[#616161]'>
                 05 Oct 2023 Prescription{' '}
                 <span className='text-blue-500 underline hover:text-blue-700 cursor-pointer'>
-                  #34567
+                #2241206
                 </span>
               </p>
             </div>
@@ -103,7 +103,7 @@ function App() {
               <p className='text-sm font-normal text-[#616161]'>
                 12 Sep 2023 Prescription{' '}
                 <span className='text-blue-500 underline hover:text-blue-700 cursor-pointer'>
-                  #45678
+                #2241206
                 </span>
               </p>
             </div>
