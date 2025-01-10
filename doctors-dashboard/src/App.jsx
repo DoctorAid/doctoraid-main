@@ -13,6 +13,12 @@ function SessionPatientList() {
   return (
     <div className="w-full h-full flex flex-col items-start px-4 py-6 bg-white shadow-lg rounded-lg overflow-y-auto">
       <h2 className="text-xl font-semibold mb-6 text-gray-800">Session's Patient List</h2>
+
+      {/* Today Section */}
+      <div className="top-right">
+        <p className="text-xl font-bold text-gray-800">Today</p>
+      </div>
+
       <ul className="w-full">
         {patients.map((patient) => (
           <li
