@@ -1,6 +1,41 @@
 import React from 'react';
 import DashboardNavigation from './assets/page_sections/dashboard/DashboardNavigation';
 
+function SessionPatientList() {
+  const patients = [
+    { initials: 'DW', name: 'Denzel White', id: '200-01', time: '9.00 AM' },
+    { initials: 'SM', name: 'Stacy Mitchell', id: '220-02', time: '9.15 AM'},
+    { initials: 'AD', name: 'Amy Dunham', id: '254-02', time: '9.30 AM'},
+    { initials: 'DJ', name: 'Demi Joan', id: '260-01', time: '9.50 AM'},
+    { initials: 'SM', name: 'Susan Myers', id: '240-03', time: '10.15 AM'},
+  ];
+
+  return (
+    <div className="w-full h-full flex flex-col items-start px-6 py-4 shadow-md rounded-lg overflow-y-scroll">
+      <h2 className="text-lg font-semibold mb-4 text-black">Session's Patient List</h2>
+      <ul className="space-y-3 w-full">
+        {patients.map((patient) => (
+          <li
+            key={patient.id}
+            className="flex justify-between items-center bg-gray-100 rounded-lg px-4 py-3 shadow-sm"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-500 text-white font-bold">
+                {patient.initials}
+              </div>
+              <div>
+                <p className="text-sm font-medium">{patient.name}</p>
+                <p className="text-xs text-gray-500">Patient ID: {patient.id}</p>
+              </div>
+            </div>
+            <p className="text-sm text-gray-700">{patient.time}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 function App() {
   return (
     <div className='flex flex-col gap-5 bg-[#FAFAF9] w-full px-2 py-2 items-start justify-start text-black'>
@@ -14,7 +49,16 @@ function App() {
 
       {/* Bottom Section */}
       <div className='flex justify-around gap-2 w-full h-[60%] bg-[#93b1ec] items-center px-1 py-1'>
-        <div className='bg-[#2e38f8] w-full h-full flex items-center justify-center'><p>Section 01</p></div>
+
+        {/* Sessions patient list section */}
+        <div className='bg-white w-full h-full'>
+          <SessionPatientList/>
+        </div>
+
+
+
+
+
         <div className='bg-[#7da4f2] w-full h-full flex items-center justify-center'><p>Section 02</p></div>
 
         {/* Consultation History Section */}
