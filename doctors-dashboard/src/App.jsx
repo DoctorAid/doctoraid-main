@@ -11,24 +11,24 @@ function SessionPatientList() {
   ];
 
   return (
-    <div className="w-full h-full flex flex-col items-start px-6 py-4 shadow-md rounded-lg overflow-y-scroll">
-      <h2 className="text-lg font-semibold mb-4 text-black">Session's Patient List</h2>
-      <ul className="space-y-3 w-full">
+    <div className="w-full h-full flex flex-col items-start px-4 py-6 bg-white shadow-lg rounded-lg overflow-y-auto">
+      <h2 className="text-xl font-semibold mb-6 text-gray-800">Session's Patient List</h2>
+      <ul className="w-full">
         {patients.map((patient) => (
           <li
             key={patient.id}
-            className="flex justify-between items-center bg-gray-100 rounded-lg px-4 py-3 shadow-sm"
+            className="flex justify-between items-center bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg px-5 py-4 mb-4 shadow-sm"
           >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-500 text-white font-bold">
+            <div className="flex items-center ">
+              <div className="w-12 h-12 flex items-center justify-center rounded-full bg-blue-600 text-white text-lg font-semibold">
                 {patient.initials}
               </div>
-              <div>
-                <p className="text-sm font-medium">{patient.name}</p>
-                <p className="text-xs text-gray-500">Patient ID: {patient.id}</p>
-              </div>
+              <div className='ml-4'>
+                <p className="text-base font-medium text-gray-800">{patient.name}</p>
+                <p className="text-sm text-gray-500">Patient ID: {patient.id}</p>
+              </div> 
             </div>
-            <p className="text-sm text-gray-700">{patient.time}</p>
+            <p className="text-sm font-medium text-gray-700">{patient.time}</p>
           </li>
         ))}
       </ul>
