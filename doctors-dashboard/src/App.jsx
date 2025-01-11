@@ -11,22 +11,22 @@ function SessionPatientList() {
   ];
 
   return (
-    <div className="w-full h-full flex flex-col items-start px-4 py-6 bg-white shadow-lg rounded-lg overflow-y-auto">
-      <h2 className="text-xl font-semibold mb-6 text-gray-800">Session's Patient List</h2>
+    <div className="w-full h-full flex flex-col items-start px-6 py-4 bg-white shadow-lg rounded-lg overflow-y-auto">
+      <h2 className="text-xl font-semibold mb-4 text-gray-800">Session's Patient List</h2>
 
       {/* Today Section */}
-      <div className="top-right">
-        <p className="text-xl font-bold text-gray-800">Today</p>
+      <div className="mb-4">
+        <p className="text-lg font-bold text-gray-700">Today</p>
       </div>
 
-      <ul className="w-full">
+      <ul className="w-full space-y-4">
         {patients.map((patient) => (
           <li
             key={patient.id}
-            className="flex justify-between items-center bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg px-5 py-4 mb-4 shadow-sm"
+            className="flex justify-between items-center bg-white  hover:bg-gray-50 border border-gray-200 rounded-lg px-6 py-4 shadow"
           >
             <div className="flex items-center ">
-              <div className="w-12 h-12 flex items-center justify-center rounded-full bg-blue-600 text-white text-lg font-semibold">
+              <div className="w-12 h-12 flex items-center justify-center rounded-full bg-blue-500 text-white text-lg font-semibold">
                 {patient.initials}
               </div>
               <div className='ml-4'>
@@ -34,7 +34,9 @@ function SessionPatientList() {
                 <p className="text-sm text-gray-500">Patient ID: {patient.id}</p>
               </div> 
             </div>
-            <p className="text-sm font-medium text-gray-700">{patient.time}</p>
+            <div className='text-right'>
+              <p className="text-base font-medium text-gray-800">{patient.time}</p>
+            </div>
           </li>
         ))}
       </ul>
