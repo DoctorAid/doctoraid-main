@@ -3,30 +3,32 @@ import DashboardNavigation from './assets/page_sections/dashboard/DashboardNavig
 
 function SessionPatientList() {
   const patients = [
-    { initials: 'DW', name: 'Denzel White', id: '200-01', time: '9.00 AM' },
-    { initials: 'SM', name: 'Stacy Mitchell', id: '220-02', time: '9.15 AM'},
-    { initials: 'AD', name: 'Amy Dunham', id: '254-02', time: '9.30 AM'},
-    { initials: 'DJ', name: 'Demi Joan', id: '260-01', time: '9.50 AM'},
-    { initials: 'SM', name: 'Susan Myers', id: '240-03', time: '10.15 AM'},
+    { initials: 'DW', name: 'Denzel White', id: '200-01', time: '9.00 AM', timeColor: 'bg-blue-100 text-blue-700' },
+    { initials: 'SM', name: 'Stacy Mitchell', id: '220-02', time: '9.15 AM', timeColor: 'bg-pink-100 text-pink-700'},
+    { initials: 'AD', name: 'Amy Dunham', id: '254-02', time: '9.30 AM', timeColor: 'bg-purple-100 text-purple-700'},
+    { initials: 'DJ', name: 'Demi Joan', id: '260-01', time: '9.50 AM', timeColor: 'bg-green-100 text-green-700'},
+    { initials: 'SM', name: 'Susan Myers', id: '240-03', time: '10.15 AM', timeColor: 'bg-pink-100 text-pink-700'},
   ];
 
   return (
     <div className="w-full h-full flex flex-col items-start px-6 py-4 bg-white shadow-lg rounded-lg overflow-y-auto">
-      <h2 className="text-xl font-semibold mb-4 text-gray-800">Session's Patient List</h2>
-
-      {/* Today Section */}
-      <div className="mb-4">
-        <p className="text-lg font-bold text-gray-700">Today</p>
+      <div className='flex justify-between w-full mb-4'>
+        <h2 className="text-lg font-bold text-gray-900">Session's Patient List</h2>
+        <p className='text-base font-medium text-gray-600 flex items-center gap-1 cursor-pointer'>
+          Today <span className='transform rotate-90'>&#9660;</span>
+        </p>
       </div>
+      
 
+    
       <ul className="w-full space-y-4">
         {patients.map((patient) => (
           <li
             key={patient.id}
-            className="flex justify-between items-center bg-white  hover:bg-gray-50 border border-gray-200 rounded-lg px-6 py-4 shadow"
+            className="flex justify-between items-center bg-gray-50  hover:bg-gray-100 border border-gray-200 rounded-lg px-5 py-4 shadow-sm"
           >
             <div className="flex items-center ">
-              <div className="w-12 h-12 flex items-center justify-center rounded-full bg-blue-500 text-white text-lg font-semibold">
+              <div className={`w-12 h-12 flex items-center justify-center rounded-full ${patient.timeColor} text-lg font-semibold`}>
                 {patient.initials}
               </div>
               <div className='ml-4'>
@@ -34,8 +36,8 @@ function SessionPatientList() {
                 <p className="text-sm text-gray-500">Patient ID: {patient.id}</p>
               </div> 
             </div>
-            <div className='text-right'>
-              <p className="text-base font-medium text-gray-800">{patient.time}</p>
+            <div className={` text-sm font-medium px-3 py-1 rounded-full ${patient.timeColor} bg-opacity-20`}>
+              {patient.time}
             </div>
           </li>
         ))}
