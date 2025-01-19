@@ -9,6 +9,7 @@ import MessagePage from './assets/pages/MessagePage.jsx'
 import MedicinesPage from './assets/pages/MedicinesPage.jsx'
 import PatientsPage from './assets/pages/PatientsPage.jsx'
 import ErrorPage from './assets/pages/ErrorPage.jsx'
+import { ClerkProvider } from '@clerk/clerk-react'
 
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
