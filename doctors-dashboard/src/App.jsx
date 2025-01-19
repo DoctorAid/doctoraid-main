@@ -1,5 +1,6 @@
 import React from 'react';
 import DashboardNavigation from './assets/page_sections/dashboard/DashboardNavigation';
+import { SignOutButton } from '@clerk/clerk-react';
 
 function App() {
   return (
@@ -9,7 +10,7 @@ function App() {
       {/* Top Section */}
       <div className='flex justify-around gap-2 w-full h-[40%] bg-[#93b1ec] items-center px-1 py-1'>
         <div className='bg-[#b7f877] w-full h-full flex items-center justify-center'><p>Section 01</p></div>
-        <div className='bg-[#3bcf3b] w-full h-full flex items-center justify-center'><p>Section 02</p></div>
+        <div className='bg-[#edefed] w-full h-full flex items-center justify-center'><SignOutButton/></div>
       </div>
 
       {/* Bottom Section */}

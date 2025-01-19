@@ -5,7 +5,7 @@ function RootLayout() {
   const location = useLocation();
 
   
-  const hideNavigationRoutes = ["/"]; // Add other routes if needed
+  const hideNavigationRoutes = ["/log-in"]; // Add other routes if needed
   const shouldHideNavigation = hideNavigationRoutes.includes(location.pathname);
 
   return (
