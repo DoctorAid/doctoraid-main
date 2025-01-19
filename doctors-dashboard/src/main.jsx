@@ -8,9 +8,10 @@ import SchedulePage from './assets/pages/SchedulePage.jsx'
 import MessagePage from './assets/pages/MessagePage.jsx'
 import MedicinesPage from './assets/pages/MedicinesPage.jsx'
 import PatientsPage from './assets/pages/PatientsPage.jsx'
+import SignInPage from './assets/pages/Auth/SignInPage.jsx'
 import ErrorPage from './assets/pages/ErrorPage.jsx'
 import { ClerkProvider } from '@clerk/clerk-react'
-import { SignIn } from '@clerk/clerk-react'
+
 
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
@@ -23,7 +24,9 @@ const router = createBrowserRouter(
   [{
     element:<RootLayout/>,
     children:[
-       
+        { path:"/",
+          element:<SignInPage/>
+        },
         { path:"/dashboard",
           element:<App/>
         },
@@ -39,10 +42,7 @@ const router = createBrowserRouter(
         { path:"/medicines",
           element:<MedicinesPage/>
         },
-        {
-          path: "/", 
-          element: <App />,
-        },
+        
         
     ]
   }]
@@ -50,7 +50,6 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-  
     <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
       <RouterProvider router={router}/>
     </ClerkProvider>

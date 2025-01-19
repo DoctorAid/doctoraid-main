@@ -1,24 +1,21 @@
-import { Outlet } from "react-router-dom"
-import Navigation from "../components/Navigation"
-import { useState } from "react";
+import { Outlet, useLocation } from "react-router-dom";
+import Navigation from "../components/Navigation";
 
+function RootLayout() {
+  const location = useLocation();
 
-function RootLayout(params) {
-    
-    return(
-       
-        <main>
+  
+  const hideNavigationRoutes = ["/"]; // Add other routes if needed
+  const shouldHideNavigation = hideNavigationRoutes.includes(location.pathname);
 
-            <div className="flex px-8 py-8 ">
-            <Navigation/>
-            <Outlet/>
-            </div>
-            
-          
-            
-            
-        </main>
-      
-    )
+  return (
+    <main>
+      <div className="flex px-8 py-8">
+        {!shouldHideNavigation && <Navigation />}
+        <Outlet />
+      </div>
+    </main>
+  );
 }
-export default RootLayout
+
+export default RootLayout;
