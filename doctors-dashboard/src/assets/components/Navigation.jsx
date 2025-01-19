@@ -2,7 +2,18 @@ import { LogOut } from 'lucide-react';
 import React from 'react'
 import NavigationTabs from './NavigationTabs';
 
+import { useNavigate } from "react-router-dom";
+import { useClerk } from "@clerk/clerk-react";
+
 function Navigation() {
+
+  const { signOut } = useClerk();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/log-in"); // Redirect to the log-in page after sign out
+  };
   return (
     <div className='rounded-l-[30px] bg-[#FAFAF9] h-screeen '>
      <div className="flex flex-col w-[16.625rem] h-[100%] py-8 gap-20 bg-[#295567] rounded-[30px]">
@@ -26,8 +37,10 @@ function Navigation() {
         <NavigationTabs/>
 
         <div className='flex items-center text-white justify-center'>
-          <div className='flex justify-between gap-2 cursor-pointer'>
-            <LogOut/>
+          <div className='flex justify-between gap-2 cursor-pointer ' onClick={handleSignOut}>
+            
+              <LogOut/>
+            
             Log Out
           </div>
         </div>
