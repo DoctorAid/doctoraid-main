@@ -3,15 +3,12 @@ import React from 'react'
 function TimeSlot(props) {
   if(props.selectedSlotId === props.timeSlot.id)
     return (
-
-     
+   
          <button className='border bg-[#b6e44baa] border-[#353637] text-center rounded-md '>
           {props.timeSlot.time}
           
-          </button>
-
-      
-     
+          </button>     
+  
     )
 
   else{
