@@ -3,12 +3,14 @@ import React from 'react'
 import NavigationTabs from './NavigationTabs';
 
 import { useNavigate } from "react-router-dom";
-import { useClerk } from "@clerk/clerk-react";
+import { useClerk,useUser } from "@clerk/clerk-react";
+import { UserButton } from '@clerk/clerk-react';
 
 function Navigation() {
 
   const { signOut } = useClerk();
   const navigate = useNavigate();
+  const {user} = useUser();
 
   const handleSignOut = async () => {
     await signOut();
@@ -27,7 +29,7 @@ function Navigation() {
 
         <div className='flex flex-col gap-2 justify-center items-center'>
           <div className="w-[179px] h-[179px] bg-[#c4c4c4] rounded-full overflow-hidden" >
-            <img src='/Images/doc-image.png' className="w-full h-full object-cover"/>
+          <img src={user.imageUrl} alt="Profile" style={{ borderRadius: "50%" }} />
           </div>
           <div className='font-semibold text-yellow-50'>
             <p>Dr.Lakshaman Dissanayake</p>
