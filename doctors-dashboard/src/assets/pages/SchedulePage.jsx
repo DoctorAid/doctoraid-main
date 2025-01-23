@@ -209,17 +209,37 @@ function SchedulePage() {
           );
         })}
        
-       
-  
-  
- 
-  
-          
         </div>
-        <div className='bg-[#edebeb] w-full h-[30%]'>
-          <p>Section 01</p>
+
+        {/* section 1 */}
+        <div className='bg-[#edebeb] w-full h-[30%] p-4 overflow-auto'>
+          <div className='bg-white p-4 rounded-md shadow-md flex flex-col space-y-4'>
+            <h3 className='text-lg font-semibold '>Booked by:</h3>
+          {/* </div> */}
+          {/* <div className='bg-blue-50 p-4 rounded-md flex flex-col space-y-2'> */}
+            <div className='flex items-center space-x-3'>
+              <div className='w-10 h-10 rounded-full bg-blue-400 flex items-center justify-center text-white font-medium'>
+                S
+              </div>
+              <div>
+                <p className='font-semibold text-gray-800'>Sandith Silva</p>
+                <p className='text-sm text-gray-500'>8 April, 2021 | 4.00 PM</p>
+              </div>
+            </div>
+            <div>
+              <p className='text-gray-700 font-medium'>Patient Note:</p>
+              <p className='text-gray-500 italic truncate'>No additional notes provided.</p>
+            </div>
+            <div className='space-y-1'>
+              <p className='text-gray-700'>
+                <span className='font-semibold'>Family ID:</span>
+              </p>
+              <p className='text-gray-700'>
+                <span className='font-semibold'>Patient ID:</span>
+              </p>
+            </div>
+          </div>
         </div>
-        
       </div>
 
         {/* right side */}
