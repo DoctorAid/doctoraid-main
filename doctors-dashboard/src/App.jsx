@@ -7,11 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 function App() {
 
-
- 
-
- 
-
+  
   return (
     <div className='flex flex-col gap-5 bg-[#FAFAF9] w-full px-2 py-2 items-start justify-start text-black'>
       <DashboardNavigation />

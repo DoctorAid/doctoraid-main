@@ -10,7 +10,8 @@ import MedicinesPage from './assets/pages/MedicinesPage.jsx'
 import PatientsPage from './assets/pages/PatientsPage.jsx'
 import SignInPage from './assets/pages/Auth/SignInPage.jsx'
 import ErrorPage from './assets/pages/ErrorPage.jsx'
-import { ClerkProvider } from '@clerk/clerk-react'
+import { ClerkProvider,useUser } from '@clerk/clerk-react'
+import { Navigate } from 'react-router-dom'
 
 
 
@@ -22,17 +23,32 @@ if (!PUBLISHABLE_KEY) {
   
 }
 
+const ProtectedRoute = ({ children }) => {
+  const { isSignedIn } = useUser();
+
+  if (!isSignedIn) {
+    // Redirect unauthenticated users to the login page
+    return <Navigate to="/log-in" replace />;
+  }
+
+  return children;
+};
+
 
 
 const router = createBrowserRouter(
   [{
     element:<RootLayout/>,
     children:[
-        { path:"/log-in",
+        { path:"/",
           element:<SignInPage/>
         },
-        { path:"/",
-          element:<App/>
+        { path:"/dashboard",
+          element: (
+            <ProtectedRoute>
+              <App />
+            </ProtectedRoute>
+          ),
         },
         { path:"/schedule",
           element:<SchedulePage/>
