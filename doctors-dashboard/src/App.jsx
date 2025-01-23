@@ -19,7 +19,7 @@ function SessionPatientList() {
       <div className='flex justify-between w-full mb-4'>
         <h2 className="text-lg font-bold text-gray-900">Session's Patient List</h2>
         <p className='text-base font-medium text-gray-600 flex items-center gap-1 cursor-pointer'>
-          Today <span className='transform rotate-90'>&#9660;</span>
+          Today <span className='transform rotate-270 text-sm relative -bottom-0.5'>&#9660;</span>
         </p>
       </div>
       
