@@ -3,6 +3,7 @@ import DashboardNavigation from './assets/page_sections/dashboard/DashboardNavig
 import { SignOutButton } from '@clerk/clerk-react';
 import { useClerk,UserButton,useUser } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
+import { Plus } from "lucide-react";
 
 
 function SessionPatientList() {
@@ -59,7 +60,38 @@ function App() {
 
       {/* Top Section */}
       <div className='flex justify-around gap-2 w-full h-[40%] bg-[#93b1ec] items-center px-1 py-1'>
-        <div className='bg-[#b7f877] w-full h-full flex items-center justify-center'><p>Section 01</p></div>
+      <div className=" max-w-lg mx-auto space-y-6">
+      {/* First Row: On-going Section and Timer */}
+      <div className="grid grid-cols-2 gap-4 items-center text-center">
+        {/* On-going Section */}
+        <div className=" h-[175px] bg-[#C9E4F3] p-10 rounded-3xl ">
+          <h5 className="text-lg font-semibold text-[25px]">On-going</h5>
+          <br />
+          <p className="text-gray-500 text-sm text-[20px]">Session ID</p>
+          <p className="text-[#6394B5] font-bold text-lg text-[25px]">#2241206</p>
+        </div>
+
+        {/* Timer */}
+        <div className="flex justify-center items-center">
+          <div className="h-[175px] w-[250px] rounded-3xl bg-[#152945] text-white flex items-center justify-center text-xl font-bold">
+          </div>
+        </div>
+      </div>
+
+      {/* Second Row: Create a New Session */}
+      <div className="flex justify-between items-center h-[90px] bg-[#FFFFFF] rounded-3xl pl-[15px]">
+        <div>
+          <p className="text-[#6394B5] text-[30px]">
+            Left <span className="text-[#6394B5] font-bold text-[40px]">15</span>
+          </p>
+        </div>
+        <button className=" text-[#6394B5] px-4 py-2 rounded-lg ">
+          Create a New Session
+          <Plus className="w-5 h-5 mr-2" />
+        </button>
+      </div>
+    </div>
+
         <div className='bg-[#edefed] w-full h-full flex items-center justify-center'></div>
       </div>
 
