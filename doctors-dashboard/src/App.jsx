@@ -65,8 +65,7 @@ function App() {
 
       {/* Bottom Section */}
       <div className='flex justify-around gap-2 w-full h-[60%] bg-[#93b1ec] items-center px-1 py-1'>
-        <div className='bg-[#2e38f8] w-full h-full flex items-center justify-center'><p>Section 01</p></div>
-        <div className='bg-[#7da4f2] w-full h-full flex items-center justify-center'></div>
+       
 
         {/* Sessions patient list section */}
         <div className='bg-white w-full h-full'>
