@@ -108,7 +108,48 @@ function App() {
 
 
 
-        <div className='bg-[#7da4f2] w-full h-full flex items-center justify-center'><p>Section 02</p></div>
+        <div className="p-6 bg-white rounded-lg shadow-md max-w-lg mx-auto h-full">
+  {/* On-going Header */}
+  <h2 className="text-2xl font-bold mb-6">On-going</h2>
+
+  {/* Patient Information */}
+  <div className="flex items-center mb-6">
+    {/* Profile Icon */}
+    <div className="w-16 h-16 flex items-center justify-center rounded-full bg-green-100 text-xl font-bold text-green-500 mr-4">
+      DW
+    </div>
+    {/* Patient Details */}
+    <div>
+      <h3 className="text-lg font-medium">Denzel White</h3>
+      <p className="text-sm text-gray-500">Patient ID - 200 - 01</p>
+    </div>
+  </div>
+
+  {/* Patient Stats */}
+  <div className="text-sm space-y-2 mb-6">
+    <p>
+      <strong>Sex:</strong> Male
+    </p>
+    <p>
+      <strong>Age:</strong> 28
+    </p>
+    <p>
+      <strong>Blood:</strong> O+
+    </p>
+    <p>
+      <strong>Allergies:</strong> Lorem ipsum dolor sit amet
+    </p>
+  </div>
+
+  {/* Added Complaints */}
+  <div>
+    <h4 className="text-lg font-bold mb-2">Added Complaints</h4>
+    <p className="text-sm text-gray-700">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis.
+    </p>
+  </div>
+</div>
+
 
         {/* Consultation History Section */}
         <div className='bg-white w-full h-full flex flex-col items-start px-6 py-4 shadow-md rounded-lg overflow-y-scroll'>
