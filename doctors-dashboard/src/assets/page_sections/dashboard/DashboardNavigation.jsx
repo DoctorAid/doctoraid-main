@@ -1,12 +1,16 @@
 import React from 'react';
 import { Bell, Settings, Plus } from 'lucide-react'; // importing bell icon, setting icon and plus icon from luicde react
 import { FaSearch } from 'react-icons/fa'; // Importing FontAwesome search icon
+import { useClerk,useUser,useAuth,UserButton } from "@clerk/clerk-react";
+
+
 
 function DashboardNavigation() {
+  const {user} = useUser();
   return (
     <div className='flex justify-between w-full h-[10%] gap-2 bg-white items-center px-6 py-3'>
         <div className='flex flex-col justify-center'>
-          <p className="text-[#1a237e] font-bold">Hi, <span className="text-[#82b1ff]">Dr. Bessie</span></p>
+          <p className="text-[#1a237e] font-bold">Hi, <span className="text-[#82b1ff]">Dr. {user.firstName}</span></p>
           <p className="text-[#1a237e] font-bold">Today is Monday, 20th November 2024</p>
         </div>
         <div className='flex-grow flex items-center justify-center mx-6'>
@@ -35,6 +39,8 @@ function DashboardNavigation() {
           <button className='p-2 text-gray-600 hover:text-gray-800 focus:outline-none'>
             <Bell className='w-6 h-6'/>
           </button>
+
+          <UserButton/>
 
           {/* Settings icon */}
           <button className='p-2 text-gray-600 hover:text-gray-800 focus:outline-none'>
