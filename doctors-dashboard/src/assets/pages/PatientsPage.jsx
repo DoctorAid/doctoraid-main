@@ -136,7 +136,7 @@ const PatientsTable = () => {
       </div>
 
       {/* Patient Details Section */}
-      <div className="w-[400px] bg-white shadow-md rounded-md h-full flex-shrink-0">
+      <div className="w-[500px] bg-white shadow-md rounded-md h-full flex-shrink-0">
         {/* Header */}
         <div className="bg-[#F2F6FA] px-6 py-4 border-b border-gray-200 flex items-center">
           <div className="h-12 w-12 flex justify-center items-center bg-gray-200 rounded-full text-lg font-medium text-gray-700">
