@@ -29,13 +29,13 @@ function App() {
           </div>
           {/* Large Section */}
           <div className="bg-white p-6 rounded-xl shadow-md col-span-2 h-full">
-  {/* First Row: Patient Details & Consultation History */}
-  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    {/* On-going Patient Details */}
-    <div>
-      <h3 className="text-xl font-semibold">On-going - Patient Details</h3>
-      <div className="mt-4 p-4 border rounded-lg">
-        <div className="flex items-center space-x-4">
+          {/* First Row: Patient Details & Consultation History */}
+         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* On-going Patient Details */}
+        <div>
+          <h3 className="text-xl font-semibold">On-going - Patient Details</h3>
+          <div className="mt-4 p-4 border rounded-lg">
+          <div className="flex items-center space-x-4">
           <div className="bg-gray-200 rounded-full w-12 h-12 flex items-center justify-center text-lg font-bold">DW</div>
           <div>
             <h4 className="text-lg font-semibold">Denzel White</h4>
