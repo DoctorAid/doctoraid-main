@@ -92,7 +92,54 @@ function App() {
       </div>
     </div>
 
-        <div className='bg-[#edefed] w-full h-full flex items-center justify-center'></div>
+    <div className="bg-[#edefed] w-full h-full flex items-center justify-center">
+      <div className="bg-blue-100 w-full  rounded-lg shadow-lg p-6 flex flex-col md:flex-row gap-6">
+        {/* Waiting List */}
+        <div className="flex-1">
+          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg mb-4 w-full text-left font-medium flex items-center">
+            <span className="text-2xl mr-2">+</span> Create a New Session
+          </button>
+          <h2 className="text-lg font-bold text-gray-800 mb-4">Waiting List</h2>
+          <div className="bg-white p-4 rounded-lg shadow-md mb-4 flex items-center">
+            <div className="bg-blue-500 text-white rounded-full w-10 h-10 flex items-center justify-center text-lg font-bold mr-4">
+              M
+            </div>
+            <div>
+              <h3 className="font-medium">Sandith Silva</h3>
+              <p className="text-sm text-gray-500">8 April, 2021 | 04:00 PM</p>
+            </div>
+          </div>
+          <div className="bg-white p-4 rounded-lg shadow-md flex items-center">
+            <div className="bg-blue-500 text-white rounded-full w-10 h-10 flex items-center justify-center text-lg font-bold mr-4">
+              M
+            </div>
+            <div>
+              <h3 className="font-medium">Sandith Silva</h3>
+              <p className="text-sm text-gray-500">8 April, 2021 | 04:00 PM</p>
+            </div>
+          </div>
+        </div>
+
+        {/* New Appointments */}
+        <div className="flex-1">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-bold text-gray-800">New Appointments</h2>
+            <a href="#" className="text-blue-600 text-sm font-medium">View All</a>
+          </div>
+          {[...Array(3)].map((_, index) => (
+            <div key={index} className="bg-white p-4 rounded-lg shadow-md mb-4 flex items-center">
+              <div className="bg-blue-500 text-white rounded-full w-10 h-10 flex items-center justify-center text-lg font-bold mr-4">
+                M
+              </div>
+              <div>
+                <h3 className="font-medium">Monthly doctor’s meet</h3>
+                <p className="text-sm text-gray-500">8 April, 2021 | 04:00 PM</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
       </div>
 
       {/* Bottom Section */}
