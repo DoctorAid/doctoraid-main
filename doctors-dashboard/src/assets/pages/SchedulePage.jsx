@@ -7,10 +7,17 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 
 function SchedulePage() {
   const [SelectedSlot, setSelectedSlot] = useState("");
-  const [selectedDate, setSelectedDate] = useState(dayjs());
+  ///const [selectedDate, setSelectedDate] = useState(dayjs());
+
+  
+  const [selectedTime, setSelectedTime] = useState(null);
+  
 
   const timeSlots = [
     {
@@ -129,6 +136,36 @@ function SchedulePage() {
       status: "Booked"
     }
   ];
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [bookedDates, setBookedDates] = useState([]);
+  const [events, setEvents] = useState({});
+  const [selectedEvent, setSelectedEvent] = useState(null);
+
+  useEffect(() => {
+    // Simulating API call to fetch booked dates with events
+    setTimeout(() => {
+      const bookedData = [
+        { date: new Date(2025, 0, 10), event: "Doctor's Appointment at 10:00 AM" },
+        { date: new Date(2025, 0, 10), event: "Dental Checkup at 3:00 PM" },
+        { date: new Date(2025, 0, 15), event: "Eye Test at 1:30 PM" },
+      ];
+
+      // Extract dates and create an event map
+      const dateList = bookedData.map(item => item.date);
+      const eventMap = bookedData.reduce((acc, item) => {
+        acc[item.date.toDateString()] = item.event;
+        return acc;
+      }, {});
+
+      setBookedDates(dateList);
+      setEvents(eventMap);
+    }, 1000);
+  }, []);
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+    setSelectedEvent(events[date.toDateString()] || null);
+  };
   
   
   
@@ -244,20 +281,58 @@ function SchedulePage() {
 
         {/* right side */}
       <div className='flex flex-col gap-2 bg-[#3gcf3b] w-[60%] h-full'>
-        <div className='flex bg-[#3bff3b] w-full h-[50%]'>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <StaticDatePicker
-        displayStaticWrapperAs="desktop"
-        value={selectedDate}
-        onChange={(newValue) => setSelectedDate(newValue)}
-        renderInput={(params) => <TextField {...params} />}
+
+        {/* Upper Sction */}
+        <div className='flex bg-slate-400 w-full h-[50%]'>
+          <div className="flex flex-col gap-2 p-4 border rounded-lg shadow-md bg-blue-50">
+            <label className="font-medium text-lg">Select a Date:</label>
+            <DatePicker
+              selected={selectedDate}
+              onChange={handleDateChange}
+              highlightDates={bookedDates}
+              inline
+            />
+            {selectedDate && (
+              <p className="text-blue-600 font-medium mt-2">
+                Selected: {selectedDate.toLocaleDateString()}
+              </p>
+            )}
+            {selectedEvent && (
+              <div className="bg-gray-100 p-3 mt-2 rounded-md shadow">
+                <p className="text-black font-semibold">Event Details:</p>
+                <p className="text-gray-700">{selectedEvent}</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        
+        <div className="flex  gap-2">
+      <label className="font-medium">Select Time:</label>
+      <DatePicker
+        selected={selectedTime}
+        onChange={(time) => setSelectedTime(time)}
+        showTimeSelect
+        showTimeSelectOnly
+        timeIntervals={30}
+        timeCaption="Time"
+        dateFormat="HH:mm"
+        className="p-2 border rounded-lg"
       />
-    </LocalizationProvider>
-        </div>
-        <div className='flex bg-[#3bcf3b] w-full h-[50%]'>
-        <p>Section 02</p>
-     
-        </div>
+      {selectedTime && <p className="text-green-600">Selected: {selectedTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</p>}
+      <label className="font-medium">Select Time:</label>
+      <DatePicker
+        selected={selectedTime}
+        onChange={(time) => setSelectedTime(time)}
+        showTimeSelect
+        showTimeSelectOnly
+        timeIntervals={30}
+        timeCaption="Time"
+        dateFormat="HH:mm"
+        className="p-2 border rounded-lg"
+      />
+      {selectedTime && <p className="text-green-600">Selected: {selectedTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</p>}
+    </div>
         </div>
     </div>
 
@@ -266,7 +341,6 @@ function SchedulePage() {
     
   </div>
     
-
 
   )
 }
