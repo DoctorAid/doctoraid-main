@@ -5,7 +5,7 @@ import { useClerk,UserButton,useUser } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 import { Plus } from "lucide-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-
+import PatientCardType2 from './assets/components/PatientCardType2';
 function App() {
 
   const WaitingList = () => {
@@ -60,7 +60,7 @@ function App() {
             </div>
             {/* Small Section 3 */}
             <div className="bg-blue-200 p-6 rounded-xl shadow-md h-80 flex items-center justify-center">
-              Section 3
+              <PatientCardType2/>
             </div>
           </div>
           {/* Large Section */}

@@ -1,5 +1,9 @@
 import React from 'react';
 
+const patients = [
+  { id: 'P001', name: 'John Doe', time: '10:30 AM', code: 'ABC123' },
+];
+
 const PatientCardType2 = ({ id, name, time, code }) => {
   // Extract initials from the name
   const initials = name
@@ -24,4 +28,14 @@ const PatientCardType2 = ({ id, name, time, code }) => {
   );
 };
 
-export default PatientCardType2;
+const PatientList = () => {
+  return (
+    <div className="space-y-4">
+      {patients.map((patient) => (
+        <PatientCardType2 key={patient.id} {...patient} />
+      ))}
+    </div>
+  );
+};
+
+export default PatientList;
