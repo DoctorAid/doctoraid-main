@@ -309,7 +309,31 @@ function SchedulePage() {
 
         
         <div className="flex  gap-2">
+          <label className="font-medium">Select Time:</label>
+          <DatePicker
+            selected={selectedTime}
+            onChange={(time) => setSelectedTime(time)}
+            showTimeSelect
+            showTimeSelectOnly
+            timeIntervals={30}
+            timeCaption="Time"
+            dateFormat="HH:mm"
+            className="p-2 border rounded-lg"
+          />
+          {selectedTime && <p className="text-green-600">Selected: {selectedTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</p>}
           
+          <label className="font-medium">Select Time:</label>
+          <DatePicker
+            selected={selectedTime}
+            onChange={(time) => setSelectedTime(time)}
+            showTimeSelect
+            showTimeSelectOnly
+            timeIntervals={30}
+            timeCaption="Time"
+            dateFormat="HH:mm"
+            className="p-2 border rounded-lg"
+          />
+          {selectedTime && <p className="text-green-600">Selected: {selectedTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</p>}
         </div>
       </div>
     </div>
