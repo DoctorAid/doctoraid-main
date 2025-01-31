@@ -5,44 +5,10 @@ import { useClerk,UserButton,useUser } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 import { Plus } from "lucide-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import PatientCardType1 from './assets/components/PatientCardType1';
 import PatientCardType2 from './assets/components/PatientCardType2';
+
 function App() {
-
-  const WaitingList = () => {
-    const items = [
-      { name: "Sandith Silva", date: "8 April, 2021", time: "04.00 PM"},
-      { name: "John Doe", date: "8 April, 2021", time: "04.15 PM"},
-      { name: "Jane Smith", date: "8 April, 2021", time: "04.30 PM"},
-    ];
-
-    return (
-      <div className='w-full h-full bg-white rounded-lg shadow-md p-4 flex flex-col'>
-        <h2 className='text-xl font-semibold mb-4'>Waiting List</h2>
-        <div className='space-y-2 overflow-y-auto flex-1'>
-          {items.map((item,index) => (
-            <div
-              key={index}
-              className={`flex items-center p-4 bg-blue-50 rounded-lg shadow-sm ${
-                index === 0 ? "border-2 border-blue-500" : ""
-              }`}
-            >
-              <div className='flex items-center justify-center w-10 h-10 bg-blue-200 rounded-full text-lg font-bold text-gray-700'>
-                M
-              </div>
-              <div className='ml-4'>
-                <p className='font-medium text-gray-800'>{item.name}</p>
-                <p className='text-sm text-gray-500'>
-                  {item.date} | {item.time}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-
 
   return (
     <div className='flex flex-col gap-5 bg-[#FAFAF9] w-full px-2 py-2 items-start justify-start text-black'>
@@ -55,12 +21,18 @@ function App() {
               Section 1
             </div>
             {/* Small Section 2 */}
-            <div className="bg-blue-200 p-6 rounded-xl shadow-md h-60 flex items-center justify-center">
-              <WaitingList />
+            <div className="h-60 pr-2">
+            <div className="font-[500] text-[1.5rem] pl-5 text-gray-800">
+              Waiting List
+            </div>
+            <PatientCardType1/>
             </div>
             {/* Small Section 3 */}
-            <div className="bg-blue-200 p-6 rounded-xl shadow-md h-80 flex items-center justify-center">
-              <PatientCardType2/>
+            <div className="h-90 pr-2">
+            <div className="font-[500] text-[1.5rem] pl-5 text-gray-800">
+              Session’s Patient List
+            </div>
+            <PatientCardType2/>
             </div>
           </div>
           {/* Large Section */}
