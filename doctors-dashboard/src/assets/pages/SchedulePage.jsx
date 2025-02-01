@@ -173,14 +173,13 @@ function SchedulePage() {
   
   const handleDateChange = (date) => {
     setSelectedDate(date);
-    
-    // Filter events for the selected date
-    const eventsForDate = bookedData
-      .filter(item => item.date.toDateString() === date.toDateString())
-      .map(item => item.event);
-    
+  
+    const dateKey = date.toDateString();
+    const eventsForDate = events[dateKey] || [];  // Get events or empty array if none
+  
     setSelectedEvent(eventsForDate);
   };
+  
 
   // const handleDateChange = (date) => {
   //   setSelectedDate(date);
@@ -310,8 +309,15 @@ function SchedulePage() {
               )}
               {selectedEvent && (
                 <div className="bg-gray-100 p-3 mt-2 rounded-md shadow  max-h-32 overflow-y-auto">
-                  <p className="text-black font-semibold">Event Details:</p>
-                  <p className="text-gray-700">{selectedEvent}</p>
+                 {selectedEvent && selectedEvent.length > 0 ? (
+    <ul>
+      {selectedEvent.map((event, index) => (
+        <li key={index}>{event}</li>
+      ))}
+    </ul>
+  ) : (
+    <p>No events for this date.</p>
+  )}
                 </div>
               )}
             </div>
