@@ -322,7 +322,7 @@ function SchedulePage() {
 
 
           {/* Time Selecting Section */}
-          <div className='flex bg-slate-600 gap-2'>
+          <div className='flex bg-[#9aafd988] gap-2'>
 
             <div className="flex flex-col">
               <div>
