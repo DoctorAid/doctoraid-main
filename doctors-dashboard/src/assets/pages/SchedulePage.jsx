@@ -284,9 +284,10 @@ function SchedulePage() {
         <div className='flex flex-col gap-2 bg-[#3gcf3b] w-[60%] h-full'>
 
           {/* Upper Sction */}
-          <div className='flex bg-slate-400 w-full h-[50%]'>
+          <div className='flex justify-center bg-slate-400 w-full h-[50%]'>
 
-            <div className="flex flex-col gap-2 p-4 border rounded-lg shadow-md bg-blue-50">
+            <div className="flex flex-col gap-2 p-4 border rounded-lg shadow-md bg-blue-50 w-[275px]">
+              
               <label className="font-medium text-lg">Select a Date:</label>
               <DatePicker
                 selected={selectedDate}
@@ -302,11 +303,11 @@ function SchedulePage() {
               {selectedEvent && (
                 <div className="bg-gray-100 p-3 mt-2 rounded-md shadow  max-h-32 overflow-y-auto">
                   {selectedEvent && selectedEvent.length > 0 ? (
-                    <ul>
+                    <ol className=" ">
                       {selectedEvent.map((event, index) => (
-                        <li key={index}>{event}</li>
+                        <li key={index}>{event} </li>
                       ))}
-                    </ul>
+                    </ol>
                   ) : (
                     <p>No events for this date.</p>
                   )}
@@ -314,7 +315,6 @@ function SchedulePage() {
               )}
             </div>
           </div>
-
 
 
           {/* Lower Section */}
@@ -380,7 +380,7 @@ function SchedulePage() {
               )}
 
           {/* Submit Button */}
-          <Button className='bg-slate-300'>ssssss</Button>
+          <Button className='bg-slate-300'>SUBMIT</Button>
 
         </div>
 
