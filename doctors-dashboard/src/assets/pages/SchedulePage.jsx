@@ -1,25 +1,17 @@
 import React from 'react'
 import { useState, useEffect } from "react";
 import TimeSlot from '../components/TimeSlot';
-import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
-import { TextField } from '@mui/material';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs from 'dayjs';
-
+import { Button, TextField } from '@mui/material';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 
 function SchedulePage() {
+
   const [SelectedSlot, setSelectedSlot] = useState("");
-  ///const [selectedDate, setSelectedDate] = useState(dayjs());
-
-
   const [endTime, setEndTime] = useState(null);
   const [startingTime, setStartingTime] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
-
 
   const timeSlots = [
     {
@@ -138,6 +130,7 @@ function SchedulePage() {
       status: "Booked"
     }
   ];
+ 
   const [selectedDate, setSelectedDate] = useState(null);
   const [bookedDates, setBookedDates] = useState([]);
   const [events, setEvents] = useState({});
@@ -150,8 +143,14 @@ function SchedulePage() {
     setTimeout(() => {
       const bookedData = [
         { date: new Date(2025, 0, 10), event: "Doctor's Appointment at 10:00 AM" },
-        { date: new Date(2025, 0, 10), event: "Dental Checkup at 3:00 PM" },
+        { date: new Date(2025, 1, 10), event: "Dental Checkup at 3:00 PM" },
         { date: new Date(2025, 0, 15), event: "Eye Test at 1:30 PM" },
+        { date: new Date(2025, 0, 10), event: "Doctor's Appointment at 10:00 AM" },
+        { date: new Date(2025, 1, 20), event: "Dental Checkup at 3:00 PM" },
+        { date: new Date(2025, 0, 15), event: "Eye Test at 1:30 PM" },
+        { date: new Date(2025, 1, 14), event: "Doctor's Appointment at 10:00 AM" },
+        { date: new Date(2025, 1, 10), event: "Dental Checkup at 3:00 PM" },
+        { date: new Date(2025, 1, 14), event: "Eye Test at 1:30 PM" },
       ];
   
       // Extract dates and create an event map with arrays of events
@@ -180,17 +179,10 @@ function SchedulePage() {
     setSelectedEvent(eventsForDate);
   };
   
-
-  // const handleDateChange = (date) => {
-  //   setSelectedDate(date);
-  //   setSelectedEvent(events[date.toDateString()] || null);
-  // };
-
-
-
   const HandleTabClick = (id) => {
     setSelectedSlot(id);
   };
+
   return (
     <div className='flex flex-col gap-5 bg-[#FAFAF9] w-full  px-2 py-2 items-start justify-start text-black'>
       <div className='flex justify-around gap-2 w-full h-[100%]  items-center px-1 py-1'>
@@ -309,76 +301,92 @@ function SchedulePage() {
               )}
               {selectedEvent && (
                 <div className="bg-gray-100 p-3 mt-2 rounded-md shadow  max-h-32 overflow-y-auto">
-                 {selectedEvent && selectedEvent.length > 0 ? (
-    <ul>
-      {selectedEvent.map((event, index) => (
-        <li key={index}>{event}</li>
-      ))}
-    </ul>
-  ) : (
-    <p>No events for this date.</p>
-  )}
+                  {selectedEvent && selectedEvent.length > 0 ? (
+                    <ul>
+                      {selectedEvent.map((event, index) => (
+                        <li key={index}>{event}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>No events for this date.</p>
+                  )}
                 </div>
               )}
             </div>
           </div>
 
-              <div className='flex bg-slate-600'>
-          <div><label className="flex font-medium">Select Start Time:</label></div>
-          <div>
-          <DatePicker
-            selected={startingTime}
-            onChange={(time) => setStartingTime(time)}
-            showTimeSelect
-            showTimeSelectOnly
-            timeIntervals={30}
-            timeCaption="Time"
-            dateFormat="HH:mm"
-            className="p-2 border rounded-lg"
-          />
 
-        </div>
-          {startingTime && <p className="text-green-600">Selected: {startingTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</p>}
-          
-          <label className="font-medium">Select End Time:</label>
-          <DatePicker
-            selected={endTime}
-            onChange={(time) => setEndTime(time)}
-            showTimeSelect
-            showTimeSelectOnly
-            timeIntervals={30}
-            timeCaption="Time"
-            dateFormat="HH:mm"
-            className="p-2 border rounded-lg"
-          />
-          {endTime && <p className="text-green-600">Selected: {endTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</p>}
+
+          {/* Lower Section */}
+
+
+
+          {/* Time Selecting Section */}
+          <div className='flex bg-slate-600 gap-2'>
+
+            <div className="flex flex-col">
+              <div>
+                <label className="flex font-medium">Select Start Time:</label>
+              </div>
+              <div>
+                <DatePicker
+                  selected={startingTime}
+                  onChange={(time) => setStartingTime(time)}
+                  showTimeSelect
+                  showTimeSelectOnly
+                  timeIntervals={30}
+                  timeCaption="Time"
+                  dateFormat="HH:mm"
+                  className="p-2 border rounded-lg"
+                />
+              </div>
+              {startingTime && <p className="text-green-600">Selected: {startingTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</p>}
+            </div>
+
+            <div className="flex flex-col ">
+
+              <label className="font-medium">Select End Time:</label>
+              <DatePicker
+                selected={endTime}
+                onChange={(time) => setEndTime(time)}
+                showTimeSelect
+                showTimeSelectOnly
+                timeIntervals={30}
+                timeCaption="Time"
+                dateFormat="HH:mm"
+                className="p-2 border rounded-lg"
+              />
+              {endTime && <p className="text-green-600">Selected: {endTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</p>}
+            </div>
+
           </div>
 
+          {/* Slot Duration Section */}
           <label className="font-medium">Select Duration:</label>
-<select
-  value={selectedTime}
-  onChange={(e) => setSelectedTime(e.target.value)}
-  className="p-2 border rounded-lg bg-white shadow-md"
->
-  {Array.from({ length: 6 }, (_, i) => (i + 1) * 5).map((minutes) => (
-    <option key={minutes} value={minutes}>
-      {minutes} minutes
-    </option>
-  ))}
-</select>
+            <select
+              value={selectedTime}
+              onChange={(e) => setSelectedTime(e.target.value)}
+              className="p-2 border rounded-lg bg-white shadow-md"
+            >
+              {Array.from({ length: 6 }, (_, i) => (i + 1) * 5).map((minutes) => (
+                <option key={minutes} value={minutes}>
+                  {minutes} minutes
+                </option>
+              ))}
+            </select>
 
-{selectedTime && (
-  <p className="text-green-600 mt-2">Selected Duration: {selectedTime} minutes</p>
-)}
+              {selectedTime && (
+                <p className="text-green-600 mt-2">Selected Duration: {selectedTime} minutes</p>
+              )}
+
+          {/* Submit Button */}
+          <Button className='bg-slate-300'>ssssss</Button>
+
         </div>
+
       </div>
 
-
-
-
     </div>
-
-
   )
 }
 
