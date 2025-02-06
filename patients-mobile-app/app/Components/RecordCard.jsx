@@ -16,7 +16,9 @@ const RecordCard = ({ record }) => {
       <Text style={styles.content}>{record.diagnosis}</Text>
       <Text style={styles.label}>Instructions</Text>
       <Text style={styles.content}>{record.instructions}</Text>
+      
       <View style={styles.prescriptionBox}>
+        <Text style={styles.label}>Prescription</Text>
         <Text style={styles.prescription}>{record.prescription}</Text>
       </View>
     </View>
