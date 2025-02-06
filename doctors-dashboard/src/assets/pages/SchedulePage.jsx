@@ -4,6 +4,8 @@ import TimeSlot from '../components/TimeSlot';
 import { Button, TextField } from '@mui/material';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { Clock, Calendar, Timer } from 'lucide-react';
+
 
 
 function SchedulePage() {
@@ -281,71 +283,80 @@ function SchedulePage() {
         </div>
 
         {/* right side */}
-        <div className='flex flex-col gap-2 bg-[#3gcf3b] w-[60%] h-full'>
+        <div className=" w-[80%] bg-gray-50 p-6">
+      <div className=" bg-white rounded-xl p-3">
+        <h1 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
+          <Clock className="w-6 h-6 text-[#295567] " />
+          Schedule Appointment
+        </h1>
 
-          {/* Upper Sction */}
-          <div className='flex justify-center bg-slate-400 w-full h-[50%]'>
-
-            <div className="flex flex-col gap-2 p-4 border rounded-lg shadow-md bg-blue-50 w-[275px]">
-              
-              <label className="font-medium text-lg">Select a Date:</label>
-              <DatePicker
-                selected={selectedDate}
-                onChange={handleDateChange}
-                highlightDates={bookedDates}
-                inline
-              />
-              {selectedDate && (
-                <p className="text-blue-600 font-medium mt-2">
-                  Selected: {selectedDate.toLocaleDateString()}
-                </p>
-              )}
-              {selectedEvent && (
-                <div className="bg-gray-100 p-3 mt-2 rounded-md shadow  max-h-32 overflow-y-auto">
-                  {selectedEvent && selectedEvent.length > 0 ? (
-                    <ol className=" ">
-                      {selectedEvent.map((event, index) => (
-                        <li key={index}>{event} </li>
-                      ))}
-                    </ol>
-                  ) : (
-                    <p>No events for this date.</p>
-                  )}
-                </div>
-              )}
+        {/* Date and Events Section */}
+        <div className="grid md:grid-cols-2 gap-1 mb-8">
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="flex items-center  mb-4">
+              <Calendar className="w-5 h-5  text-[#295567] " />
+              <label className="font-medium text-gray-700"> Select Date</label>
             </div>
+            <DatePicker
+              selected={selectedDate}
+              onChange={handleDateChange}
+              highlightDates={[new Date()]}
+              inline
+              className="w-full"
+            />
+            {selectedDate && (
+              <p className="text-blue-600 font-medium mt-2">
+                Selected: {selectedDate.toLocaleDateString()}
+              </p>
+            )}
           </div>
 
-
-          {/* Lower Section */}
-
-
-
-          {/* Time Selecting Section */}
-          <div className='flex bg-[#9aafd988] gap-2'>
-
-            <div className="flex flex-col">
-              <div>
-                <label className="flex font-medium">Select Start Time:</label>
+          <div>
+            {/* Events Display */}
+            {selectedEvent && (
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <h3 className="font-medium text-gray-700 mb-2">Events for {selectedDate.toLocaleDateString()}</h3>
+                <div className="max-h-32 overflow-y-auto">
+                  {selectedEvent.length > 0 ? (
+                    <ul className="space-y-2">
+                      {selectedEvent.map((event, index) => (
+                        <li key={index} className="text-gray-600">{event}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-gray-500">No events scheduled</p>
+                  )}
+                </div>
               </div>
-              <div>
-                <DatePicker
-                  selected={startingTime}
-                  onChange={(time) => setStartingTime(time)}
-                  showTimeSelect
-                  showTimeSelectOnly
-                  timeIntervals={30}
-                  timeCaption="Time"
-                  dateFormat="HH:mm"
-                  className="p-2 border rounded-lg"
-                />
-              </div>
-              {startingTime && <p className="text-green-600">Selected: {startingTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</p>}
+            )}
+          </div>
+        </div>
+
+        {/* Time Selection Section */}
+        <div className="border-t pt-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Timer className="w-5 h-5 text-[#295567]" />
+            <h3 className="font-medium text-gray-700">Time Selection</h3>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm text-gray-600 mb-1">Start Time</label>
+              <DatePicker
+                selected={startingTime}
+                onChange={(time) => setStartingTime(time)}
+                showTimeSelect
+                showTimeSelectOnly
+                timeIntervals={30}
+                timeCaption="Time"
+                dateFormat="HH:mm"
+                className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholderText="Select time"
+              />
             </div>
 
-            <div className="flex flex-col ">
-
-              <label className="font-medium">Select End Time:</label>
+            <div>
+              <label className="block text-sm text-gray-600 mb-1">End Time</label>
               <DatePicker
                 selected={endTime}
                 onChange={(time) => setEndTime(time)}
@@ -354,36 +365,38 @@ function SchedulePage() {
                 timeIntervals={30}
                 timeCaption="Time"
                 dateFormat="HH:mm"
-                className="p-2 border rounded-lg"
+                className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholderText="Select time"
               />
-              {endTime && <p className="text-green-600">Selected: {endTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</p>}
             </div>
 
+            <div>
+              <label className="block text-sm text-gray-600 mb-1">Duration</label>
+              <select
+                value={selectedTime}
+                onChange={(e) => setSelectedTime(e.target.value)}
+                className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                {Array.from({ length: 6 }, (_, i) => (i + 1) * 5).map((minutes) => (
+                  <option key={minutes} value={minutes}>
+                    {minutes} minutes
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-
-          {/* Slot Duration Section */}
-          <label className="font-medium">Select Duration:</label>
-            <select
-              value={selectedTime}
-              onChange={(e) => setSelectedTime(e.target.value)}
-              className="p-2 border rounded-lg bg-white shadow-md"
-            >
-              {Array.from({ length: 6 }, (_, i) => (i + 1) * 5).map((minutes) => (
-                <option key={minutes} value={minutes}>
-                  {minutes} minutes
-                </option>
-              ))}
-            </select>
-
-              {selectedTime && (
-                <p className="text-green-600 mt-2">Selected Duration: {selectedTime} minutes</p>
-              )}
-
-          {/* Submit Button */}
-          <Button className='bg-slate-300'>SUBMIT</Button>
-
         </div>
 
+        <div className="mt-6">
+          <button
+            type="submit"
+            className="w-full bg-[#295567] text-white py-3 px-4 rounded-lg hover:bg-[#6394b5] transition-colors duration-200 font-medium"
+          >
+            Schedule Appointment
+          </button>
+        </div>
+      </div>
+    </div>
       </div>
 
     </div>
