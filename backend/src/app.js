@@ -1,5 +1,6 @@
-const express = require('express');
-const mongoose = require('mongoose');
+import express from 'express';
+import mongoose from 'mongoose';
+import { connectDB } from './infrastructure/db.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -7,6 +8,8 @@ const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
 
-app.get('/', (req, res) => res.send('DoctorAid API Running'));
 
-app.listen(PORT, () => console.log(`Serkkkrunning on http://localhost:${PORT}`));
+
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+
+connectDB();
