@@ -1,3 +1,7 @@
+import Session from "../../../infrastructure/schema/sessions_schema.js";
+import Slot from "../../../infrastructure/schema/slots_schema.js";
+
+
 function generateTimeslots(startTime, endTime, duration) {
     const slots = [];
     let currentSlotTime = new Date(startTime);
@@ -39,13 +43,25 @@ export const createSlots = async (req, res) => {
             return res.status(400).json({ message: 'Start time must be before end time' });
         }
 
+        const new_session = new Session();   // creating a new session
+        const saved_session = await new_session.save(); // saving the session in db
+
+        const session_id = saved_session._id; // getting the session id
+
         const slots = generateTimeslots(startDate, endDate, parseInt(duration));
 
         const formattedSlots = slots.map(slot => ({
+            Session: session_id,
             startTime: slot.startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             endTime: slot.endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            duration: duration,
             availability: availability
         }));
+
+        formattedSlots.map(async (slot) => {
+            const new_slot = new Slot(slot);
+            await new_slot.save();
+        })
 
         console.log('Generated slots:', formattedSlots);
         return res.status(200).json(formattedSlots);
