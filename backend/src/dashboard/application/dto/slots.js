@@ -25,9 +25,9 @@ function generateTimeslots(startTime, endTime, duration) {
 
 export const createSlots = async (req, res) => {
     try {
-        const { startTime, endTime, duration } = req.body;
+        const { startTime, endTime, date, duration } = req.body;
 
-        if (!startTime || !endTime || !duration) {
+        if (!startTime || !endTime || !date || !duration) {
             return res.status(400).json({ message: 'Missing required data (startTime, endTime, or duration)' });
         }
 
@@ -43,7 +43,7 @@ export const createSlots = async (req, res) => {
             return res.status(400).json({ message: 'Start time must be before end time' });
         }
 
-        const new_session = new Session();   // creating a new session
+        const new_session = new Session({date});   // creating a new session
         const saved_session = await new_session.save(); // saving the session in db
 
         const session_id = saved_session._id; // getting the session id
