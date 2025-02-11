@@ -1,4 +1,4 @@
-import Session from "../../../infrastructure/schema/sessions_schema"
+import Session from "../../../infrastructure/schema/sessions_schema.js"
 
 export const getSessions = async (req, res) => {
     try{
