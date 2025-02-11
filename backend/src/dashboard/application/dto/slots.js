@@ -64,10 +64,20 @@ export const createSlots = async (req, res) => {
         })
 
         console.log('Generated slots:', formattedSlots);
-        return res.status(200).json(formattedSlots);
+        return res.status(200).json(formattedSlots).populate('Session');
 
     } catch (error) {
         console.error('Error creating slots:', error);
         res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+
+export const getSlotsbySession = async (req,res) => {
+    try{
+        const slots = await Slot.find({Session: req.params.id}).populate('Session');
+        res.status(200).json(slots);
+    }catch(error){
+        res.status(404).json({message: 'cant retrieve slots'});
     }
 };
