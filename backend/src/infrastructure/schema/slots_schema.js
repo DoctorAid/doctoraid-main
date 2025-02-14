@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-
 const slotsSchema = new mongoose.Schema({  
     Session: {
         type: mongoose.Schema.Types.ObjectId,
