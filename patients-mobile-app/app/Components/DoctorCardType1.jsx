@@ -14,7 +14,7 @@ const appointments = [
 
 const DoctorCard = ({ doctorName, patientName, date, time }) => {
   return (
-    <TouchableOpacity style={{ backgroundColor: '#1E3A8A', padding: 16, borderRadius: 16, margin: 8 }}>
+    <TouchableOpacity style={{ backgroundColor: '#1E3A8A', padding: 20,   borderRadius: 16, margin: 20 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: 'white' }} />
         <View style={{ marginLeft: 16, flex: 1 }}>
