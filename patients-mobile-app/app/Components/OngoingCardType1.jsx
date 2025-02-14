@@ -1,19 +1,29 @@
-import { StyleSheet, Text, View, Image } from 'react-native'
-import React from 'react'
+import { StyleSheet, Text, View, Image } from 'react-native';
+import React from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const OngoingCardType1 = () => {
+
   const appointmentNo = 7;
   const currentNo = 5;
   const queueCount = 1;
+  const doctorName = "Dr. Lakee Jayamanne";
+  const patientName = "Nimesha";
+  const appointmentTime = "11:00am - 12:00pm";
+  const profilePic = "https://via.placeholder.com/50";
+  const notificationMessage = "No: 6 haven't joined the queue";
+  const upNextText = "Up Next"; 
 
   return (
     <View style={styles.container}>
       {/* Header Section */}
       <View style={styles.headerContainer}>
-        <Text style={styles.header}>Ongoing Appointment</Text>
+        <View style={styles.headerTextContainer}>
+          <Text style={styles.header}>Ongoing</Text>
+          <Text style={styles.header}>Appointment</Text>
+        </View>
         <View style={styles.timeContainer}>
-          <Text style={styles.timeText}>11:00am - 12:00pm</Text>
+          <Text style={styles.timeText}>{appointmentTime}</Text>
         </View>
       </View>
       
@@ -21,10 +31,10 @@ const OngoingCardType1 = () => {
       <View style={styles.card}>
         {/* Doctor Info */}
         <View style={styles.doctorInfo}>
-          <Image source={{ uri: 'https://via.placeholder.com/50' }} style={styles.profilePic} />
+          <Image source={{ uri: profilePic }} style={styles.profilePic} />
           <View>
-            <Text style={styles.doctorName}>Dr. Lakee Jayamanne</Text>
-            <Text style={styles.patientName}>For Nimesha</Text>
+            <Text style={styles.doctorName}>{doctorName}</Text>
+            <Text style={styles.patientName}>For {patientName}</Text>
           </View>
         </View>
 
@@ -41,31 +51,37 @@ const OngoingCardType1 = () => {
             <Text style={styles.whiteText}>Queue Count: {queueCount.toString().padStart(2, '0')}</Text>
           </View>
           <View style={styles.upNextContainer}>
-            <Text style={styles.upNextText}>Up Next</Text>
+            <Text style={styles.upNextText}>{upNextText}</Text> 
           </View>
         </View>
 
         {/* Notification Message */}
         <View style={styles.queueInfo}>
           <MaterialIcons name="notifications" size={16} color="#295567" />
-          <Text style={styles.queueText}> No: 6 haven't joined the queue</Text>
+          <Text style={styles.queueText}>{notificationMessage}</Text>
         </View>
       </View>
     </View>
-  )
-}
+  );
+};
 
-export default OngoingCardType1
+export default OngoingCardType1;
 
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+    width: '100%',
   },
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 5,
+    paddingRight: 10,
+  },
+  headerTextContainer: {
+    flex: 0.6,
+    marginRight: 20,
   },
   header: {
     fontSize: 22,
@@ -77,6 +93,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 15,
     borderRadius: 20,
+    marginTop: 5, // Added gap between "Appointment" and time
   },
   timeText: {
     color: '#FEFAF6',
@@ -125,6 +142,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 10,
+    paddingRight: 10,
   },
   whiteText: {
     color: 'white',
@@ -153,4 +171,4 @@ const styles = StyleSheet.create({
     color: '#295567',
     fontSize: 14,
   },
-})
+});

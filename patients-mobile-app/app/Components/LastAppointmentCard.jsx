@@ -1,13 +1,16 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'; 
 import React from 'react';
 
 const LastAppointmentCard = () => {
   const doctorName = "Dr. Lakee Jayamanne";
   const patientName = "Nimesha";
+  const appointmentTime = "11:00am - 12:00pm";
+  const profilePic = "https://via.placeholder.com/50";
+  const appointmentStatus = "Done"; 
+  const showViewReport = true; 
 
   const handleViewReport = () => {
     console.log("View Report Clicked!");
-    // Add navigation or action logic here
   };
 
   return (
@@ -16,10 +19,10 @@ const LastAppointmentCard = () => {
       <View style={styles.headerContainer}>
         <View style={styles.headerTextContainer}>
           <Text style={styles.header}>Last</Text>
-          <Text style={styles.header}>Appointment</Text>
+          <Text style={[styles.header, { width: 150 }]}>Appointment</Text>
         </View>
         <View style={styles.timeContainer}>
-          <Text style={styles.timeText}>11:00am - 12:00pm</Text>
+          <Text style={styles.timeText}>{appointmentTime}</Text>
         </View>
       </View>
 
@@ -27,7 +30,7 @@ const LastAppointmentCard = () => {
       <View style={styles.card}>
         {/* Doctor Info */}
         <View style={styles.doctorInfo}>
-          <Image source={{ uri: 'https://via.placeholder.com/50' }} style={styles.profilePic} />
+          <Image source={{ uri: profilePic }} style={styles.profilePic} />
           <View style={styles.doctorDetails}>
             <Text style={styles.doctorName}>{doctorName}</Text>
             <Text style={styles.patientName}>For <Text style={styles.boldText}>{patientName}</Text></Text>
@@ -39,10 +42,12 @@ const LastAppointmentCard = () => {
 
         {/* Status & View Report */}
         <View style={styles.statusContainer}>
-          <Text style={styles.status}>Done</Text>
-          <TouchableOpacity style={styles.viewReportButton} onPress={handleViewReport}>
-            <Text style={styles.viewReportText}>View Report</Text>
-          </TouchableOpacity>
+          <Text style={styles.status}>{appointmentStatus}</Text>
+          {showViewReport && (
+            <TouchableOpacity style={styles.viewReportButton} onPress={handleViewReport}>
+              <Text style={styles.viewReportText}>View Report</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </View>
@@ -54,27 +59,32 @@ export default LastAppointmentCard;
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+    width: '100%',
   },
   headerContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 10,
+    alignItems: 'center',
+    marginBottom: 5,
+    paddingRight: 10,
   },
   headerTextContainer: {
-    flex: 1,
-    marginRight: 20, 
+    flex: 0.6,
+    marginRight: 20,
+    flexDirection: 'column',
   },
   header: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
     color: '#0A5A72',
+    lineHeight: 26,
   },
   timeContainer: {
     backgroundColor: '#0A5A72',
     paddingVertical: 5,
-    paddingHorizontal: 15, 
+    paddingHorizontal: 15,
     borderRadius: 20,
+    marginTop: 5,
   },
   timeText: {
     color: '#FFFFFF',
@@ -82,8 +92,8 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: '#0A5A72',
-    padding: 20,
-    borderRadius: 15,
+    padding: 15,
+    borderRadius: 10,
     borderWidth: 2,
     borderColor: '#A9D6E5',
   },
@@ -117,17 +127,19 @@ const styles = StyleSheet.create({
   line: {
     height: 1,
     backgroundColor: '#C0E4E9',
-    marginVertical: 10,
+    marginVertical: 5,
   },
   statusContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    paddingRight: 10,
   },
   status: {
     color: 'white',
     fontSize: 28,
     fontWeight: 'bold',
+    marginRight: 20,
   },
   viewReportButton: {
     backgroundColor: '#DBF3C9',
