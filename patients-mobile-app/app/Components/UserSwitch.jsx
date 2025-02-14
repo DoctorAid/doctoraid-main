@@ -1,19 +1,24 @@
 import React, { useState } from 'react';
-import { View, Image, Text, TouchableOpacity, Animated } from 'react-native';
+import { View, Image, Text, TouchableOpacity } from 'react-native';
 
 const sampleProfiles = [
-    { id: 1, name: 'Nimesha Dahanayake', relation: 'Daughter', image: 'https://i.pravatar.cc/100?img=1' },
-    { id: 2, name: 'John Smith', relation: 'Son', image: 'https://i.pravatar.cc/100?img=2' },
-    { id: 3, name: 'Sarah Johnson', relation: 'Daughter', image: 'https://i.pravatar.cc/100?img=3' }
+    { id: 1, name: 'Nimesha Dahanayake', relation: 'Daughter', birthDate: '10.02.2014', age: '10 years', weight: '50kg', height: "5'3", gender: 'Female', image: 'https://i.pravatar.cc/100?img=1' },
+    { id: 2, name: 'John Smith', relation: 'Son', birthDate: '12.05.2016', age: '8 years', weight: '40kg', height: "4'8", gender: 'Male', image: 'https://i.pravatar.cc/100?img=2' },
+    { id: 3, name: 'Sarah Johnson', relation: 'Daughter', birthDate: '20.09.2012', age: '12 years', weight: '55kg', height: "5'5", gender: 'Female', image: 'https://i.pravatar.cc/100?img=3' }
 ];
-const ProfileDropdown = () => {
+
+const UserSwitch = ({ onProfileChange }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedProfile, setSelectedProfile] = useState(sampleProfiles[0]);
+
     const toggleDropdown = () => setIsOpen(!isOpen);
+    
     const selectProfile = (profile) => {
         setSelectedProfile(profile);
         setIsOpen(false);
+        onProfileChange(profile); // Update selected profile in parent component
     };
+
     return (
         <View style={styles.container}>
             <TouchableOpacity onPress={toggleDropdown} style={styles.selectedProfile}>
@@ -41,8 +46,9 @@ const ProfileDropdown = () => {
         </View>
     );
 };
+
 const styles = {
-    container: { width: '90%', flexDirection: 'column' ,marginTop:180, alignSelf:'center'},
+    container: { width: '90%', flexDirection: 'column', marginTop: 180, alignSelf: 'center' },
     selectedProfile: { flexDirection: 'row', alignItems: 'center', padding: 10, backgroundColor: '#e6f3ff', borderRadius: 8 },
     profileImage: { width: 50, height: 50, borderRadius: 25, marginRight: 10 },
     profileInfo: { flex: 1, flexDirection: 'column' },
@@ -58,4 +64,4 @@ const styles = {
     dropdownRelation: { fontSize: 12, color: '#666' },
 };
 
-export default ProfileDropdown;
+export default UserSwitch;
