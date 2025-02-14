@@ -1,6 +1,30 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
+export const records = [
+  {
+    patientName: "For Nimesha",
+    doctorName: "Dr. David",
+    time: "12:00 PM",
+    date: "Sunday, 12 June",
+    presentingComplaint: "Coughing\nFever",
+    diagnosis: "Dengue",
+    instructions: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.",
+    prescription: "Lorem ipsum dolor sit 1 day amet.\nLorem ipsum dolor sit 2 times adipiscing elit.\nLorem ipsum dolor sit 10 times sit amet."
+  },
+  {
+    patientName: "For Nimesha",
+    doctorName: "Dr. David",
+    time: "12:00 PM",
+    date: "Sunday, 12 June",
+    presentingComplaint: "Coughing\nFever",
+    diagnosis: "Dengue",
+    instructions: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.",
+    prescription: "Lorem ipsum dolor sit 1 day amet.\nLorem ipsum dolor sit 2 times adipiscing elit.\nLorem ipsum dolor sit 10 times sit amet."
+  },
+  // Add more records as needed
+];
+
 const RecordCard = ({ record }) => {
   return (
     <View style={styles.card}>
