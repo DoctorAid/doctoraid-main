@@ -1,156 +1,149 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
-import { PenSquare } from 'lucide-react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 
-// Theme variables
-const theme = {
-  primaryColor: '#2C4A6B',
-  secondaryColor: '#F8F9FA',
-  textColor: '#2C4A6B',
-  borderRadius: 16,
-  padding: 24,
-  cardBg: 'white',
-  headingSize: 28,
-  labelSize: 16,
-  valueSize: 18,
-};
-
-function App() {
-  const generalInfo = [
-    { label: 'Name', value: 'Nimesha Dahanayake' },
-    { label: 'Relation', value: 'Son' },
-    { label: 'Birth Date', value: '10.02.2014' },
-    { label: 'Age', value: '10 years' },
-    { label: 'Weight', value: '50kg' },
-    { label: 'Height', value: "5'3" },
-    { label: 'Gender', value: 'Female' },
-  ];
-
-  const medicalInfo = [
-    { label: 'Allergies', value: 'Arya Muller' },
-    { label: 'Blood Type', value: 'Arya Muller' },
-  ];
-
-  const handleEdit = () => {
-    console.log('Edit clicked');
-  };
-
-  const InfoCard = ({ title, items, onEdit }) => {
-    return (
-      <View style={styles.infoCard}>
-        <View style={styles.infoCardHeader}>
-          <Text style={styles.infoCardTitle}>{title}</Text>
-          {onEdit && (
-            <TouchableOpacity onPress={onEdit}>
-              <PenSquare
-                size={20}
-                color={theme.primaryColor}
-              />
-            </TouchableOpacity>
-          )}
-        </View>
-        <View style={styles.infoGrid}>
-          {items.map((item, index) => (
-            <View key={index} style={styles.infoItem}>
-              <Text style={styles.infoLabel}>{item.label}</Text>
-              <Text style={styles.infoValue}>{item.value}</Text>
-            </View>
-          ))}
-        </View>
-      </View>
-    );
-  };
-
+function Layout() {
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
-        <InfoCard 
-          title="General Info" 
-          items={generalInfo} 
-          onEdit={handleEdit}
+    <>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen 
+          name="index" 
+          options={{
+            title: 'Medical Profile',
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: '#F5F6F8',
+            },
+            headerTitleStyle: {
+              color: '#435B71',
+              fontSize: 20,
+              fontWeight: '600',
+            },
+          }} 
         />
-        <InfoCard 
-          title="Medical Info" 
-          items={medicalInfo} 
-          onEdit={handleEdit}
-        />
-      </View>
-    </View>
+      </Stack>
+      <StatusBar style="auto" />
+    </>
   );
 }
 
+const InfoSection = ({ title, children }) => (
+  <View style={styles.section}>
+    <View style={styles.sectionHeader}>
+      <Text style={styles.sectionTitle}>{title}</Text>
+      <TouchableOpacity style={styles.editButton}>
+        <Ionicons name="pencil" size={24} color="#435B71" />
+      </TouchableOpacity>
+    </View>
+    <View style={styles.sectionContent}>
+      {children}
+    </View>
+  </View>
+);
+
+const InfoRow = ({ label, value }) => (
+  <View style={styles.infoRow}>
+    <Text style={styles.label}>{label}</Text>
+    <Text style={styles.value}>{value}</Text>
+  </View>
+);
+
+const MedicalProfile = () => {
+  const generalInfo = {
+    name: 'Nimesha Dahanayake',
+    relation: 'Son',
+    birthDate: '10.02.2014',
+    age: '10 years',
+    weight: '50kg',
+    height: "5'3",
+    gender: 'Female'
+  };
+
+  const medicalInfo = {
+    allergies: 'Arya Muller',
+    bloodType: 'Arya Muller'
+  };
+
+  return (
+    <>
+      <Layout />
+      <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+        <InfoSection title="General Info">
+          <InfoRow label="Name" value={generalInfo.name} />
+          <InfoRow label="Relation" value={generalInfo.relation} />
+          <InfoRow label="Birth Date" value={generalInfo.birthDate} />
+          <InfoRow label="Age" value={generalInfo.age} />
+          <InfoRow label="Weight" value={generalInfo.weight} />
+          <InfoRow label="Height" value={generalInfo.height} />
+          <InfoRow label="Gender" value={generalInfo.gender} />
+        </InfoSection>
+
+        <InfoSection title="Medical Info">
+          <InfoRow label="Allergies" value={medicalInfo.allergies} />
+          <InfoRow label="Blood Type" value={medicalInfo.bloodType} />
+        </InfoSection>
+      </ScrollView>
+    </>
+  );
+};
+
 const styles = StyleSheet.create({
   container: {
-    minHeight: '100vh',
-    backgroundColor: theme.secondaryColor,
-    padding: theme.padding,
+    flex: 1,
+    backgroundColor: '#F5F6F8',
   },
-  content: {
-    maxWidth: 768,
-    marginHorizontal: 'auto',
-    width: '100%',
+  contentContainer: {
+    padding: 20,
   },
-  infoCard: {
-    backgroundColor: theme.cardBg,
-    borderRadius: theme.borderRadius,
-    padding: theme.padding,
-    marginBottom: 24,
+  section: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 20,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 2,
+    elevation: 3,
   },
-  infoCardHeader: {
+  sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 24,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(44, 74, 107, 0.1)',
-    paddingBottom: 12,
+    marginBottom: 20,
   },
-  infoCardTitle: {
-    color: theme.primaryColor,
-    fontSize: theme.headingSize,
+  sectionTitle: {
+    fontSize: 24,
     fontWeight: '600',
+    color: '#435B71',
   },
-  infoGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginHorizontal: -12,
-  },
-  infoItem: {
-    width: '50%',
-    paddingHorizontal: 12,
-    marginBottom: 24,
-    backgroundColor: 'transparent',
-    borderRadius: 8,
+  editButton: {
     padding: 8,
   },
-  infoLabel: {
-    color: theme.textColor,
-    fontSize: theme.labelSize,
+  sectionContent: {
+    gap: 16,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  label: {
+    fontSize: 16,
+    color: '#435B71',
     fontWeight: '500',
-    marginBottom: 4,
-    opacity: 0.8,
   },
-  infoValue: {
-    color: theme.textColor,
-    fontSize: theme.valueSize,
-    fontWeight: '400',
-  },
-  '@media (max-width: 640px)': {
-    container: {
-      padding: 16,
-    },
-    infoCard: {
-      padding: 16,
-    },
-    infoItem: {
-      width: '100%',
-    },
+  value: {
+    fontSize: 16,
+    color: '#7A8D9C',
   },
 });
 
-export default App;
+export default MedicalProfile;
