@@ -1,11 +1,9 @@
 import React from 'react'
 import { useState, useEffect } from "react";
 import TimeSlot from '../components/TimeSlot';
-import { Button, TextField } from '@mui/material';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Clock, Calendar, Timer } from 'lucide-react';
-
+import { Clock, Calendar, Timer,CircleArrowRight,CircleArrowLeft } from 'lucide-react';
 
 
 function SchedulePage() {
@@ -16,8 +14,158 @@ function SchedulePage() {
   const [selectedTime, setSelectedTime] = useState(null);
 
  
+
+ 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+
+  const sessions = [
+    {
+      "_id": "67a8c7eec9bf90242a504f3d",
+      "date": "2025-02-14T00:00:00.000+00:00"
+    },
+    {
+      "_id": "67a8c7eec9bf90242a504f44",
+      "date": "2025-02-15T00:00:00.000+00:00"
+    },
+    {
+      "_id": "67a8c7eec9bf90242a504f4b",
+      "date": "2025-02-16T00:00:00.000+00:00"
+    }
+  ];
+
+  const slots = [
+    {
+      "_id": "67a8c7efc9bf90242a504f3f",
+      "sessionId": "67a8c7eec9bf90242a504f3d",
+      "startTime": "09:00 AM",
+      "endTime": "09:10 AM",
+      "duration": 10,
+      "status": "available"
+    },
+    {
+      "_id": "67a8c7efc9bf90242a504f3f",
+      "sessionId": "67a8c7eec9bf90242a504f3d",
+      "startTime": "09:00 AM",
+      "endTime": "09:10 AM",
+      "duration": 10,
+      "status": "available"
+    },
+    {
+      "_id": "67a8c7efc9bf90242a504f3f",
+      "sessionId": "67a8c7eec9bf90242a504f3d",
+      "startTime": "09:00 AM",
+      "endTime": "09:10 AM",
+      "duration": 10,
+      "status": "available"
+    },
+    {
+      "_id": "67a8c7efc9bf90242a504f3f",
+      "sessionId": "67a8c7eec9bf90242a504f3d",
+      "startTime": "09:00 AM",
+      "endTime": "09:10 AM",
+      "duration": 10,
+      "status": "available"
+    },
+    {
+      "_id": "67a8c7efc9bf90242a504f3f",
+      "sessionId": "67a8c7eec9bf90242a504f3d",
+      "startTime": "09:00 AM",
+      "endTime": "09:10 AM",
+      "duration": 10,
+      "status": "available"
+    },
+    {
+      "_id": "67a8c7efc9bf90242a504f3f",
+      "sessionId": "67a8c7eec9bf90242a504f3d",
+      "startTime": "09:00 AM",
+      "endTime": "09:10 AM",
+      "duration": 10,
+      "status": "available"
+    },
+    {
+      "_id": "67a8c7efc9bf90242a504f3f",
+      "sessionId": "67a8c7eec9bf90242a504f3d",
+      "startTime": "09:00 AM",
+      "endTime": "09:10 AM",
+      "duration": 10,
+      "status": "available"
+    },
+    {
+      "_id": "67a8c7efc9bf90242a504f40",
+      "sessionId": "67a8c7eec9bf90242a504f3d",
+      "startTime": "09:10 AM",
+      "endTime": "09:20 AM",
+      "duration": 10,
+      "status": "booked"
+    },
+    {
+      "_id": "67a8c7efc9bf90242a504f40",
+      "sessionId": "67a8c7eec9bf90242a504f3d",
+      "startTime": "09:10 AM",
+      "endTime": "09:20 AM",
+      "duration": 10,
+      "status": "booked"
+    },
+    {
+      "_id": "67a8c7efc9bf90242a504f40",
+      "sessionId": "67a8c7eec9bf90242a504f3d",
+      "startTime": "09:10 AM",
+      "endTime": "09:20 AM",
+      "duration": 10,
+      "status": "booked"
+    },
+
+    {
+      "_id": "67a8c7efc9bf90242a504f40",
+      "sessionId": "67a8c7eec9bf90242a504f3d",
+      "startTime": "09:10 AM",
+      "endTime": "09:20 AM",
+      "duration": 10,
+      "status": "booked"
+    },
+    {
+      "_id": "67a8c7efc9bf90242a504f41",
+      "sessionId": "67a8c7eec9bf90242a504f3d",
+      "startTime": "09:20 AM",
+      "endTime": "09:30 AM",
+      "duration": 10,
+      "status": "available"
+    },
+    {
+      "_id": "67a8c7efc9bf90242a504f42",
+      "sessionId": "67a8c7eec9bf90242a504f3d",
+      "startTime": "09:30 AM",
+      "endTime": "09:40 AM",
+      "duration": 10,
+      "status": "booked"
+    },
+    {
+      "_id": "67a8c7efc9bf90242a504f43",
+      "sessionId": "67a8c7eec9bf90242a504f3d",
+      "startTime": "09:40 AM",
+      "endTime": "09:50 AM",
+      "duration": 10,
+      "status": "available"
+    },
+    {
+      "_id": "67a8c7efc9bf90242a504f45",
+      "sessionId": "67a8c7eec9bf90242a504f44",
+      "startTime": "10:00 AM",
+      "endTime": "10:10 AM",
+      "duration": 10,
+      "status": "available"
+    },
+    {
+      "_id": "67a8c7efc9bf90242a504f46",
+      "sessionId": "67a8c7eec9bf90242a504f44",
+      "startTime": "10:10 AM",
+      "endTime": "10:20 AM",
+      "duration": 10,
+      "status": "booked"
+    }
+  ];
+  
 
   const timeSlots = [
     {
@@ -136,6 +284,65 @@ function SchedulePage() {
       status: "Booked"
     }
   ];
+
+  const [currentSlots, setCurrentSlots] = useState([]);
+  const [currentSession, setCurrentSession] = useState(sessions[0]);
+  const [availableSlotsCount, setAvailableSlotsCount] = useState(0);
+  const [bookedSlotsCount, setBookedSlotsCount] = useState(0);
+  
+
+  function nextSession() {
+    const currentIndex = sessions.findIndex(session => session._id === currentSession._id);
+    const nextIndex = (currentIndex + 1) % sessions.length; // Loop back to the first session if at the end
+    setCurrentSession(sessions[nextIndex]);
+    
+    
+  }
+
+  function previousSession() {
+    if (currentSession === null) {
+      setCurrentSession(0);
+    } else {
+      setCurrentSession(currentSession - 1);
+    }
+    
+    console.log(currentSession);
+  }
+
+  function setSlots(session) {
+    const sessionSlots = slots.filter((slot) => slot.sessionId === session._id);
+    const bookedCount = sessionSlots.filter((slot) => slot.status === "booked").length;
+    const availableCount = sessionSlots.filter((slot) => slot.status === "available").length;
+    setAvailableSlotsCount(availableCount);
+    setBookedSlotsCount(bookedCount);
+    setCurrentSlots(sessionSlots);
+    console.log("Current Session:", currentSession);
+    console.log("Current Slots:", currentSlots);
+    console.log("Booked Slots:", bookedSlotsCount);
+    console.log("Available Slots:", availableSlotsCount);
+    
+   
+  }
+  
+
+  useEffect(() => {
+    setSlots(currentSession);
+  }, [currentSession]);
+
+
+
+  function slotsInfo(){
+    const bookedSlotsCount = currentSlots.filter((slot) => slot.status === "Booked" && slot.sessionId === currentSession._id);
+    const availableSlots = currentSlots.filter((slot) => slot.status === "Available" && slot.sessionId === currentSession._id);
+    setAvailableSlotsCount(availableSlots.length);
+    setBookedSlotsCount(bookedSlotsCount.length);
+    
+  }
+
+  
+
+
+
  
   const [selectedDate, setSelectedDate] = useState(null);
   const [bookedDates, setBookedDates] = useState([]);
@@ -207,8 +414,8 @@ function SchedulePage() {
     setSelectedEvent(eventsForDate);
   };
   
-  const HandleTabClick = (id) => {
-    setSelectedSlot(id);
+  const HandleTabClick = (_id) => {
+    setSelectedSlot(_id);
   };
 
   return (
@@ -236,11 +443,11 @@ function SchedulePage() {
               <div className='flex flex-col items-center  justify-end'>
                 <div><span class="text-[#152945] text-2xl font-bold font-['Raleway']">Totol Slots</span>
                   <span class="text-black text-2xl font-medium font-['Raleway'] "> - </span>
-                  <span class="text-black text-2xl font-normal font-['Raleway'] ">172</span>
+                  <span class="text-black text-2xl font-normal font-['Raleway'] ">{availableSlotsCount+bookedSlotsCount}</span>
                 </div>
                 <div className="flex px-8 items-center justify-center h-10 bg-[#cdffcd] rounded-[10px]">
                   <div><span class="text-[#295567] text-2xl lg:text-xl font-bold font-['Raleway'] ">Booked - </span>
-                    <span class="text-[#295567] text-2xl lg:text-xlfont-normal font-['Raleway'] ">20</span>
+                    <span class="text-[#295567] text-2xl lg:text-xlfont-normal font-['Raleway'] ">{bookedSlotsCount}</span>
                   </div>
                 </div>
               </div>
@@ -250,21 +457,23 @@ function SchedulePage() {
               <div className='flex items-end'>
                 <div className="rounded-[8px] h-8 w-48 flex items-center justify-center border p-1 border-[#295567]">
                   <div><span class="text-[#295567] font-semibold w-5 text-2xl lg:text-xl font-bold font-['Raleway'] leading-normal">Available - </span>
-                    <span class="text-[#295567] text-2xl font-normal font-['Raleway'] leading-normal">120<br /></span></div>
+                    <span class="text-[#295567] text-2xl font-normal font-['Raleway'] leading-normal">{availableSlotsCount}<br /></span></div>
                 </div>
               </div>
 
               <div className='flex flex-col'>
                 <div className='text-4xl font-bold'>ID</div>
-                <div className="text-center text-[#6394b5] text-5xl font-bold font-['Instrument Sans']">#2241206</div>
+                <div className="text-center text-[#6394b5] text-5xl font-bold font-['Instrument Sans']">#{currentSession._id.slice(-6)}</div>
               </div>
+              <CircleArrowLeft className="w-8 h-8 text-[#295567] cursor-pointer" onClick={previousSession} />
+              <CircleArrowRight className="w-8 h-8 text-[#295567] cursor-pointer" onClick={nextSession} />
 
             </div>
 
           </div>
 
           <div className='bg-[#f2eaf1] w-full h-[50%] grid-cols-4 grid gap-1 overflow-auto'>
-            {timeSlots.map((el) => {
+            {currentSlots.map((el) => {
               return (
                 <TimeSlot
                   selectedSlotId={SelectedSlot}
@@ -327,9 +536,10 @@ function SchedulePage() {
             <DatePicker
               selected={selectedDate}
               onChange={handleDateChange}
-              highlightDates={[new Date()]}
+              highlightDates={bookedDates}
               inline
               className="w-full"
+              
             />
             {selectedDate && (
               <p className="text-blue-600 font-medium mt-2">
