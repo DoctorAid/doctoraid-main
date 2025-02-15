@@ -74,12 +74,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#0E3A4E",
     padding: 20,
   },
   card: {
     backgroundColor: "#164A63",
-    width: 340,
+    width: "100%",
     borderRadius: 15,
     padding: 20,
     shadowColor: "#000",
