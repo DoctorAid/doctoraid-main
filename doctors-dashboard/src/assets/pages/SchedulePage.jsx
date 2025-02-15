@@ -15,6 +15,10 @@ function SchedulePage() {
   const [startingTime, setStartingTime] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
 
+ 
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+
   const timeSlots = [
     {
       id: "1",
@@ -137,6 +141,28 @@ function SchedulePage() {
   const [bookedDates, setBookedDates] = useState([]);
   const [events, setEvents] = useState({});
   const [selectedEvent, setSelectedEvent] = useState(null);
+
+    const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    setLoading(true);
+    setMessage('');
+
+    if (!selectedDate || !startingTime || !endTime || !selectedTime) {
+      setMessage('Please fill in all fields');
+      setLoading(false);
+      return;
+    }
+    const formData = {
+      date: selectedDate.toISOString().split('T')[0],
+      startTime: startingTime.toTimeString().slice(0, 5),
+      endTime: endTime.toTimeString().slice(0, 5),
+      duration: selectedTime
+    };
+
+    console.log(formData);
+  }
+
 
   
 
@@ -284,6 +310,7 @@ function SchedulePage() {
 
         {/* right side */}
         <div className=" w-[80%] bg-gray-50 p-6">
+            <form onSubmit={handleSubmit} className="max-w-4xl mx-auto p-6">
       <div className=" bg-white rounded-xl p-3">
         <h1 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
           <Clock className="w-6 h-6 text-[#295567] " />
@@ -394,13 +421,17 @@ function SchedulePage() {
           >
             Schedule Appointment
           </button>
+          
         </div>
+        
       </div>
+      </form>
     </div>
       </div>
 
     </div>
   )
 }
+
 
 export default SchedulePage
