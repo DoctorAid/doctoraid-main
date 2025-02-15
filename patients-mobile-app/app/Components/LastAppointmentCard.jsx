@@ -1,22 +1,25 @@
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'; 
 import React from 'react';
 
-const OngoingCardType2 = () => {
-  const appointmentNo = 7;
-  const queueCount = 1;
+const LastAppointmentCard = () => {
   const doctorName = "Dr. Lakee Jayamanne";
   const patientName = "Nimesha";
   const appointmentTime = "11:00am - 12:00pm";
   const profilePic = "https://via.placeholder.com/50";
-  const currentTagText = "Current"; 
+  const appointmentStatus = "Done"; 
+  const showViewReport = true; 
+
+  const handleViewReport = () => {
+    console.log("View Report Clicked!");
+  };
 
   return (
     <View style={styles.container}>
       {/* Header Section */}
       <View style={styles.headerContainer}>
         <View style={styles.headerTextContainer}>
-          <Text style={styles.header}>Ongoing</Text>
-          <Text style={styles.header}>Appointment</Text>
+          <Text style={styles.header}>Last</Text>
+          <Text style={[styles.header, { width: 150 }]}>Appointment</Text>
         </View>
         <View style={styles.timeContainer}>
           <Text style={styles.timeText}>{appointmentTime}</Text>
@@ -30,29 +33,28 @@ const OngoingCardType2 = () => {
           <Image source={{ uri: profilePic }} style={styles.profilePic} />
           <View style={styles.doctorDetails}>
             <Text style={styles.doctorName}>{doctorName}</Text>
-            <Text style={styles.patientName}>For {patientName}</Text>
+            <Text style={styles.patientName}>For <Text style={styles.boldText}>{patientName}</Text></Text>
           </View>
         </View>
 
-        <View style={styles.fullWidthDivider} />
+        {/* Horizontal Line */}
+        <View style={styles.line} />
 
-        {/* Status Section */}
-        <View style={styles.ongoingContainer}>
-          <Text style={styles.ongoingText}>Ongoing</Text>
-          <View style={styles.currentTag}>
-            <Text style={styles.currentText}>{currentTagText}</Text>
-          </View>
+        {/* Status & View Report */}
+        <View style={styles.statusContainer}>
+          <Text style={styles.status}>{appointmentStatus}</Text>
+          {showViewReport && (
+            <TouchableOpacity style={styles.viewReportButton} onPress={handleViewReport}>
+              <Text style={styles.viewReportText}>View Report</Text>
+            </TouchableOpacity>
+          )}
         </View>
-
-        {/* Queue Info with larger text */}
-        <Text style={styles.queueInfo}>Current No: {appointmentNo.toString().padStart(2, '0')}</Text>
-        <Text style={styles.queueInfo}>Queue Count: {queueCount.toString().padStart(2, '0')}</Text>
       </View>
     </View>
   );
 };
 
-export default OngoingCardType2;
+export default LastAppointmentCard;
 
 const styles = StyleSheet.create({
   container: {
@@ -67,23 +69,22 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   headerTextContainer: {
+    flex: 0.6,
+    marginRight: 20,
     flexDirection: 'column',
-    alignItems: 'flex-start',
-    minWidth: 120, 
-    flexShrink: 1, 
   },
   header: {
     fontSize: 22,
     fontWeight: 'bold',
     color: '#0A5A72',
-    textAlign: 'left',
+    lineHeight: 26,
   },
   timeContainer: {
     backgroundColor: '#0A5A72',
     paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 15,
-    marginLeft: 5,
+    paddingHorizontal: 15,
+    borderRadius: 20,
+    marginTop: 5,
   },
   timeText: {
     color: '#FFFFFF',
@@ -91,64 +92,65 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: '#0A5A72',
-    padding: 20,
-    borderRadius: 15,
+    padding: 15,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#A9D6E5',
   },
   doctorInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 15,
-  },
-  doctorDetails: {
-    flex: 1,
-    marginLeft: 10,
-  },
-  doctorName: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 20,
-  },
-  patientName: {
-    color: '#C0E4E9',
-    fontSize: 16,
-    marginTop: 5,
-  },
-  fullWidthDivider: {
-    height: 1,
-    backgroundColor: '#C0E4E9',
-    width: '100%',
-    marginVertical: 15,
-  },
-  ongoingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 15,
-  },
-  ongoingText: {
-    color: 'white',
-    fontSize: 32,
-    fontWeight: 'bold',
-  },
-  currentTag: {
-    backgroundColor: '#DBF3C9',
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-  },
-  currentText: {
-    color: '#0A5A72',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  queueInfo: {
-    color: 'white',
-    fontSize: 16,
-    marginBottom: 8,
+    marginBottom: 10,
   },
   profilePic: {
     width: 50,
     height: 50,
     borderRadius: 25,
+    marginRight: 10,
+  },
+  doctorDetails: {
+    flex: 1,
+  },
+  doctorName: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  patientName: {
+    color: '#C0E4E9',
+    fontSize: 14,
+  },
+  boldText: {
+    fontWeight: 'bold',
+    color: '#C0E4E9',
+  },
+  line: {
+    height: 1,
+    backgroundColor: '#C0E4E9',
+    marginVertical: 5,
+  },
+  statusContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingRight: 10,
+  },
+  status: {
+    color: 'white',
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginRight: 20,
+  },
+  viewReportButton: {
+    backgroundColor: '#DBF3C9',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 15,
+    alignItems: 'center',
+  },
+  viewReportText: {
+    color: '#0A5A72',
+    fontWeight: 'bold',
+    fontSize: 14,
   },
 });
