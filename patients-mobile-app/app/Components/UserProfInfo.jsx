@@ -1,9 +1,18 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView, useWindowDimensions } from 'react-native';
+
 
 const UserProfInfo = ({ profile }) => {
     return (
-        <View style={styles.container}>
+      <SafeAreaView style={styles.safeArea}>
+      <UserProfInfo />
+      <ScrollView 
+        style={styles.container} 
+        contentContainerStyle={[
+          styles.contentContainer,
+          { width: 600, alignSelf: 'center' }
+        ]}
+      >
             <Text style={styles.title}>General Info</Text>
             <InfoRow label="Name" value={profile.name} />
             <InfoRow label="Relation" value={profile.relation} />
@@ -12,7 +21,8 @@ const UserProfInfo = ({ profile }) => {
             <InfoRow label="Weight" value={profile.weight} />
             <InfoRow label="Height" value={profile.height} />
             <InfoRow label="Gender" value={profile.gender} />
-        </View>
+        </ScrollView>
+    </SafeAreaView>
     );
 };
 

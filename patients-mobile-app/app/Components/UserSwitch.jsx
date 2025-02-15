@@ -20,6 +20,7 @@ const UserSwitch = ({ onProfileChange }) => {
     };
 
     return (
+        
         <View style={styles.container}>
             <TouchableOpacity onPress={toggleDropdown} style={styles.selectedProfile}>
                 <Image source={{ uri: selectedProfile.image }} style={styles.profileImage} />
