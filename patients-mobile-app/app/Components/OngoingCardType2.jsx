@@ -67,20 +67,23 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   headerTextContainer: {
-    flex: 0.6,
-    marginRight: 20,
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    minWidth: 120, 
+    flexShrink: 1, 
   },
   header: {
     fontSize: 22,
     fontWeight: 'bold',
     color: '#0A5A72',
+    textAlign: 'left',
   },
   timeContainer: {
     backgroundColor: '#0A5A72',
     paddingVertical: 5,
-    paddingHorizontal: 15,
-    borderRadius: 20,
-    marginTop: 5,
+    paddingHorizontal: 10,
+    borderRadius: 15,
+    marginLeft: 5,
   },
   timeText: {
     color: '#FFFFFF',

@@ -1,9 +1,8 @@
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image } from 'react-native'; 
 import React from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const OngoingCardType1 = () => {
-
   const appointmentNo = 7;
   const currentNo = 5;
   const queueCount = 1;
@@ -80,20 +79,23 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   headerTextContainer: {
-    flex: 0.6,
-    marginRight: 20,
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    minWidth: 120, 
+    flexShrink: 1, 
   },
   header: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#295567',
+    color: '#0A5A72',
+    textAlign: 'left',
   },
   timeContainer: {
     backgroundColor: '#295567',
     paddingVertical: 5,
-    paddingHorizontal: 15,
-    borderRadius: 20,
-    marginTop: 5, // Added gap between "Appointment" and time
+    paddingHorizontal: 10,
+    borderRadius: 15,
+    marginLeft: 5, 
   },
   timeText: {
     color: '#FEFAF6',
