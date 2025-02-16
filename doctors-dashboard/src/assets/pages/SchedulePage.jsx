@@ -289,6 +289,8 @@ function SchedulePage() {
   const [currentSession, setCurrentSession] = useState(sessions[0]);
   const [availableSlotsCount, setAvailableSlotsCount] = useState(0);
   const [bookedSlotsCount, setBookedSlotsCount] = useState(0);
+  const [daynumber, setDayNumber] = useState(0);
+  const [dayname, setDayName] = useState(0);
   
 
   function nextSession() {
@@ -300,27 +302,31 @@ function SchedulePage() {
   }
 
   function previousSession() {
-    if (currentSession === null) {
-      setCurrentSession(0);
-    } else {
-      setCurrentSession(currentSession - 1);
-    }
-    
-    console.log(currentSession);
+    const currentIndex = sessions.findIndex(session => session._id === currentSession._id);
+    const prevIndex = (currentIndex - 1 + sessions.length) % sessions.length; // Loop to last if at first
+    setCurrentSession(sessions[prevIndex]);
   }
 
   function setSlots(session) {
     const sessionSlots = slots.filter((slot) => slot.sessionId === session._id);
     const bookedCount = sessionSlots.filter((slot) => slot.status === "booked").length;
     const availableCount = sessionSlots.filter((slot) => slot.status === "available").length;
+
+    const dateObj = new Date(currentSession.date); 
+    const dayNumber = dateObj.getDate(); // Get the day of the month
+    const dayName = dateObj.toLocaleDateString("en-US", { weekday: "short" });
+    
+    setDayNumber(dayNumber)
+    setDayName(dayName) 
     setAvailableSlotsCount(availableCount);
     setBookedSlotsCount(bookedCount);
     setCurrentSlots(sessionSlots);
+
     console.log("Current Session:", currentSession);
     console.log("Current Slots:", currentSlots);
     console.log("Booked Slots:", bookedSlotsCount);
     console.log("Available Slots:", availableSlotsCount);
-    
+    console.log(`Date Number: ${dayNumber}, Day Name: ${dayName}`); 
    
   }
   
@@ -435,8 +441,8 @@ function SchedulePage() {
               {/* header date */}
               <div className="flex items-center bg-[#295567] rounded-[10px]">
                 <div className="h-20 w-20 text-center"><span class="text-[#fefaf6] text-3xl font-bold font-['Raleway'] ">
-                  20<br /></span>
-                  <span class="text-[#fefaf6] text-3xl font-normal font-['Raleway'] ">Sun</span>
+                  {daynumber}<br /></span>
+                  <span class="text-[#fefaf6] text-3xl font-normal font-['Raleway'] ">{dayname}</span>
                 </div>
               </div>
 
