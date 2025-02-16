@@ -1,0 +1,258 @@
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView, useWindowDimensions } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+
+function Layout() {
+  return (
+    <>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen 
+          name="index" 
+          options={{
+            title: 'Medical Profile',
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: '#F5F6F8',
+            },
+            headerTitleStyle: {
+              color: '#435B71',
+              fontSize: 20,
+              fontWeight: '600',
+            },
+          }} 
+        />
+      </Stack>
+      <StatusBar style="auto" />
+    </>
+  );
+}
+
+const InfoSection = ({ title, children }) => (
+  <View style={styles.section}>
+    <View style={styles.sectionHeader}>
+      <Text style={styles.sectionTitle}>{title}</Text>
+      <TouchableOpacity style={styles.editButton}>
+        <Ionicons name="pencil" size={24} color="#435B71" />
+      </TouchableOpacity>
+    </View>
+    <View style={styles.sectionContent}>
+      {children}
+    </View>
+  </View>
+);
+
+const InfoRow = ({ label, value }) => (
+  <View style={styles.infoRow}>
+    <Text style={styles.label}>{label}</Text>
+    <Text style={styles.value}>{value}</Text>
+  </View>
+);
+
+const MedicalProfile = () => {
+  const { width } = useWindowDimensions();
+  
+  const generalInfo = {
+    name: 'Nimesha Dahanayake',
+    relation: 'Son',
+    birthDate: '10.02.2014',
+    age: '10 years',
+    weight: '50kg',
+    height: "5'3",
+    gender: 'Female'
+  };
+
+  const medicalInfo = {
+    allergies: 'Arya Muller',
+    bloodType: 'Arya Muller'
+  };
+
+  const contentWidth = Math.min(width, 600);
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <Layout />
+      <ScrollView 
+        style={styles.container} 
+        contentContainerStyle={[
+          styles.contentContainer,
+          { width: contentWidth, alignSelf: 'center' }
+        ]}
+      >
+        <InfoSection title="General Info">
+          <InfoRow label="Name" value={generalInfo.name} />
+          <InfoRow label="Relation" value={generalInfo.relation} />
+          <InfoRow label="Birth Date" value={generalInfo.birthDate} />
+          <InfoRow label="Age" value={generalInfo.age} />
+          <InfoRow label="Weight" value={generalInfo.weight} />
+          <InfoRow label="Height" value={generalInfo.height} />
+          <InfoRow label="Gender" value={generalInfo.gender} />
+        </InfoSection>
+
+        <InfoSection title="Medical Info">
+          <InfoRow label="Allergies" value={medicalInfo.allergies} />
+          <InfoRow label="Blood Type" value={medicalInfo.bloodType} />
+        </InfoSection>
+        <InfoSection title="Medical Info">
+          <InfoRow label="Allergies" value={medicalInfo.allergies} />
+          <InfoRow label="Blood Type" value={medicalInfo.bloodType} />
+        </InfoSection>
+        
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#F5F6F8',
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F6F8',
+  },
+  contentContainer: {
+    padding: 16,
+    paddingBottom: 32,
+  },
+  section: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: '#435B71',
+  },
+  editButton: {
+    padding: 8,
+  },
+  sectionContent: {
+    gap: 16,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  label: {
+    fontSize: 16,
+    color: '#435B71',
+    fontWeight: '500',
+    flex: 1,
+  },
+  value: {
+    fontSize: 16,
+    color: '#7A8D9C',
+    flex: 1,
+    textAlign: 'right',
+  },
+});
+
+export default MedicalProfile;
+
+
+import React, { useState } from 'react';
+import { View, Image, Text, TouchableOpacity, Animated } from 'react-native';
+
+const sampleProfiles = [
+    { id: 1, name: 'Nimesha Dahanayake', relation: 'Daughter', image: 'https://i.pravatar.cc/100?img=1' },
+    { id: 2, name: 'John Smith', relation: 'Son', image: 'https://i.pravatar.cc/100?img=2' },
+    { id: 3, name: 'Sarah Johnson', relation: 'Daughter', image: 'https://i.pravatar.cc/100?img=3' }
+];
+const ProfileDropdown = () => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedProfile, setSelectedProfile] = useState(sampleProfiles[0]);
+    const toggleDropdown = () => setIsOpen(!isOpen);
+    const selectProfile = (profile) => {
+        setSelectedProfile(profile);
+        setIsOpen(false);
+    };
+    return (
+        <View style={styles.container}>
+            <TouchableOpacity onPress={toggleDropdown} style={styles.selectedProfile}>
+                <Image source={{ uri: selectedProfile.image }} style={styles.profileImage} />
+                <View style={styles.profileInfo}>
+                    <Text style={styles.name}>{selectedProfile.name}</Text>
+                    <Text style={styles.relation}>{selectedProfile.relation}</Text>
+                </View>
+                <Text style={[styles.arrow, isOpen && styles.arrowUp]}>▼</Text>
+            </TouchableOpacity>
+
+            {isOpen && (
+                <View style={styles.dropdown}>
+                    {sampleProfiles.map((profile) => (
+                        <TouchableOpacity key={profile.id} onPress={() => selectProfile(profile)} style={styles.dropdownItem}>
+                            <Image source={{ uri: profile.image }} style={styles.dropdownImage} />
+                            <View style={styles.dropdownInfo}>
+                                <Text style={styles.dropdownName}>{profile.name}</Text>
+                                <Text style={styles.dropdownRelation}>{profile.relation}</Text>
+                            </View>
+                        </TouchableOpacity>
+                    ))}
+                </View>
+            )}
+        </View>
+    );
+};
+const styles = {
+    container: { width: '90%', flexDirection: 'column' ,marginTop:180, alignSelf:'center'},
+    selectedProfile: { flexDirection: 'row', alignItems: 'center', padding: 10, backgroundColor: '#e6f3ff', borderRadius: 8 },
+    profileImage: { width: 50, height: 50, borderRadius: 25, marginRight: 10 },
+    profileInfo: { flex: 1, flexDirection: 'column' },
+    name: { fontSize: 16, fontWeight: 'bold', color: '#333' },
+    relation: { fontSize: 14, color: '#666' },
+    arrow: { fontSize: 16, color: '#666', padding: 5 },
+    arrowUp: { transform: [{ rotate: '180deg' }] },
+    dropdown: { marginTop: 5, backgroundColor: 'white', borderRadius: 8, elevation: 3, flexDirection: 'column' },
+    dropdownItem: { flexDirection: 'row', alignItems: 'center', padding: 10, borderBottomWidth: 1, borderBottomColor: '#eee' },
+    dropdownImage: { width: 40, height: 40, borderRadius: 20, marginRight: 10 },
+    dropdownInfo: { flex: 1, flexDirection: 'column' },
+    dropdownName: { fontSize: 14, fontWeight: 'bold', color: '#333' },
+    dropdownRelation: { fontSize: 12, color: '#666' },
+};
+
+export default ProfileDropdown;
+
+import React, { useState } from 'react';
+import { View, Image, Text, TouchableOpacity, Animated } from 'react-native';
+import UserSwitch from '../Components/UserSwitch';
+import UserProfInfo from '../Components/UserProfInfo';
+
+const userprofile = () => {
+
+    return (
+        <View style={{ flex: 1, alignItems: 'center' }}>
+            <UserSwitch/>
+            <UserProfInfo/>
+        </View>
+    );
+}
+
+export default userprofile;
+
+
+these are two components, make this such that the user info changes when profiles switches
+keep the components seperate. provide all the updated code. dont change any desgin
+
