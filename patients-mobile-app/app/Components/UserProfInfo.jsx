@@ -1,30 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView, useWindowDimensions } from 'react-native';
-
-
-const UserProfInfo = ({ profile }) => {
-    return (
-      <SafeAreaView style={styles.safeArea}>
-      <UserProfInfo />
-      <ScrollView 
-        style={styles.container} 
-        contentContainerStyle={[
-          styles.contentContainer,
-          { width: 600, alignSelf: 'center' }
-        ]}
-      >
-            <Text style={styles.title}>General Info</Text>
-            <InfoRow label="Name" value={profile.name} />
-            <InfoRow label="Relation" value={profile.relation} />
-            <InfoRow label="Birth Date" value={profile.birthDate} />
-            <InfoRow label="Age" value={profile.age} />
-            <InfoRow label="Weight" value={profile.weight} />
-            <InfoRow label="Height" value={profile.height} />
-            <InfoRow label="Gender" value={profile.gender} />
-        </ScrollView>
-    </SafeAreaView>
-    );
-};
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 
 const InfoRow = ({ label, value }) => (
     <View style={styles.infoRow}>
@@ -33,44 +9,79 @@ const InfoRow = ({ label, value }) => (
     </View>
 );
 
+const UserProfInfo = ({ profile }) => {
+    return (
+        <ScrollView style={styles.scrollView}>
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <Text style={styles.title}>General Info</Text>
+                    <Feather name="edit-2" size={20} color="#2C4157" />
+                </View>
+                <InfoRow label="Name" value={profile.name} />
+                <InfoRow label="Relation" value={profile.relation} />
+                <InfoRow label="Birth Date" value={profile.birthDate} />
+                <InfoRow label="Age" value={profile.age} />
+                <InfoRow label="Weight" value={profile.weight} />
+                <InfoRow label="Height" value={profile.height} />
+                <InfoRow label="Gender" value={profile.gender} />
+            </View>
+
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <Text style={styles.title}>Medical Info</Text>
+                    <Feather name="edit-2" size={20} color="#2C4157" />
+                </View>
+                <InfoRow label="Allergies" value={profile.allergies} />
+                <InfoRow label="Blood Type" value={profile.bloodType} />
+            </View>
+        </ScrollView>
+    );
+};
+
 const styles = StyleSheet.create({
+    scrollView: {
+        width: '100%'
+    },
     container: {
-        backgroundColor: '#fff',
-        borderRadius: 16,
-        padding: 20,
-        marginTop: 20,
         width: '90%',
         alignSelf: 'center',
+        backgroundColor: '#FFFFFF',
+        borderRadius: 12,
+        padding: 20,
+        marginBottom: 20,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3,
     },
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 15
+    },
     title: {
-        fontSize: 24,
+        fontSize: 20,
         fontWeight: '600',
-        color: '#435B71',
-        marginBottom: 10,
+        color: '#2C4157',
     },
     infoRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingVertical: 8,
+        paddingVertical: 12,
         borderBottomWidth: 1,
-        borderBottomColor: '#F0F0F0',
+        borderBottomColor: '#E8F1F9',
     },
     label: {
         fontSize: 16,
-        color: '#435B71',
+        color: '#2C4157',
         fontWeight: '500',
-        flex: 1,
     },
     value: {
         fontSize: 16,
-        color: '#7A8D9C',
-        flex: 1,
+        color: '#6B7C8F',
         textAlign: 'right',
     },
 });

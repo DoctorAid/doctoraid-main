@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import UserSwitch from '../Components/UserSwitch';
 import UserProfInfo from '../Components/UserProfInfo';
 
@@ -13,15 +13,25 @@ const UserProfile = () => {
         weight: '50kg',
         height: "5'3",
         gender: 'Female',
-        image: 'https://i.pravatar.cc/100?img=1'
+        image: 'https://i.pravatar.cc/100?img=1',
+        allergies: 'Arya Muller',
+        bloodType: 'Arya Muller'
     });
 
     return (
-        <View style={{ flex: 1, alignItems: 'center' }}>
+        <View style={styles.container}>
             <UserSwitch onProfileChange={setSelectedProfile} />
             <UserProfInfo profile={selectedProfile} />
         </View>
     );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#F8F9FB',
+        paddingTop: 40
+    }
+});
 
 export default UserProfile;
