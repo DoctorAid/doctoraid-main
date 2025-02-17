@@ -43,7 +43,6 @@ const DoctorCardType2 = ({ item }) => {
           <Text style={styles.location}>{item.location}</Text>
         </View>
       </View>
-
       <View style={styles.infoContainer}>
         <View style={styles.row}>
           <Calendar size={16} color="#7A7D9C" />
@@ -78,22 +77,17 @@ export default function DoctorCardList() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 20,
+    marginTop: 10,
+    marginBottom: 20,
     flex: 1,
-    backgroundColor: "#F5F7FA",
-    paddingLeft: 10, // Left padding for better horizontal scrolling
+    paddingLeft: 20,
   },
   card: {
     backgroundColor: "white",
-    width: 320,
+    width: 300,
     borderRadius: 15,
     padding: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 5,
-    marginRight: 15, // Adds spacing between horizontally swipeable cards
+    marginRight: 25, 
   },
   header: {
     flexDirection: "row",
@@ -113,11 +107,11 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#1D1E2C",
+    color: "#265A69",
   },
   location: {
     fontSize: 14,
-    color: "#7A7D9C",
+    color: "#265A69",
   },
   infoContainer: {
     borderTopWidth: 1,

@@ -26,9 +26,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#D4EAF7",
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     width: "90%",
     alignSelf: "center",
   },
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 8,
     color: "#2C3E50",
-    fontSize: 16,
+    fontSize: 14,
   },
 });
 
