@@ -4,7 +4,7 @@ function TimeSlot(props) {
   if(props.selectedSlotId === props.timeSlot._id)
     return (
    
-         <button className='border bg-[#b6e44baa] border-[#353637] text-center rounded-md '>
+         <button className='border bg-[#295567] border-[#353637] text-center text-[#ffffff] rounded-md '>
           {props.timeSlot.startTime}
           
           </button>     
@@ -24,7 +24,7 @@ function TimeSlot(props) {
     else{
       return(
      
-        <button className='border bg-[#2082ecaa] text-center rounded-md '
+        <button className='border bg-[#C9E4F3] text-center rounded-md '
                 onClick={() => props.onClick(props.timeSlot._id)}>
          {props.timeSlot.startTime}
          
