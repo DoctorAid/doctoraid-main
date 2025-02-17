@@ -25,15 +25,16 @@ export default WelcomeMessage;
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+    marginTop: 0,
     backgroundColor: "#FAF9F6",
   },
   welcome: {
-    fontSize: 32,
+    fontSize: 36,
     fontWeight: "bold",
     color: "#265A69",
   },
   familyName: {
-    fontSize: 18,
+    fontSize: 24,
     color: "#4A6D7C",
   },
 });

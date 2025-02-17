@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, FlatList, TouchableOpacity } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
+import { ChevronRight } from 'lucide-react-native';
 
 const appointments = [
   {
@@ -16,7 +16,7 @@ const DoctorCard = ({ doctorName, patientName, date, time, onPress }) => {
   return (
     <TouchableOpacity 
       onPress={onPress} 
-      style={{ backgroundColor: '#1E3A8A', padding: 20, borderRadius: 16, margin: 20 }}
+      style={{ backgroundColor: '#25A69', padding: 20, borderRadius: 16, margin: 20 }}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: 'white' }} />
@@ -26,7 +26,7 @@ const DoctorCard = ({ doctorName, patientName, date, time, onPress }) => {
             For <Text style={{ fontWeight: 'bold' }}>{patientName}</Text>
           </Text>
         </View>
-        <FontAwesome name="chevron-right" size={18} color="white" />
+        <ChevronRight size={15} color="white" strokeWidth={1} />
       </View>
       <View style={{ borderBottomWidth: 1, borderBottomColor: '#9CA3AF', marginVertical: 8 }} />
       <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>

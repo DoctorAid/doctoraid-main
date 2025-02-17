@@ -4,7 +4,6 @@ import WelcomeMessage from "../Components/WelcomeMessage";
 import SearchBar from "../Components/SearchBar";
 import DoctorCardType1 from "../Components/DoctorCardType1";
 import DoctorCardType3 from "../Components/DoctorCardType3"; // New Component
-
 import DoctorCardList from "../Components/DoctorCardType2";
 
 
@@ -18,7 +17,6 @@ export default function Tab() {
     <ScrollView contentContainerStyle={styles.container}>
       <WelcomeMessage />
       <SearchBar />
-
       <Text style={styles.sectionTitle}>Your Appointments</Text>
       {currentStep === "step1" && <DoctorCardType1 onPress={handleCardClick} />}
       {currentStep === "step2" && <DoctorCardType3 onSubmitPin={handlePinSubmit} />}
@@ -34,7 +32,7 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     paddingHorizontal: 20,
-    paddingVertical: 60,
+    paddingVertical: 20,
     backgroundColor: "#FAF9F6",
   },
   sectionTitle: {
