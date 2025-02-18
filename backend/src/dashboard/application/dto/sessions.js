@@ -8,3 +8,14 @@ export const getSessions = async (req, res) => {
         res.status(404).json({message: 'cant retrieve sessions'});
     }
 }
+
+export const createSession = async (req, res) => {
+    const session = req.body;
+    const newSession = new Session(session);
+    try{
+        await newSession.save();
+        res.status(201).json(newSession);
+    }catch(error){
+        res.status(409).json({message: error.message});
+    }
+}

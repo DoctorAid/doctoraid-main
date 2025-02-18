@@ -43,8 +43,11 @@ export const createSlots = async (req, res) => {
             return res.status(400).json({ message: 'Start time must be before end time' });
         }
 
-        const new_session = new Session({date});   // creating a new session
+        //creates a new session for the slots
+        const session_time = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const new_session = new Session({date:date,time:session_time});   // creating a new session
         const saved_session = await new_session.save(); // saving the session in db
+        console.log("new session created successfully");
 
         const session_id = saved_session._id; // getting the session id
 
@@ -63,8 +66,8 @@ export const createSlots = async (req, res) => {
             await new_slot.save();
         })
 
-        console.log('Generated slots:', formattedSlots);
-        return res.status(200).json(formattedSlots).populate('Session');
+        console.log("slots created successfully");
+        return res.status(200).json(formattedSlots);
 
     } catch (error) {
         console.error('Error creating slots:', error);
