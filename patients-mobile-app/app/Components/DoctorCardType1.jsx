@@ -16,11 +16,11 @@ const appointments = [
 
 const DoctorCard = ({ doctorName, patientName, date, time, onPress }) => {
   return (
-    <TouchableOpacity 
-      onPress={onPress} 
+    <TouchableOpacity
+      onPress={onPress}
       style={{ backgroundColor: '#265A69', padding: 20, borderRadius: 16, marginTop: 10, marginLeft: 20, marginRight: 20 }}
     >
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>  
         <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: 'white' }} />
         <View style={{ marginLeft: 16, flex: 1 }}>
           <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>{doctorName}</Text>
@@ -45,11 +45,31 @@ const DoctorCard = ({ doctorName, patientName, date, time, onPress }) => {
 
 const DoctorCardType1 = ({ onPress }) => {
   return (
-    <FlatList
-      data={appointments}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item }) => <DoctorCard {...item} onPress={onPress} />}
-    />
+    <View>
+      <Text style={{ 
+        fontSize: 24, 
+        fontWeight: 'bold', 
+        color: '#265A69', 
+        marginLeft: 20, 
+        marginTop: 20,
+      }}>
+        Your
+      </Text>
+      <Text style={{ 
+        fontSize: 24, 
+        fontWeight: 'bold', 
+        color: '#265A69', 
+        marginLeft: 20, 
+        marginBottom: 10,
+      }}>
+        Appointments
+      </Text>
+      <FlatList
+        data={appointments}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => <DoctorCard {...item} onPress={onPress} />}
+      />
+    </View>
   );
 };
 

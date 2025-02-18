@@ -2,90 +2,88 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from "react-native";
 import { Calendar, Clock, ChevronRight } from "lucide-react-native";
 
-const appointments = [
-  {
+const DoctorCardType3 = ({ onSubmitPin }) => {
+  const [pin, setPin] = useState("");
+  const item = {
     id: "1",
     doctor: "Dr. Lakee Jayamanne",
     patient: "Nimesha",
     date: "Sunday, 12 June",
     time: "11:00 am - 12:00 pm",
-  },
-];
-
-const DoctorQueueCard = ({ item }) => {
-  const [pin, setPin] = useState("");
-
+  };
+  
+  const handleSubmitPin = () => {
+    if (pin.trim().length > 0) {
+      console.log("PIN submitted:", pin);
+      onSubmitPin();
+    } else {
+      console.log("Please enter a valid PIN");
+    }
+  };
+  
   return (
-    <View style={styles.card}>
-      {/* Header with Doctor Name & Patient */}
-      <View style={styles.header}>
-        <View style={styles.imagePlaceholder} />
-        <View style={styles.textContainer}>
-          <Text style={styles.doctorName}>{item.doctor}</Text>
-          <Text style={styles.forPatient}>
-            For <Text style={styles.patientName}>{item.patient}</Text>
-          </Text>
+    <View>
+      <Text style={styles.titleText}>Enter the pin number</Text>
+      <View style={styles.card}>
+        {/* Header with Doctor Name & Patient */}
+        <View style={styles.header}>
+          <View style={styles.imagePlaceholder} />
+          <View style={styles.textContainer}>
+            <Text style={styles.doctorName}>{item.doctor}</Text>
+            <Text style={styles.forPatient}>
+              For <Text style={styles.patientName}>{item.patient}</Text>
+            </Text>
+          </View>
+          <ChevronRight size={24} color="white" />
         </View>
-        <ChevronRight size={24} color="white" />
+       
+        {/* Appointment Date & Time */}
+        <View style={styles.infoContainer}>
+          <View style={styles.row}>
+            <Calendar size={16} color="#AFCDE7" />
+            <Text style={styles.date}>{item.date}</Text>
+          </View>
+          <View style={styles.row}>
+            <Clock size={16} color="#AFCDE7" />
+            <Text style={styles.time}>{item.time}</Text>
+          </View>
+        </View>
+       
+        {/* PIN Input Field */}
+        <TextInput
+          style={styles.input}
+          placeholder="Enter Pin |"
+          placeholderTextColor="#AFCDE7"
+          secureTextEntry
+          value={pin}
+          onChangeText={setPin}
+          keyboardType="number-pad" // Better for PIN entry
+        />
+       
+        {/* Enter Queue Button */}
+        <TouchableOpacity style={styles.button} onPress={handleSubmitPin}>
+          <Text style={styles.buttonText}>Enter Queue</Text>
+        </TouchableOpacity>
       </View>
-
-      {/* Appointment Date & Time */}
-      <View style={styles.infoContainer}>
-        <View style={styles.row}>
-          <Calendar size={16} color="#AFCDE7" />
-          <Text style={styles.date}>{item.date}</Text>
-        </View>
-        <View style={styles.row}>
-          <Clock size={16} color="#AFCDE7" />
-          <Text style={styles.time}>{item.time}</Text>
-        </View>
-      </View>
-
-      {/* PIN Input Field */}
-      <TextInput
-        style={styles.input}
-        placeholder="Enter Pin |"
-        placeholderTextColor="#AFCDE7"
-        secureTextEntry
-        value={pin}
-        onChangeText={setPin}
-      />
-
-      {/* Enter Queue Button */}
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Enter Queue</Text>
-      </TouchableOpacity>
     </View>
   );
 };
 
-export default function DoctorQueueList() {
-  return (
-    <View style={styles.container}>
-      {appointments.map((item) => (
-        <DoctorQueueCard key={item.id} item={item} />
-      ))}
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
+  titleText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#265A69',
+    marginLeft: 20,
+    marginBottom: 10,
+    marginTop: 20,
   },
   card: {
     backgroundColor: "#164A63",
-    width: "100%",
+    width: "300",
+    marginLeft: 20,
     borderRadius: 15,
     padding: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 5,
     marginBottom: 20,
     borderWidth: 2,
     borderColor: "#AFCDE7",
@@ -163,3 +161,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+
+export default DoctorCardType3;

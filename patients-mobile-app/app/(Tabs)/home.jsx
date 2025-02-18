@@ -2,14 +2,13 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import WelcomeMessage from "../Components/WelcomeMessage";
 import SearchBar from "../Components/SearchBar";
-import DoctorCardType1 from "../Components/DoctorCardType1";
-import DoctorCardType3 from "../Components/DoctorCardType3"; // New Component
-import DoctorCardList from "../Components/DoctorCardType2";
-
+import DoctorCardType1 from "../Components/DoctorCardType1"; 
+import DoctorCardType2 from "../Components/DoctorCardType2";
+import DoctorCardType3 from "../Components/DoctorCardType3";
+import OngoingCardType1 from "../Components/OngoingCardType1";
 
 export default function Tab() {
   const [currentStep, setCurrentStep] = useState("step1"); // "step1" -> "step2" -> "step3"
-
   const handleCardClick = () => setCurrentStep("step2");
   const handlePinSubmit = () => setCurrentStep("step3");
 
@@ -17,13 +16,12 @@ export default function Tab() {
     <ScrollView contentContainerStyle={styles.container}>
       <WelcomeMessage />
       <SearchBar />
-      <Text style={styles.sectionTitle}>Your Appointments</Text>
       {currentStep === "step1" && <DoctorCardType1 onPress={handleCardClick} />}
       {currentStep === "step2" && <DoctorCardType3 onSubmitPin={handlePinSubmit} />}
-      {currentStep === "step3" && <DoctorCardType4 />}
+      {currentStep === "step3" && <OngoingCardType1 />}
 
       <Text style={styles.sectionTitle}>Subscribed Doctors</Text>
-      <DoctorCardList />
+      <DoctorCardType2/>
     </ScrollView>
   );
 }
