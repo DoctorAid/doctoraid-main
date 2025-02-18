@@ -33,11 +33,17 @@ const slotsSchema = new mongoose.Schema({
         default: ''
     },
     patientId: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Patient',
         default: ''
     },
     patientName: {
         type: String,
+        default: ''
+    },
+    recordId: {
+        type:mongoose.Schema.Types.ObjectId,
+        ref: 'Record',
         default: ''
     }
 });

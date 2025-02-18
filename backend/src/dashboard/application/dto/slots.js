@@ -18,8 +18,6 @@ function generateTimeslots(startTime, endTime, duration) {
         });
         currentSlotTime = new Date(slotEndTime); // Move to next slot
     }
-
-    console.log(slots);
     return slots;
 }
 
@@ -58,7 +56,7 @@ export const createSlots = async (req, res) => {
             startTime: slot.startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             endTime: slot.endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             duration: duration,
-            availability: availability
+            status: 'available',
         }));
 
         formattedSlots.map(async (slot) => {
