@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import TimeSlot from '../components/TimeSlot';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { createSlots } from '../api/slotsAPI.js';
 import { Clock, Calendar, Timer,CircleArrowRight,CircleArrowLeft } from 'lucide-react';
 
 
@@ -660,6 +661,16 @@ function SchedulePage() {
   };
 
   console.log(formData);
+
+  try {
+    const data = await createSlots(formData);
+    console.log('Slots created:', data);
+    setMessage('Slots created successfully!');
+  } catch (error) {
+    setMessage(error.message);
+  } finally {
+    setLoading(false);
+  }
 }
 
 
@@ -922,7 +933,7 @@ function SchedulePage() {
           >
             Schedule Appointment
           </button>
-          
+          <p>{message}</p>
         </div>
         
       </div>
