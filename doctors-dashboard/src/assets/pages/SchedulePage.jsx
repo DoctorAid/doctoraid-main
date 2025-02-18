@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import TimeSlot from '../components/TimeSlot';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { createSlots } from '../api/slotsAPI.js';
 import { Clock, Calendar, Timer,CircleArrowRight,CircleArrowLeft } from 'lucide-react';
 
 
@@ -20,18 +21,9 @@ function SchedulePage() {
   const [message, setMessage] = useState('');
 
   const sessions = [
-    {
-      "_id": "67a8c7eec9bf90242a504f3d",
-      "date": "2025-02-14T00:00:00.000+00:00"
-    },
-    {
-      "_id": "67a8c7eec9bf90242a504f44",
-      "date": "2025-02-15T00:00:00.000+00:00"
-    },
-    {
-      "_id": "67a8c7eec9bf90242a504f4b",
-      "date": "2025-02-16T00:00:00.000+00:00"
-    }
+    { _id: "67a8c7eec9bf90242a504f3d", date: "2025-02-14T00:00:00.000+00:00", event: "Morning Session at 10:00 AM" },
+    { _id: "67a8c7eec9bf90242a504f44", date: "2025-02-15T00:00:00.000+00:00", event: "Afternoon Session at 1:30 PM" },
+    { _id: "67a8c7eec9bf90242a504f4b", date: "2025-02-16T00:00:00.000+00:00", event: "Evening Session at 3:00 PM" }
   ];
 
   const slots = [
@@ -660,39 +652,43 @@ function SchedulePage() {
   };
 
   console.log(formData);
+
+  try {
+    const data = await createSlots(formData);
+    console.log('Slots created:', data);
+    setMessage('Slots created successfully!');
+  } catch (error) {
+    setMessage(error.message);
+  } finally {
+    setLoading(false);
+  }
 }
 
 
-  useEffect(() => {
-    // Simulating API call to fetch booked dates with events
-    setTimeout(() => {
-      const bookedData = [
-        { date: new Date(2025, 0, 10), event: "Doctor's Appointment at 10:00 AM" },
-        { date: new Date(2025, 1, 10), event: "Dental Checkup at 3:00 PM" },
-        { date: new Date(2025, 0, 15), event: "Eye Test at 1:30 PM" },
-        { date: new Date(2025, 0, 10), event: "Doctor's Appointment at 10:00 AM" },
-        { date: new Date(2025, 1, 20), event: "Dental Checkup at 3:00 PM" },
-        { date: new Date(2025, 0, 15), event: "Eye Test at 1:30 PM" },
-        { date: new Date(2025, 1, 14), event: "Doctor's Appointment at 10:00 AM" },
-        { date: new Date(2025, 1, 10), event: "Dental Checkup at 3:00 PM" },
-        { date: new Date(2025, 1, 14), event: "Eye Test at 1:30 PM" },
-      ];
-  
-      // Extract dates and create an event map with arrays of events
-      const dateList = bookedData.map(item => item.date);
-      const eventMap = bookedData.reduce((acc, item) => {
-        const dateKey = item.date.toDateString();
-        if (!acc[dateKey]) {
-          acc[dateKey] = [];  // Initialize an array for the date
-        }
-        acc[dateKey].push(item.event);  // Push the event to the array
-        return acc;
-      }, {});
-  
-      setBookedDates(dateList);
-      setEvents(eventMap);
-    }, 1000);
-  }, []);
+useEffect(() => {
+  // Simulating API call to fetch booked dates with events
+  setTimeout(() => {
+    const bookedData = sessions;
+
+    console.log('Booked data:', bookedData);
+
+    // Extract dates and create an event map with arrays of events
+    const dateList = bookedData.map(item => new Date(item.date));
+    const eventMap = bookedData.reduce((acc, item) => {
+      const dateKey = new Date(item.date).toDateString();
+      if (!acc[dateKey]) {
+        acc[dateKey] = [];
+      }
+      acc[dateKey].push(item.event);
+      return acc;
+    }, {});
+
+    console.log(dateList);
+
+    setBookedDates(dateList);
+    setEvents(eventMap);
+  }, 1000);
+}, []);
   
   
   const handleDateChange = (date) => {
@@ -922,7 +918,7 @@ function SchedulePage() {
           >
             Schedule Appointment
           </button>
-          
+          <p>{message}</p>
         </div>
         
       </div>
