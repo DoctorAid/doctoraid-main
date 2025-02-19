@@ -1,33 +1,27 @@
 import mongoose from 'mongoose';
 
 const recordsSchema = new mongoose.Schema({
+    prescription: {
+        type: [String], // ✅ Now supports an array of strings
+        required: true
+    },
     patient: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Patient',
-        required: true
-    },
-    session: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Session',
-        required: true
-    },
-    diagnosis: {
         type: String,
         required: true
     },
-    treatment: {
+    observation: {
         type: String,
         required: true
     },
+    
     notes: {
         type: String,
         default: ''
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
     }
+}, {
+    timestamps: true
 });
 
 const Record = mongoose.model('Record', recordsSchema);
 export default Record;
+
