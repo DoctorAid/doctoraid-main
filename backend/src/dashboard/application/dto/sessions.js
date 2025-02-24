@@ -16,6 +16,7 @@ export const createSession = async (req, res) => {
         await newSession.save();
         res.status(201).json(newSession);
     }catch(error){
-        res.status(409).json({message: error.message});
+        res.status(409);
+        res.json({message: error.message});
     }
 }
