@@ -632,6 +632,7 @@ function SchedulePage() {
   const [bookedDates, setBookedDates] = useState([]);
   const [events, setEvents] = useState({});
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [text, setText] = useState("");
 
   const handleSubmit = async (e) => {
   e.preventDefault();
@@ -648,7 +649,8 @@ function SchedulePage() {
     date: selectedDate.toISOString().split('T')[0],
     startTime: startingTime.toTimeString().slice(0, 5),
     endTime: endTime.toTimeString().slice(0, 5),
-    duration: selectedTime
+    duration: selectedTime,
+    text: text
   };
 
   console.log(formData);
@@ -773,12 +775,10 @@ useEffect(() => {
 
           </div>
 
-          {/* section 1 */}
+          {/* Patient's detail section */}
           <div className='bg-[#edebeb] w-full h-[30%] p-4 overflow-auto'>
             <div className='bg-white p-4 rounded-md shadow-md flex flex-col space-y-4'>
               <h3 className='text-lg font-semibold '>Booked by:</h3>
-              {/* </div> */}
-              {/* <div className='bg-blue-50 p-4 rounded-md flex flex-col space-y-2'> */}
               <div className='flex items-center space-x-3'>
                 <div className='w-10 h-10 rounded-full bg-blue-400 flex items-center justify-center text-white font-medium'>
                   S
@@ -802,69 +802,76 @@ useEffect(() => {
               </div>
             </div>
           </div>
+
+
         </div>
 
         {/* right side */}
         <div className=" w-[80%] bg-gray-50 p-6">
+
             <form onSubmit={handleSubmit} className="max-w-4xl mx-auto p-6">
-      <div className=" bg-white rounded-xl p-3">
-        <h1 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
-          <Clock className="w-6 h-6 text-[#295567] " />
-          Schedule Appointment
-        </h1>
+              <div className=" bg-white rounded-xl p-3">
+                <h1 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
+                  <Clock className="w-6 h-6 text-[#295567] " />
+                  Schedule Appointment
+                </h1>
 
-        {/* Date and Events Section */}
-        <div className="grid md:grid-cols-2 gap-1 mb-8">
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <div className="flex items-center  mb-4">
-              <Calendar className="w-5 h-5  text-[#295567] " />
-              <label className="font-medium text-gray-700"> Select Date</label>
-            </div>
-            <DatePicker
-              selected={selectedDate}
-              onChange={handleDateChange}
-              highlightDates={bookedDates}
-              inline
-              className="w-full"
-              
-            />
-            {selectedDate && (
-              <p className="text-blue-600 font-medium mt-2">
-                Selected: {selectedDate.toLocaleDateString()}
-              </p>
-            )}
-          </div>
+                {/* Date and Events Section */}
+                <div className="grid md:grid-cols-2 gap-1 mb-8">
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="flex items-center  mb-4">
+                      <Calendar className="w-5 h-5  text-[#295567] " />
+                      <label className="font-medium text-gray-700"> Select Date</label>
+                    </div>
+                    <DatePicker
+                      selected={selectedDate}
+                      onChange={handleDateChange}
+                      highlightDates={bookedDates}
+                      inline
+                      className="w-full"
+                      
+                    />
+                    {selectedDate && (
+                      <p className="text-blue-600 font-medium mt-2">
+                        Selected: {selectedDate.toLocaleDateString()}
+                      </p>
+                    )}
+                  </div>
 
-          <div>
-            {/* Events Display */}
-            {selectedEvent && (
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h3 className="font-medium text-gray-700 mb-2">Events for {selectedDate.toLocaleDateString()}</h3>
-                <div className="max-h-32 overflow-y-auto">
-                  {selectedEvent.length > 0 ? (
-                    <ul className="space-y-2">
-                      {selectedEvent.map((event, index) => (
-                        <li key={index} className="text-gray-600">{event}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-gray-500">No events scheduled</p>
-                  )}
-                </div>
+                  <div>
+                    {/* Events Display */}
+                    {selectedEvent && (
+                      <div className="bg-blue-50 p-4 rounded-lg">
+                        <h3 className="font-medium text-gray-700 mb-2">Events for {selectedDate.toLocaleDateString()}</h3>
+                        <div className="max-h-32 overflow-y-auto">
+                          {selectedEvent.length > 0 ? (
+                            <ul className="space-y-2">
+                              {selectedEvent.map((event, index) => (
+                                <li key={index} className="text-gray-600">{event}</li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <p className="text-gray-500">No events scheduled</p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
               </div>
-            )}
-          </div>
-        </div>
 
         {/* Time Selection Section */}
-        <div className="border-t pt-6">
+        <div className=" gap-4 flex flex-col border-t pt-6">
+
+          {/*Title and Logo */}
           <div className="flex items-center gap-2 mb-4">
             <Timer className="w-5 h-5 text-[#295567]" />
             <h3 className="font-medium text-gray-700">Time Selection</h3>
           </div>
           
+          {/* Start time , end time and duration picker */}
           <div className="grid md:grid-cols-3 gap-4">
-            <div>
+            
+           <div>  {/*  Start time picker */}
               <label className="block text-sm text-gray-600 mb-1">Start Time</label>
               <DatePicker
                 selected={startingTime}
@@ -879,7 +886,7 @@ useEffect(() => {
               />
             </div>
 
-            <div>
+            <div> {/*  End time picker */}
               <label className="block text-sm text-gray-600 mb-1">End Time</label>
               <DatePicker
                 selected={endTime}
@@ -894,7 +901,7 @@ useEffect(() => {
               />
             </div>
 
-            <div>
+            <div> {/*  Duration picker */}
               <label className="block text-sm text-gray-600 mb-1">Duration</label>
               <select
                 value={selectedTime}
@@ -908,13 +915,27 @@ useEffect(() => {
                 ))}
               </select>
             </div>
+
           </div>
+
+          <div> {/* Session label */}
+              <input
+                  type="text"
+                  id="textInput"
+                  className="w-full border-[#000000] rounded-lg p-2 "
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  placeholder="Type your session name here"
+                />
+          </div>
+
         </div>
 
+        
+
         <div className="mt-6">
-          <button
-            type="submit"
-            className="w-full bg-[#295567] text-white py-3 px-4 rounded-lg hover:bg-[#6394b5] transition-colors duration-200 font-medium"
+          <button  className="w-full bg-[#295567] text-white py-3 px-4 rounded-lg hover:bg-[#6394b5] transition-colors duration-200 font-medium"
+            type="submit" 
           >
             Schedule Appointment
           </button>
