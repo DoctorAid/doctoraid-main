@@ -8,7 +8,7 @@ const patientRouter = express.Router();
 
 patientRouter.get('/search/byName', searchPatients); //search patients by their name
 patientRouter.get('/search/byEmail', searchPatients);    //search patients by thier email
-patientRouter.get('getPatients', getPatientList);   //get the patient list
+patientRouter.get('/getPatients', getPatientList);   //get the patient list
 
 
 export default patientRouter;
