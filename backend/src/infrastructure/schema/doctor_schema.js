@@ -14,10 +14,6 @@ const doctorsSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    password: {
-        type: String,
-        required: true
-    },
     specialization: {
         type: String,
         required: true
@@ -34,18 +30,26 @@ const doctorsSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    experience: {
-        type: Number,
-        required: true
-    },
-    education: {
-        type: String,
-        required: true
-    },
     certification: {
         type: String,
         required: true
-    }
+    },
+    
+    description: {
+        type: String,
+        required: true
+    },
+    schedule: {
+        weekdays: {
+            type: String,
+            required: true
+        },
+        weekends: {
+            type: String,
+            required: true
+        }
+    },
+   
 });
 
 const Doctor = mongoose.model('Doctor', doctorsSchema);
