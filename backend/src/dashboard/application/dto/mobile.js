@@ -43,3 +43,12 @@ export const searchDoctors = async (req, res) => {
         res.status(500).json({ message: 'Error searching doctors', error: error.message });
     }
 };
+
+export const subcribeToDoctor = async (req, res) => {
+    try {
+        const { doctorId, patientId } = req.query;
+        const doctor = await Doctor.findById(doctorId);
+    } catch (error) {
+        res.status(500).json({ message: 'Error subscribing to doctor', error: error.message });
+    }
+};

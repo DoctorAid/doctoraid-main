@@ -8,4 +8,6 @@ mobileRouter.get('/doctor/:id', getDoctorById);
 
 mobileRouter.get('/doctors/search', searchDoctors);
 
+mobileRouter.get('/doctors/subscribe', subcribeToDoctor);
+
 export default mobileRouter;
