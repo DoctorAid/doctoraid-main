@@ -23,7 +23,7 @@ export const searchPatients = async (req, res)  => {
     }
 };
 
-//getting tyhe patient list
+//getting the patient list
 export const getPatientList = async(req, res) => {
     try {
         // Use 'let' instead of 'const' so we can reassign values
@@ -49,3 +49,5 @@ export const getPatientList = async(req, res) => {
         res.status(500).json({ message: "Internal server error", error: error.message});
     }
 };
+
+//sorting the patient list
