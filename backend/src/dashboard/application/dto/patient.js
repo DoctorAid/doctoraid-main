@@ -13,7 +13,6 @@ export const searchPatients = async (req, res)  => {
         if (name) query.name = { $regex: new RegExp(name, "i")};    //case insenstive search
         if (email) query.email = { $regex: new RegExp(email, "i") };
 
-
         const patients = await patient.find(query);
         return res.status(200).json(patients);
 

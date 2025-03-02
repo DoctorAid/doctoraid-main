@@ -1,7 +1,6 @@
 import Session from "../../../infrastructure/schema/sessions_schema.js";
 import Slot from "../../../infrastructure/schema/slots_schema.js";
 
-
 function generateTimeslots(startTime, endTime, duration) {
     const slots = [];
     let currentSlotTime = new Date(startTime);
@@ -71,7 +70,6 @@ export const createSlots = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
-
 
 export const getSlotsbySession = async (req,res) => {
     try{
