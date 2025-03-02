@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import patient from "../../../infrastructure/schema/patient_schema.js";
 
 //search patient by name or email
@@ -10,7 +11,7 @@ export const searchPatients = async (req, res)  => {
         }
 
         const query = {};
-        if (name) query.name = { $regex: new RegExp(name, "i")};    //case insenstive search
+        if (name) query.name = { $regex: new RegExp(name, "i")};    //case insensitive search
         if (email) query.email = { $regex: new RegExp(email, "i") };
 
         const patients = await patient.find(query);
@@ -38,7 +39,8 @@ export const getPatientList = async(req, res) => {
 
         const patients = await patient.find()
             .skip((page - 1) * limit)  // Fixed parentheses issue
-            .limit(limit);
+            .limit(limit)
+            .lean();
 
         const totalPatients = await patient.countDocuments();
 
@@ -64,8 +66,8 @@ export const sortPatientList = async (req, res) => {
         }
 
         //validate doctor id
-        if (doctorId && isNaN(doctorId)) {
-            return res.status(400).json({ message: "Invalid doctorID. it has to be a number"});
+        if (doctorId && !mongoose.Types.ObjectId.isValid(doctorId)) {
+            return res.status(400).json({ message: "Invalid doctorId. it has to be a valid Id"});
         }
 
         //validating the sorting method
@@ -86,5 +88,29 @@ export const sortPatientList = async (req, res) => {
     } catch (error) {
         console.error("Error fetching sorted patient list: ", error);
         res.status(500).json({ message: "Internal server error", error: error.message });
+    }
+};
+
+//getting patient profile using patient Id
+export const getPatientProfile = async (req, res) => {
+    try {
+        const { patientId } = req.params;
+
+        if(!mongoose.Types.ObjectId.isValid(patientId)) {
+            return res.status(400).json({ message: "Invalid patient Id."});
+        }
+        const patientData = await patient.findById(patientId)
+            .populate('medicalHistory')
+            .populate('assignedDoctors')
+            .lean();
+
+        if(!patientData) {
+            return res.status(404).json({ message: 'Patient not found'});
+        }
+
+        return res.status(200).json(patientData);
+    }catch (error) {
+        console.error('Error fetching patient profile: ', error);
+        res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 };
