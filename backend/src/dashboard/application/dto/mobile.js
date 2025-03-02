@@ -44,10 +44,25 @@ export const searchDoctors = async (req, res) => {
     }
 };
 
-export const subcribeToDoctor = async (req, res) => {
+export const subscribeToDoctor = async (req, res) => {
     try {
-        const { doctorId, patientId } = req.query;
+        const { doctorId, patientId } = req.body;
+
         const doctor = await Doctor.findById(doctorId);
+        if (!doctor) {
+            return res.status(404).json({ message: 'Doctor not found' });
+        }
+
+        if (!doctor.subscribers) {
+            doctor.subscribers = [];
+        }
+
+        if (!doctor.subscribers.includes(patientId)) {
+            doctor.subscribers.push(patientId);
+            await doctor.save();
+        }
+
+        res.status(200).json({ message: 'Subscribed to doctor successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Error subscribing to doctor', error: error.message });
     }
