@@ -50,3 +50,41 @@ export const getPatientList = async(req, res) => {
 };
 
 //sorting the patient list
+export const sortPatientList = async (req, res) => {
+    try {
+        let { page = 1, limit = 10, doctorId, sortMethod = "asc" } = req.query;
+
+        //converting page and limit to numbers
+        page = Number(page);
+        limit = Number(limit);
+
+        if (isNaN(page) || isNaN(limit) || page<1 || limit <1) {
+            return res.status(400).json({ message: "Invalid page or limit values. page and limit must be positive numbers" });
+
+        }
+
+        //validate doctor id
+        if (doctorId && isNaN(doctorId)) {
+            return res.status(400).json({ message: "Invalid doctorID. it has to be a number"});
+        }
+
+        //validating the sorting method
+        const order = sortMethod === "desc" ? -1 : 1;
+
+        //query to filter by doctors Id if provided
+        const query = doctorId ? { doctorId } : {};
+
+        //getting the patients with sorting and pagination
+        const patients = await patient.find(query).lean()
+            .sort({ name: order })  //sort by name (asc / des)
+            .skip((page - 1) * limit)
+            .limit(limit);
+
+        const totalPatients = await patient.countDocuments(query);
+
+        return res.status(200).json({ totalPatients, patients});
+    } catch (error) {
+        console.error("Error fetching sorted patient list: ", error);
+        res.status(500).json({ message: "Internal server error", error: error.message });
+    }
+};
