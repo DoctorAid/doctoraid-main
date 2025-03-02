@@ -1,4 +1,5 @@
-import Doctor from "../../../infrastructure/schema/doctor_schema.js";
+import Doctor from "../../../infrastructure/schema/doctors_schema.js";
+import Patient from "../../../infrastructure/schema/patients_schema.js";
 
 export const getDoctorById = async (req, res) => {
     try {
@@ -65,5 +66,21 @@ export const subscribeToDoctor = async (req, res) => {
         res.status(200).json({ message: 'Subscribed to doctor successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Error subscribing to doctor', error: error.message });
+    }
+};
+
+export const getFamilyById = async (req, res) => {
+    try {
+        const { familyId } = req.params;
+        
+        const familyMembers = await Patient.find({ familyId: familyId });
+        
+        if (familyMembers.length === 0) {
+            return res.status(404).json({ message: 'No family members found for this family ID' });
+        }
+        
+        res.status(200).json(familyMembers);
+    } catch (error) {
+        res.status(500).json({ message: 'Error retrieving family profile', error: error.message });
     }
 };
