@@ -9,10 +9,10 @@ function RootLayout() {
   const shouldHideNavigation = hideNavigationRoutes.includes(location.pathname);
 
   return (
-    <main>
-      <div className="flex px-8 py-8">
-        {!shouldHideNavigation && <Navigation />}
-        <Outlet />
+    <main className="h-lvh flex flex-col">
+      <div className="flex  px-8 py-8">
+        {!shouldHideNavigation && <div className="h-lvh"><Navigation /></div>}
+        <Outlet/>
       </div>
     </main>
   );
