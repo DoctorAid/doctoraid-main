@@ -12,27 +12,19 @@ export const getSessions = async (req, res) => {
 }
 export const getPatientsList = async (req, res) => {
     try {
-        const { doctorId, sessionDate } = req.query;
-        if (!doctorId || !sessionDate) {
-            return res.status(400).json({ message: 'Doctor ID and session date are required' });
+        const { doctorId, sessionId } = req.query;
+        if (!doctorId || !sessionId) {
+            return res.status(400).json({ message: 'Doctor ID and session ID are required' });
         }
 
-        const formattedDate = new Date(sessionDate);
-        if (isNaN(formattedDate.getTime())) {
-            return res.status(400).json({ message: 'Invalid session date format' });
+        // Find all sessions for the doctor with the given session ID
+        const session = await Session.findOne({ doctor: doctorId, _id: sessionId });
+        if (!session) {
+            return res.status(404).json({ message: 'No sessions found for this doctor with the given session ID' });
         }
 
-        // Find all sessions for the doctor on the given date
-        const sessions = await Session.find({ doctor: doctorId, date: formattedDate });
-        if (!sessions || sessions.length === 0) {
-            return res.status(404).json({ message: 'No sessions found for this doctor on the given date' });
-        }
-
-        // Extract session IDs
-        const sessionIds = sessions.map(session => session._id);
-
-        // Find all booked slots related to those sessions
-        const bookedSlots = await Slot.find({ Session: { $in: sessionIds }, availability: false }).populate({
+        // Find all booked slots related to that session
+        const bookedSlots = await Slot.find({ Session: session._id, availability: false }).populate({
             path: 'patient',
             select: 'firstName lastName patientId appointmentTime'
         });
