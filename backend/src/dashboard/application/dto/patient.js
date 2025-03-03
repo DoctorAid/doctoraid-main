@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 import patient from "../../../infrastructure/schema/patient_schema.js";
+import record from "../../../infrastructure/schema/records_schema.js";
+import Doctor from "../../../infrastructure/schema/doctor_schema.js";
 
 //search patient by name or email
 export const searchPatients = async (req, res)  => {
