@@ -103,7 +103,7 @@ export const getPatientProfile = async (req, res) => {
         }
         const patientData = await patient.findById(patientId)
             .populate('medicalHistory')
-            .populate('assignedDoctors')
+            .populate('doctors')
             .lean();
 
         if(!patientData) {
@@ -114,5 +114,42 @@ export const getPatientProfile = async (req, res) => {
     }catch (error) {
         console.error('Error fetching patient profile: ', error);
         res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+};
+
+//getting medical records by patient id
+export const getMedicalRecords = async (req,res) => {
+    try {
+        const {patientId} = req.params;
+        let {page = 1, limit = 10 } = req.query;
+
+        if( !mongoose.Types.ObjectId.isValid(patientId)) {
+            return res.status(400).json({ message: "Invalid patient ID. Please provide a valid Id"});
+        }
+
+        //converting to  numbers
+        page = Number(page);
+        limit = Number(limit);
+
+        if(isNaN(page) || isNaN(limit) || page <1 || limit <1){
+            return res.status(400).json({message: "Invalid page or limit values. page and limit must be positive numbers"});
+        }
+
+        const medicalRecords = await record.find({ patientId })
+            .populate('doctorId', 'firstName lastName specialization')    //populating doctor details
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .lean();
+        
+        const totalRecords = await record.countDocuments({ patientId});
+
+        if(!medicalRecords.length) {
+            return res.status(404).json({ message: "No medical records found for this patient."});
+        }
+
+        return res.status(200).json(medicalRecords);
+    } catch (error) {
+        console.error("Error fetching medical records: ", error);
+        res.status(500).json({ message: "Internal server error ", error: error.message});
     }
 };
