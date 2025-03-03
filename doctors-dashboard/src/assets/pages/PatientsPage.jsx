@@ -1,13 +1,169 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
+import { use } from "react";
 
 const PatientsTable = () => {
-  const patients = Array(500)
-    .fill()
-    .map((_, index) => ({
-      name: `Patient ${index + 1}`,
-      email: `example${index + 1}@email.com`,
-      lastLogin: "14/APR/2020",
-    }));
+  // const patients = Array(500)
+  //   .fill()
+  //   .map((_, index) => ({
+  //     name: `Patient ${index + 1}`,
+  //     email: `example${index + 1}@email.com`,
+  //     lastLogin: "14/APR/2020",
+  //   }));
+
+  const patients =  [
+    {
+      "name": "Denzel White",
+      "patient_id": "200-01",
+      "sex": "Male",
+      "age": 28,
+      "blood_type": "O+",
+      "allergies": ["Penicillin", "Dust mites", "Pollen"],
+      "date": "2024-11-21",
+      "email": "xxxxx@yahoo.com",
+      "note": "Patient has a history of seasonal allergies and penicillin sensitivity. Advise caution with antibiotic prescriptions and recommend minimizing exposure to dust and pollen to prevent flare-ups."
+    },
+    {
+      "name": "Alice Johnson",
+      "patient_id": "200-02",
+      "sex": "Female",
+      "age": 34,
+      "blood_type": "A-",
+      "allergies": ["Peanuts", "Latex"],
+      "date": "2024-11-22",
+      "email": "alice.johnson@example.com",
+      "note": "Patient has a severe peanut allergy and latex sensitivity. Recommend carrying an epinephrine auto-injector and avoiding latex-based medical equipment."
+    },
+    {
+      "name": "Michael Smith",
+      "patient_id": "200-03",
+      "sex": "Male",
+      "age": 45,
+      "blood_type": "B+",
+      "allergies": ["Shellfish", "Dust"],
+      "date": "2024-11-23",
+      "email": "michael.smith@example.com",
+      "note": "Patient has a shellfish allergy. Recommend avoiding seafood and cross-contaminated food. Dust exposure should also be minimized to prevent respiratory issues."
+    },
+    {
+      "name": "Sarah Adams",
+      "patient_id": "200-04",
+      "sex": "Female",
+      "age": 29,
+      "blood_type": "AB+",
+      "allergies": ["None"],
+      "date": "2024-11-24",
+      "email": "sarah.adams@example.com",
+      "note": "Patient has no known allergies. Regular check-ups recommended to monitor overall health."
+    },
+    {
+      "name": "John Doe",
+      "patient_id": "200-05",
+      "sex": "Male",
+      "age": 39,
+      "blood_type": "O-",
+      "allergies": ["Pollen"],
+      "date": "2024-11-25",
+      "email": "john.doe@example.com",
+      "note": "Patient experiences seasonal allergies due to pollen exposure. Recommend antihistamines during allergy season and limiting outdoor activities on high pollen days."
+    },
+    {
+      "name": "Emily Carter",
+      "patient_id": "200-06",
+      "sex": "Female",
+      "age": 31,
+      "blood_type": "A+",
+      "allergies": ["Dairy"],
+      "date": "2024-11-26",
+      "email": "emily.carter@example.com",
+      "note": "Patient is lactose intolerant. Recommend a dairy-free diet and use of lactase supplements as needed."
+    },
+    {
+      "name": "Robert Brown",
+      "patient_id": "200-07",
+      "sex": "Male",
+      "age": 50,
+      "blood_type": "B-",
+      "allergies": ["Soy", "Gluten"],
+      "date": "2024-11-27",
+      "email": "robert.brown@example.com",
+      "note": "Patient has dietary restrictions due to soy and gluten allergies. Recommend a monitored diet and avoiding processed foods that may contain allergens."
+    },
+    {
+      "name": "Laura Wilson",
+      "patient_id": "200-08",
+      "sex": "Female",
+      "age": 27,
+      "blood_type": "AB-",
+      "allergies": ["Eggs"],
+      "date": "2024-11-28",
+      "email": "laura.wilson@example.com",
+      "note": "Patient has an egg allergy. Recommend avoiding foods containing eggs and checking ingredient lists on packaged products."
+    },
+    {
+      "name": "James Miller",
+      "patient_id": "200-09",
+      "sex": "Male",
+      "age": 42,
+      "blood_type": "O+",
+      "allergies": ["Penicillin"],
+      "date": "2024-11-29",
+      "email": "james.miller@example.com",
+      "note": "Patient has a penicillin allergy. Alternative antibiotics should be considered for infections, and medical staff should be alerted before prescribing medication."
+    },
+    {
+      "name": "Olivia Davis",
+      "patient_id": "200-10",
+      "sex": "Female",
+      "age": 36,
+      "blood_type": "A-",
+      "allergies": ["None"],
+      "date": "2024-11-30",
+      "email": "olivia.davis@example.com",
+      "note": "Patient has no known allergies. Routine medical check-ups and a balanced lifestyle are recommended."
+    }
+  ];
+
+  const records = [
+    {
+      "patient_id": "200-01",
+      "last_checked": "2024-04-21",
+      "prescription_id": "#24J83KT0",
+      "observation": "High fever and cough at normal hemoglobin levels.",
+      "prescription": [
+        {"medicine": "Paracetamol", "dosage": "2 times a day"},
+        {"medicine": "Wikoryl", "dosage": "Day and Night before meal"}
+      ]
+    },
+    {
+      "patient_id": "200-02",
+      "last_checked": "2024-04-22",
+      "prescription_id": "#A18X9YD3",
+      "observation": "Mild allergic reaction due to peanut exposure.",
+      "prescription": [
+        {"medicine": "Antihistamine", "dosage": "Once a day as needed"}
+      ]
+    },
+    {
+      "patient_id": "200-03",
+      "last_checked": "2024-04-23",
+      "prescription_id": "#C92Z7PL5",
+      "observation": "Shortness of breath after dust exposure.",
+      "prescription": [
+        {"medicine": "Inhaler", "dosage": "As needed"},
+        {"medicine": "Antihistamine", "dosage": "Once a day"}
+      ]
+    },
+    {
+      "patient_id": "200-04",
+      "last_checked": "2024-04-24",
+      "prescription_id": "#D56X8YH2",
+      "observation": "Mild stomach discomfort due to gluten ingestion.",
+      "prescription": [
+        {"medicine": "Digestive Enzyme", "dosage": "Before meals"},
+        {"medicine": "Antihistamine", "dosage": "Once a day"}
+      ]
+    }
+  ]
 
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 12;
@@ -16,6 +172,9 @@ const PatientsTable = () => {
 
   const startIndex = (currentPage - 1) * rowsPerPage;
   const currentPatients = patients.slice(startIndex, startIndex + rowsPerPage);
+
+  const [selectedPatient, setSelectedPatient] = useState(patients[0]);
+  const [selectedRecord, setSelectedRecord] = useState(records[0]);
 
   const handleNext = () => {
     if (currentPage < totalPages) {
@@ -28,6 +187,15 @@ const PatientsTable = () => {
       setCurrentPage(currentPage - 1);
     }
   };
+
+  
+
+  useEffect(() => {
+
+    
+    const selectedRecord = records.find((record) => record.patient_id === selectedPatient.patient_id);
+    setSelectedRecord(selectedRecord);
+  }), [selectedPatient];
 
   return (
     <div className="flex bg-gray-50 min-h-screen">
@@ -93,7 +261,7 @@ const PatientsTable = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <button className="text-blue-600 hover:underline">
+                    <button className="text-blue-600 hover:underline" onClick={() => setSelectedPatient(patient)}>
                       View More
                     </button>
                   </td>
@@ -143,18 +311,18 @@ const PatientsTable = () => {
             DW
           </div>
           <div className="ml-4">
-            <h1 className="text-lg font-semibold text-gray-700">Denzel White</h1>
-            <p className="text-sm text-gray-500">Patient ID - 200 - 01</p>
+            <h1 className="text-lg font-semibold text-gray-700">{selectedPatient.name}</h1>
+            <p className="text-sm text-gray-500">Patient ID {selectedPatient.patient_id}</p>
           </div>
         </div>
 
         {/* Patient Details */}
         <div className="p-6 space-y-4">
           <div className="text-sm space-y-1">
-            <p><strong>Sex:</strong> Male</p>
-            <p><strong>Age:</strong> 28</p>
-            <p><strong>Blood:</strong> O+</p>
-            <p><strong>Allergies:</strong> Penicillin, Dust mites, Pollen</p>
+            <p><strong>Sex:</strong> {selectedPatient.sex}</p>
+            <p><strong>Age:</strong> {selectedPatient.age}</p>
+            <p><strong>Blood:</strong> {selectedPatient.blood_type}</p>
+            <p><strong>Allergies:</strong> {selectedPatient.allergies}</p>
           </div>
           <div>
             <h2 className="text-sm font-semibold text-gray-600 mb-1">Date - 2024-11-21</h2>
@@ -171,19 +339,24 @@ const PatientsTable = () => {
           </div>
           <div>
             <h2 className="text-sm font-semibold text-gray-600 mb-1">Last Checked</h2>
-            <p className="text-sm">21 April 2024 Prescription <a href="#" className="text-blue-600 hover:underline">#24J83KT0</a></p>
+            <p className="text-sm">{selectedRecord.last_checked}</p>
           </div>
           <div>
             <h2 className="text-sm font-semibold text-gray-600 mb-1">Observation</h2>
-            <p className="text-sm">High fever and cough at normal hemoglobin levels.</p>
+            <p className="text-sm">{selectedRecord.observation}</p>
           </div>
           <div>
             <h2 className="text-sm font-semibold text-gray-600 mb-1">Prescription</h2>
-            <p className="text-sm">Paracetamol - 2 times a day<br />Wikoryl - Day and Night before meal</p>
+            <p className="text-sm">{selectedRecord.prescription.map((item, index) => (
+              <span key={index}>
+                {item.medicine} - {item.dosage}
+                {index < selectedRecord.prescription.length - 1 && <br />}
+              </span>
+            ))}</p>
           </div>
           <div>
             <h2 className="text-sm font-semibold text-gray-600 mb-1">Note</h2>
-            <p className="text-sm">Patient has a history of seasonal allergies and sensitivity to certain medications. Recommend avoiding exposure to allergens such as dust and pollen. Follow-up is needed to monitor recurring symptoms and adjust treatment accordingly.</p>
+            <p className="text-sm">{selectedPatient.note}</p>
           </div>
         </div>
       </div>
