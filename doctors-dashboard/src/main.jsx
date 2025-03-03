@@ -51,10 +51,17 @@ const router = createBrowserRouter(
           ),
         },
         { path:"/schedule",
-          element:<SchedulePage/>
+          element:(
+            <ProtectedRoute>
+              <SchedulePage/>
+            </ProtectedRoute>
+          ),
         },
         { path:"/messages",
-          element:<MessagePage/>
+          element:(
+            <ProtectedRoute>
+              <MessagePage/>
+            </ProtectedRoute>),
         },
         { path:"/patients",
           element:<PatientsPage/>

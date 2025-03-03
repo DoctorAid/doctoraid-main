@@ -37,9 +37,9 @@ function Navigation() {
     return null;
   }
 
-  console.log("Naviagtio loaded..!")
+
   return (
-    <div className='rounded-l-[30px] bg-[#FAFAF9] h-screeen '>
+    <div className='rounded-l-[30px] bg-[#FAFAF9] h-[100%]'> 
      <div className="flex flex-col w-[16.625rem] h-[100%] py-8 gap-20 bg-[#295567] rounded-[30px]">
 
         
