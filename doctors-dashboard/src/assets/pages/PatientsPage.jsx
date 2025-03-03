@@ -1,5 +1,5 @@
-import React, { useState,useEffect } from "react";
-import { use } from "react";
+import React from 'react'
+import { useState, useEffect } from "react";
 
 const PatientsTable = () => {
   // const patients = Array(500)

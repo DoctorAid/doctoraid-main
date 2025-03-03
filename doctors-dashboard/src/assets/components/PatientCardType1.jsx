@@ -10,7 +10,7 @@ const patients = [
 
 const PatientCardType1 = ({ name, date, time }) => {
   return (
-    <div className="flex items-center bg-blue-50 rounded-lg p-4 w-full max-w-sm h-[80px]">
+    <div className="flex items-center bg-blue-50 rounded-lg p-4 w-full  h-[80px]">
       <div className="flex items-center justify-center w-12 h-12 bg-blue-200 rounded-full text-lg font-bold text-blue-600">
         {name[0]}
       </div>
@@ -26,7 +26,7 @@ const PatientCardType1 = ({ name, date, time }) => {
 
 const PatientList = () => {
   return (
-    <div className="max-h-[220px] overflow-y-auto space-y-4 p-4 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-200">
+    <div className="max-h-[250px] overflow-y-auto w-full space-y-4 p-4 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-200">
       {patients.map((patient, index) => (
         <PatientCardType1 key={index} {...patient} />
       ))}

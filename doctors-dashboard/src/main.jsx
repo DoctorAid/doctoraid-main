@@ -28,7 +28,7 @@ const ProtectedRoute = ({ children }) => {
 
   if (!isSignedIn) {
     // Redirect unauthenticated users to the login page
-    return <Navigate to="/log-in" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return children;
@@ -57,14 +57,17 @@ const router = createBrowserRouter(
             </ProtectedRoute>
           ),
         },
+        { path:"/patients",
+          element:(
+            <ProtectedRoute>
+              <PatientsPage/>
+            </ProtectedRoute>),
+        },
         { path:"/messages",
           element:(
             <ProtectedRoute>
               <MessagePage/>
             </ProtectedRoute>),
-        },
-        { path:"/patients",
-          element:<PatientsPage/>
         },
         { path:"/medicines",
           element:<MedicinesPage/>

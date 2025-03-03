@@ -64,11 +64,12 @@ const PatientDetailsCardType1 = () => {
   };
 
   return (
-    <div className="p-6 bg-white rounded-[40px] shadow-md max-auto mr-2">
+    <div className="p-6 bg-white flex flex-col rounded-[40px] shadow-md max-auto mr-2">
       {/* Top Section */}
       <div className="flex justify-between">
+
         {/* Left: Patient Details */}
-        <div className="w-1/2 pr-8">
+        <div className="w-1/2  pr-8">
           <h2 className="text-2xl font-bold">On-going - Patient Details</h2>
           <div className="flex items-center mt-4">
             {/* Patient Avatar */}
@@ -121,10 +122,7 @@ const PatientDetailsCardType1 = () => {
               ))}
             </ul>
             <p><strong>Note:</strong> {currentHistory.note}</p>
-          </div>
-
-          {/* Navigation Buttons */}
-          <div className="flex  mt-80">
+            <div className=" ">
             <button 
               className={`text-gray-500 text-2xl ${currentHistoryIndex === 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`} 
               onClick={prevHistory}
@@ -140,6 +138,10 @@ const PatientDetailsCardType1 = () => {
               &gt;
             </button>
           </div>
+          </div>
+
+          {/* Navigation Buttons */}
+          
         </div>
       </div>
 

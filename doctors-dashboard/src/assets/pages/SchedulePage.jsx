@@ -21,9 +21,9 @@ function SchedulePage() {
   const [message, setMessage] = useState('');
 
   const sessions = [
-    { _id: "67a8c7eec9bf90242a504f3d", date: "2025-02-14T00:00:00.000+00:00", event: "Morning Session at 10:00 AM" },
-    { _id: "67a8c7eec9bf90242a504f44", date: "2025-02-15T00:00:00.000+00:00", event: "Afternoon Session at 1:30 PM" },
-    { _id: "67a8c7eec9bf90242a504f4b", date: "2025-02-16T00:00:00.000+00:00", event: "Evening Session at 3:00 PM" }
+    { _id: "67a8c7eec9bf90242a504f3d", date: "2025-03-06T00:00:00.000+00:00", event: "Morning Session at 10:00 AM" },
+    { _id: "67a8c7eec9bf90242a504f44", date: "2025-03-09T00:00:00.000+00:00", event: "Afternoon Session at 1:30 PM" },
+    { _id: "67a8c7eec9bf90242a504f4b", date: "2025-03-14T00:00:00.000+00:00", event: "Evening Session at 3:00 PM" }
   ];
 
   const slots = [
@@ -708,7 +708,7 @@ useEffect(() => {
   };
 
   return (
-    <div className='flex flex-col gap-5 bg-[#FAFAF9] w-full  px-2 py-2 items-start justify-start text-black'>
+    <div className='flex gap-5 bg-[#FAFAF9] w-full  px-2 py-2 items-start justify-start text-black'>
       <div className='flex justify-around gap-2 w-full h-[100%]  items-center px-1 py-1'>
 
         {/* left side */}
