@@ -9,7 +9,7 @@ function RootLayout() {
   const shouldHideNavigation = hideNavigationRoutes.includes(location.pathname);
 
   return (
-    <main className="h-lvh flex flex-col">
+    <main className="h-lvh flex flex-col animate-[pop_0.3s_ease-out]">
       <div className="flex  px-8 py-8">
         {!shouldHideNavigation && <div className="h-full"><Navigation /></div>}
         <Outlet/>

@@ -13,7 +13,7 @@ import PatientDetailsCardType1 from './assets/components/PatientDetailsCardType1
 function App() {
 
   return (
-    <div className='flex flex-col h-[100%] gap-5 bg-[#FAFAF9] w-full px-2 py-2 items-start justify-start text-black'>
+    <div className='flex flex-col h-[100%] gap-5 bg-[#FAFAF9] w-full px-2 py-2 items-start justify-start text-black animate-[pop_0.3s_ease-out]'>
       <DashboardNavigation />
 
       <div className="grid grid-flow-col  justify-center align-middle  gap-4 w-full ">

@@ -35,7 +35,6 @@ const ProtectedRoute = ({ children }) => {
 };
 
 
-
 const router = createBrowserRouter(
   [{
     element:<RootLayout/>,

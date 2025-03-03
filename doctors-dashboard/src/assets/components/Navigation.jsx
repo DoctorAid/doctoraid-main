@@ -39,7 +39,7 @@ function Navigation() {
 
 
   return (
-    <div className='rounded-l-[30px] bg-[#FAFAF9] h-[100%]'> 
+    <div className='rounded-l-[30px] bg-[#FAFAF9] h-[100%] animate-[pop_0.3s_ease-out]'> 
      <div className="flex flex-col w-[16.625rem] h-[100%] py-8 gap-20 bg-[#295567] rounded-[30px]">
 
         

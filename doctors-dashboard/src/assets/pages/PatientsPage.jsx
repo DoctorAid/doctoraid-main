@@ -198,7 +198,7 @@ const PatientsTable = () => {
   }), [selectedPatient];
 
   return (
-    <div className="flex bg-gray-50 min-h-screen">
+    <div className="flex bg-gray-50 min-h-screen animate-[pop_0.3s_ease-out]">
       {/* Main Table Section */}
       <div className="flex justify-center items-center flex-grow">
         <div className="w-[800px] bg-white shadow-md rounded-md overflow-hidden">
