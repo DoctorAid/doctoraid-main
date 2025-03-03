@@ -56,7 +56,7 @@ function SignInPage() {
             <img src={logo} alt="DoctorAid Logo" className="h-5 w-auto" />
           </div>
           <div className="flex space-x-8 text-[20px] font-light text-gray-700">
-            <a href="https://doctoraid.site/" className="hover:text-blue-600">Sign-Up</a>
+            <a href="https://doctoraid.site/early-access" className="hover:text-blue-600">Sign-Up</a>
             <a href="/about" className="hover:text-blue-600">About Us</a>
             <a href="/contact" className="hover:text-blue-600">Contact</a>
           </div>
