@@ -1,9 +1,10 @@
 import React from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import { View, Text, FlatList, StyleSheet, ScrollView } from "react-native";
 import { Clock, Calendar } from "lucide-react-native"; // Lucide Icons
 
 const AppointmentCard = ({ name, doctor, time, date }) => {
   return (
+    <ScrollView>
     <View style={styles.cardContainer}>
       {/* Circle Placeholder for Image */}
       <View style={styles.imagePlaceholder}></View>
@@ -26,6 +27,7 @@ const AppointmentCard = ({ name, doctor, time, date }) => {
         </View>
       </View>
     </View>
+    </ScrollView>
   );
 };
 
@@ -61,8 +63,9 @@ const HistoryCard = () => {
 const styles = StyleSheet.create({
   container : {
     flex:1,
-    backgroundColor: "#F9FAFB",
-    padding: 16,
+    padding: 5,
+    paddingHorizontal: 20,
+    width: "100%",
   },
 
   cardContainer: {
@@ -76,7 +79,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius:1.41,
     elevation: 2,
-    marginBottom: 12,
+    marginBottom: 15,
     borderWidth: 1,
     borderColor: "#BAE6FD",
   },
