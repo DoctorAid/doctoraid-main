@@ -82,3 +82,40 @@ export const getSlotsbySession = async (req,res) => {
         res.status(404).json({message: 'cant retrieve slots'});
     }
 };
+
+//cancelling appointment using session id
+export const cancelAppointment = async (req, res) => {
+    try {
+        const { session_id, slot_id } = req.params;
+
+        if(!session_id || !slot_id) {
+            return res.status(400).json({ message: 'Session Id and Slot Id are needed'});
+        }
+
+
+        const updateSlot = await Slot.findOneAndUpdate(
+            {_id:slot_id, Session: session_id, status: { $ne: 'available'} },   //only updating if the status is not already available
+            {
+                $set: {
+                    status: 'available',
+                    patientNote: '',
+                    familyId: '',
+                    patientId: null,
+                    patientName: '',
+                    recordId: null
+
+                }
+            },
+            { new: true } //returns the updated document
+        );
+
+        if (!updateSlot ) {
+            return res.status(404).json({ message: 'Slot not found or slot is already available'});
+        }
+
+        res.status(200).json({ message: 'Appointment cancelled successfully', updateSlot });
+    }  catch (error) {
+        console.error('Error cancelling the appointment', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
