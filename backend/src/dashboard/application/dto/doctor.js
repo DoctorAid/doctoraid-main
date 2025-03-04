@@ -128,3 +128,85 @@ export const addDoctorToPatient = async (req, res) => {
     }
 };
 
+export const getActiveAppointmentsByDoctor = async (req, res) => {
+    try {
+        const { doctorId } = req.query;
+        if (!doctorId) {
+            return res.status(400).json({ message: 'Doctor ID is required' });
+        }
+
+        // Get current date and time
+        const currentDate = new Date();
+
+        // Find all active sessions for the doctor (ongoing or upcoming)
+        const activeSessions = await Session.find({ 
+            doctor: doctorId, 
+            date: { $gte: currentDate }  // Only future or ongoing sessions
+        });
+
+        if (!activeSessions || activeSessions.length === 0) {
+            return res.status(404).json({ message: 'No active sessions found for this doctor' });
+        }
+
+        const sessionIds = activeSessions.map(session => session._id);
+
+        // Find booked slots (availability: false) for active sessions
+        const activeAppointments = await Slot.find({ 
+            Session: { $in: sessionIds }, 
+            availability: false 
+        }).populate('patient', 'firstName lastName patientId');
+
+        if (!activeAppointments || activeAppointments.length === 0) {
+            return res.status(404).json({ message: 'No active appointments found' });
+        }
+
+        // Format the output
+        const appointmentsList = activeAppointments.map(slot => ({
+            firstName: slot.patient?.firstName || 'Unknown',
+            lastName: slot.patient?.lastName || 'Unknown',
+            patientId: slot.patient?.patientId || 'N/A',
+            appointmentTime: new Date(slot.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })
+        }));
+
+        return res.status(200).json(appointmentsList);
+    } catch (error) {
+        console.error('Error fetching active appointments:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+export const getTotalPatientCountByDoctor = async (req, res) => {
+    try {
+        const { doctorId } = req.query;
+        if (!mongoose.Types.ObjectId.isValid(doctorId)) {
+            return res.status(400).json({ message: 'Invalid doctor ID. Please provide a valid ID' });
+        }
+
+        // Find all sessions for the doctor
+        const sessions = await Session.find({ doctor: doctorId });
+        if (!sessions || sessions.length === 0) {
+            return res.status(404).json({ message: 'No sessions found for this doctor' });
+        }
+
+        const sessionIds = sessions.map(session => session._id);
+
+        // Find all booked slots for the doctor's sessions
+        const bookedSlots = await Slot.find({ 
+            Session: { $in: sessionIds }, 
+            availability: false 
+        }).populate('patient', 'patientId');
+
+        if (!bookedSlots || bookedSlots.length === 0) {
+            return res.status(200).json({ totalPatients: 0 });
+        }
+
+        // Extract unique patient IDs
+        const uniquePatients = new Set(bookedSlots.map(slot => slot.patient?.patientId));
+
+        return res.status(200).json({ totalPatients: uniquePatients.size });
+    } catch (error) {
+        console.error('Error fetching total patient count:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
