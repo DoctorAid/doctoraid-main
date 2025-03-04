@@ -1,10 +1,11 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import HistoryCard from '../Components/HistoryCard';
 import react from "react";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Tab() {
   return (
-    <ScrollView>
+    <SafeAreaView style={styles.safeArea}>
     <View style={styles.container}>
       <Text style={styles.header}>Your History</Text>
       <ScrollView contentContainerStyle={styles.ScrollView}>
@@ -16,11 +17,14 @@ export default function Tab() {
         </TouchableOpacity>
       </ScrollView>
     </View>
-    </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: "#F8F8F8",
