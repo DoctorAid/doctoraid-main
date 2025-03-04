@@ -1,5 +1,6 @@
 import Doctor from "../../../infrastructure/schema/doctors_schema.js";
 import Patient from "../../../infrastructure/schema/patients_schema.js";
+import Slot from "../../../infrastructure/schema/sessions_schema.js";
 
 export const getDoctorById = async (req, res) => {
     try {
@@ -82,5 +83,42 @@ export const getFamilyById = async (req, res) => {
         res.status(200).json(familyMembers);
     } catch (error) {
         res.status(500).json({ message: 'Error retrieving family profile', error: error.message });
+    }
+};
+
+export const bookSlot = async (req, res) => {
+    try {
+        const { patientId, note, slotId, familyId } = req.body;
+        
+        if (!patientId || !slotId) {
+            return res.status(400).json({ message: 'Patient ID and Slot ID are required' });
+        }
+        
+        const slot = await Slot.findById(slotId);
+        
+        if (!slot) {
+            return res.status(404).json({ message: 'Slot not found' });
+        }
+        
+        if (slot.status === 'booked') {
+            return res.status(400).json({ message: 'Slot is already booked' });
+        }
+        
+        const patient = await Patient.findById(patientId);
+        if (!patient) {
+            return res.status(404).json({ message: 'Patient not found' });
+        }
+        
+        slot.status = 'booked';
+        slot.patientId = patientId;
+        slot.patientNote = note || '';
+        slot.familyId = familyId || '';
+        slot.patientName = `${patient.firstName} ${patient.lastName}`;
+        
+        await slot.save();
+        
+        res.status(200).json({ message: 'Slot booked successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error booking slot', error: error.message });
     }
 };
