@@ -4,6 +4,7 @@ import react from "react";
 
 export default function Tab() {
   return (
+    <ScrollView>
     <View style={styles.container}>
       <Text style={styles.header}>Your History</Text>
       <ScrollView contentContainerStyle={styles.ScrollView}>
@@ -15,6 +16,7 @@ export default function Tab() {
         </TouchableOpacity>
       </ScrollView>
     </View>
+    </ScrollView>
   );
 }
 
