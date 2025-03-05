@@ -15,7 +15,7 @@ const recordsSchema = new mongoose.Schema({
     },
     notes: {
         type: String,
-        default: ''
+        default: null
     }
 }, {
     timestamps: true
