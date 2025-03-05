@@ -5,41 +5,39 @@ import Doctor from "../../../infrastructure/schema/doctor_schema.js";
 
 
 //creating a new patient
+
 export const createPatients = async (req, res) => {
     try {
-        const { firstName, lastName, dateOfBirth, gender, doctors, contactNumber, email, address, medicalHistory } = req.body;
+        const { 
+            firstName, 
+            lastName, 
+            dateOfBirth, 
+            gender, 
+            doctors, 
+            contactNumber, 
+            email, 
+            address, 
+            medicalHistory 
+        } = req.body;
 
-        //validating the fields
-        if (!firstName || !lastName || !dateOfBirth || !gender || !doctors || !contactNumber || !email || !address ) {
+        // Validate required fields
+        if (!firstName || !lastName || !dateOfBirth || !gender || !doctors || !contactNumber || !email || !address) {
             return res.status(400).json({ message: "All required fields must be provided." });
         }
 
-        //ensuring the gender is valid
-        const validGenders = ["Male", "Female", "Other"];
+        // Validate gender
+        const validGenders = ['Male', 'Female', 'Other'];
         if (!validGenders.includes(gender)) {
             return res.status(400).json({ message: "Invalid gender value." });
         }
 
-        //ensuring email is unique
-        const emailLower = email.trim().toLowerCase();
-        const existingPatient = await Patient.findOne({ email: emailLower });
+        // Check if email already exists
+        const existingPatient = await Patient.findOne({ email: email.toLowerCase() });
         if (existingPatient) {
             return res.status(400).json({ message: "A patient with this email already exists." });
         }
 
-        //ensure doctors array is not empty
-        if (!Array.isArray(doctors) || doctors.length === 0) {
-            return res.status(400).json({ message: "At least one doctor must be assigned." });
-        }
-
-        //validating doctor Ids
-        const invalidDoctors = doctors.filter(doctorId => !mongoose.Types.ObjectId.isValid(doctorId));
-        if (invalidDoctors.length > 0) {
-            return res.status(400).json({ message: `Invalid doctor ID: ${invalidDoctors.join(", ")}` });
-
-        }
-
-        //create a new patient
+        // Create new patient
         const newPatient = new Patient({
             firstName,
             lastName,
@@ -47,19 +45,30 @@ export const createPatients = async (req, res) => {
             gender,
             doctors,
             contactNumber,
-            email: emailLower,
+            email: email.toLowerCase(),
             address,
-            medicalHistory: medicalHistory || []    //default empty array if not provided
+            medicalHistory: medicalHistory || []
         });
 
-        await newPatient.save();
-        return res.status(201).json({ message: "patient created successfully", patient: newPatient });
 
+        // Save patient
+        const savedPatient = await newPatient.save();
+        console.log(savedPatient)
+
+        // Return success response
+        return res.status(201).json({
+            message: "Patient created successfully",
+            patient: savedPatient
+        });
 
     } catch (error) {
-        console.error("Error creating patient:", error);
-        res.status(500).json({ message: "Internal server error", error: error.message });
+        console.error('Error creating patient:', error);
+        return res.status(500).json({ 
+            message: 'Internal server error',
+            error: error.message 
+        });
     }
+    
 };
 
 //search patient by name or email

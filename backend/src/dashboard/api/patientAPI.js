@@ -6,7 +6,7 @@ import {sortPatientList} from '../application/dto/patient.js';
 import {getPatientProfile} from '../application/dto/patient.js';
 import {getMedicalRecords} from '../application/dto/patient.js';
 import {createPatients} from '../application/dto/patient.js';
-
+3
 const patientRouter = express.Router();
 
 patientRouter.post('/create', createPatients); //creating patients
