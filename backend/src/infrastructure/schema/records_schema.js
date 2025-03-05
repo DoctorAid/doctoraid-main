@@ -1,19 +1,18 @@
 import mongoose from 'mongoose';
 
 const recordsSchema = new mongoose.Schema({
-    prescription: {
-        type: [String], // ✅ Now supports an array of strings
+    date: {
+        type: Date,
         required: true
     },
-    patient: {
-        type: String,
+    prescription: {
+        type: [String], 
         required: true
     },
     observation: {
         type: String,
         required: true
     },
-    
     notes: {
         type: String,
         default: ''

@@ -4,7 +4,7 @@ import Doctor from "../../../infrastructure/schema/doctor_schema.js";
 
 export const createRecord = async (req, res) => {
     try {
-        const { prescription, patientId, doctorId, observation, notes, sampleField } = req.body;
+        const { prescription, patientId, doctorId, observation, notes } = req.body;
 
         if ( !prescription || !patientId || !doctorId || !observation ) {
             return res.status(400).json({ message: 'Missing required fields' });
@@ -15,9 +15,7 @@ export const createRecord = async (req, res) => {
             patient: patientId,
             doctor: doctorId,
             observation,
-          
             notes,
-            sampleField
         });
 
         const savedRecord = await newRecord.save();
