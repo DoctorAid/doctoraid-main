@@ -1,6 +1,6 @@
 import Doctor from "../../../infrastructure/schema/doctors_schema.js";
 import Patient from "../../../infrastructure/schema/patients_schema.js";
-import Slot from "../../../infrastructure/schema/sessions_schema.js";
+import Slot from "../../../infrastructure/schema/slots_schema.js";
 
 export const getDoctorById = async (req, res) => {
     try {
@@ -120,5 +120,52 @@ export const bookSlot = async (req, res) => {
         res.status(200).json({ message: 'Slot booked successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Error booking slot', error: error.message });
+    }
+};
+
+export const getActiveAppointments = async (req, res) => {
+    try {
+        const { patientId } = req.params;
+        
+        if (!patientId) {
+            return res.status(400).json({ message: 'Patient ID is required' });
+        }
+        
+        const currentDate = new Date();
+        const currentHours = currentDate.getHours();
+        const currentMinutes = currentDate.getMinutes();
+        const currentTimeString = `${currentHours.toString().padStart(2, '0')}:${currentMinutes.toString().padStart(2, '0')}`;
+
+        const appointments = await Slot.find({
+            patientId: patientId,
+            status: 'booked'
+        }).populate('Session');
+        
+        const activeAppointments = appointments.filter(slot => {
+            if (!slot.Session || !slot.Session.date) return false;
+
+            const sessionDate = new Date(slot.Session.date);
+            const isSameDay = 
+                sessionDate.getFullYear() === currentDate.getFullYear() &&
+                sessionDate.getMonth() === currentDate.getMonth() &&
+                sessionDate.getDate() === currentDate.getDate();
+
+            const isCurrentlyActive = 
+                isSameDay && 
+                slot.startTime <= currentTimeString && 
+                currentTimeString < slot.endTime; 
+                
+            return isCurrentlyActive;
+        });
+
+        return res.status(200).json({
+            message: activeAppointments.length 
+                ? 'Active appointments found' 
+                : 'No currently active appointments found for this patient',
+            appointments: activeAppointments
+        });
+
+    } catch (error) {
+        res.status(500).json({ message: 'Error retrieving active appointments', error: error.message });
     }
 };
