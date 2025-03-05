@@ -34,6 +34,10 @@ const patientsSchema = new mongoose.Schema({
     medicalHistory: {
         type: [String],
         default: []
+    },
+    familyId: {
+        type: String,
+        default: ''
     }
 });
 
