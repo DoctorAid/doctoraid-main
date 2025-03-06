@@ -4,20 +4,33 @@ import Doctor from "../../../infrastructure/schema/doctor_schema.js";
 
 export const createRecord = async (req, res) => {
     try {
-        const { prescription, patientId, doctorId, observation, notes } = req.body;
-
-        if ( !prescription || !patientId || !doctorId || !observation ) {
+        const { prescription, patientId, doctorId, observation, notes, date } = req.body;
+        
+        if (!prescription || !patientId || !doctorId || !observation || !date) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
-
+        
+        // Verify the patient exists
+        const patientExists = await Patient.findById(patientId);
+        if (!patientExists) {
+            return res.status(404).json({ message: 'Patient not found' });
+        }
+        
+        // Verify the doctor exists
+        const doctorExists = await Doctor.findById(doctorId);
+        if (!doctorExists) {
+            return res.status(404).json({ message: 'Doctor not found' });
+        }
+        
         const newRecord = new Record({
+            patientId,
+            doctorId,
             prescription,
-            patient: patientId,
-            doctor: doctorId,
             observation,
             notes,
+            date
         });
-
+        
         const savedRecord = await newRecord.save();
         return res.status(201).json(savedRecord);
     } catch (error) {

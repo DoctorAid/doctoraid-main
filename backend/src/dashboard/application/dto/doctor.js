@@ -2,23 +2,45 @@ import Doctor from "../../../infrastructure/schema/doctor_schema.js";
 import Session from "../../../infrastructure/schema/sessions_schema.js";
 import Slot from "../../../infrastructure/schema/slots_schema.js";
 import Patient from "../../../infrastructure/schema/patient_schema.js";
-export const addDoctorDetails = async (req, res) => {
-    try {
-        const { firstName, lastName, email, contactNumber, description, schedule } = req.body;
 
-        if (!firstName || !lastName || !email || !contactNumber || !description || !schedule) {
+export const createDoctor = async (req, res) => {
+    try {
+        const { 
+            firstName, 
+            lastName, 
+            email, 
+            specialization, 
+            hospital, 
+            address, 
+            contactNumber, 
+            certification, 
+            description, 
+            schedule,
+            location 
+        } = req.body;
+        
+        // Check all required fields
+        if (!firstName || !lastName || !email || !specialization || 
+            !hospital || !address || !contactNumber || !certification || 
+            !description || !schedule || !schedule.weekdays || 
+            !schedule.weekends || !location) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
-
+        
         const newDoctor = new Doctor({
             firstName,
             lastName,
             email,
+            specialization,
+            hospital,
+            address,
             contactNumber,
+            certification,
             description,
-            schedule
+            schedule,
+            location
         });
-
+        
         const savedDoctor = await newDoctor.save();
         return res.status(201).json(savedDoctor);
     } catch (error) {
@@ -26,7 +48,6 @@ export const addDoctorDetails = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
-
 export const getDoctorDetails = async (req, res) => {
     try {
         const doctors = await Doctor.find({}, 'firstName lastName email contactNumber description schedule');
