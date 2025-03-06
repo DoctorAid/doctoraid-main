@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Doctor from "../../../infrastructure/schema/doctor_schema.js";
 import Session from "../../../infrastructure/schema/sessions_schema.js";
 import Slot from "../../../infrastructure/schema/slots_schema.js";
@@ -8,14 +9,14 @@ export const createDoctor = async (req, res) => {
     try {
         
         
-        const { firstName, lastName, email, contactNumber,location, description, schedule, specialization, hospital, address, certification } = req.body;
+        const { doctorId,firstName, lastName, email, contactNumber,location, description, schedule, specialization, hospital, address, certification } = req.body;
 
-        if (!firstName || !lastName || !email || !contactNumber || !description ) {
+        if (!doctorId||!firstName || !lastName || !email || !contactNumber || !description ) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
         
         const newDoctor = new Doctor({
-          
+            doctorId: doctorId,
             firstName: firstName,
             lastName: lastName,
             email: email,
@@ -37,7 +38,7 @@ export const createDoctor = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-export const getDoctorDetails = async (req, res) => {
+export const getAllDoctors = async (req, res) => {
     try {
         const doctors = await Doctor.find({}, 'firstName lastName email contactNumber description schedule');
         return res.status(200).json(doctors);
@@ -47,6 +48,31 @@ export const getDoctorDetails = async (req, res) => {
     }
 };
 
+export const getDoctorById = async (req, res) => {
+    try {
+        const { id } = req.params; // Get the `_id` from request URL
+
+        // ✅ Validate if the provided ID is a valid MongoDB ObjectId
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: "Invalid doctor ID format" });
+        }
+
+        // ✅ Find the doctor strictly by `_id`
+        const doctor = await Doctor.findById(id).select(
+            "firstName lastName email contactNumber specialization hospital address certification description schedule location"
+        );
+
+        // ✅ If no doctor found, return 404
+        if (!doctor) {
+            return res.status(404).json({ message: "Doctor not found" });
+        }
+
+        return res.status(200).json(doctor);
+    } catch (error) {
+        console.error("Error fetching doctor details:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
 export const deleteDoctorDetails = async (req, res) => {
     try {
         const { doctorId } = req.query;
