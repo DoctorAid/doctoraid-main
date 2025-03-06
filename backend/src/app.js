@@ -5,6 +5,7 @@ import slotsRouter from './dashboard/api/slotsAPI.js'
 import recordRouter from './dashboard/api/recordAPI.js'
 import patientRouter from './dashboard/api/patientAPI.js'
 import doctorsRouter from './dashboard/api/doctorAPI.js'
+import mobileRouter from './dashboard/api/mobileAPI.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -15,6 +16,7 @@ app.use('/api/sessions', sessionsRouter);
 app.use('/api/records', recordRouter);
 app.use('/api/patients', patientRouter);
 app.use('/api/doctors', doctorsRouter);
+app.use('/api/mobile', mobileRouter);
 
 connectDB();
 
