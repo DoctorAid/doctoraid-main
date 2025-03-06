@@ -140,10 +140,13 @@ export const sortPatientList = async (req, res) => {
 
         }
 
-        //validate doctor id
+        //validate doctor Id
         if (doctorId && !mongoose.Types.ObjectId.isValid(doctorId)) {
             return res.status(400).json({ message: "Invalid doctorId. Please provide a valid Id"});
         }
+
+        //logging the sort method
+        console.log("Sort method: ", sortMethod);
 
         //validating the sorting method
         const order = sortMethod === "desc" ? -1 : 1;
@@ -151,11 +154,17 @@ export const sortPatientList = async (req, res) => {
         //query to filter by doctors Id if provided
         const query = doctorId ? { doctors: doctorId } : {};
 
+        //debug the query
+        console.log("Query: ", query);
+
         //getting the patients with sorting and pagination
         const patients = await Patient.find(query).lean()
-            .sort({ lastName: order, firstName: order })  //sort by name, last name is pioritized
+            .sort({ firstName: order })  //sort by first name
             .skip((page - 1) * limit)
             .limit(limit);
+
+        //logging patients to check the output
+        console.log("Patients: ", patients);
 
         const totalPatients = await Patient.countDocuments(query);
 
