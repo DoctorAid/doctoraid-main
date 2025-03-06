@@ -1,10 +1,10 @@
 import express from 'express';
-import { getDoctorById, searchDoctors, subscribeToDoctor, getFamilyById, bookSlot, getActiveAppointments } from '../application/dto/mobile.js';
+import { searchDoctors, subscribeToDoctor, getFamilyById, bookSlot, getActiveAppointments } from '../application/dto/mobile.js';
 
 const mobileRouter = express.Router();
 
 
-mobileRouter.get('/doctor/:id', getDoctorById);
+// mobileRouter.get('/doctor/:id', getDoctorById);
 
 mobileRouter.get('/doctors/search', searchDoctors);
 
