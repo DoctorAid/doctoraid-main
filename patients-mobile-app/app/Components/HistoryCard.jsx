@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
 
   cardContainer: {
     flexDirection: "row",
-    backgroundColor: "#C9E4F3",
+    backgroundColor: "#E8F1F9",
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 24,
     borderWidth: 2,
-    borderColor: "#7DD3FC",
+    borderColor: "#FFFFFF",
     marginRight: 16,
   },
   infoContainer: {
