@@ -1,11 +1,10 @@
 import mongoose from 'mongoose';
-import { addDoctorDetails } from '../../dashboard/application/dto/doctor';
 
 const doctorsSchema = new mongoose.Schema({
     doctorId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Doctor',
-        required: false
+        type: String,
+        required: true,
+        unique: true
     },
     firstName: {
         type: String,
@@ -48,11 +47,11 @@ const doctorsSchema = new mongoose.Schema({
     schedule: {
         weekdays: {
             type: String,
-            required: true
+            required: false
         },
         weekends: {
             type: String,
-            required: true
+            required: false
         }
     },
    

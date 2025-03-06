@@ -2,28 +2,38 @@ import Doctor from "../../../infrastructure/schema/doctor_schema.js";
 import Session from "../../../infrastructure/schema/sessions_schema.js";
 import Slot from "../../../infrastructure/schema/slots_schema.js";
 import Patient from "../../../infrastructure/schema/patient_schema.js";
+import e from "express";
+
 export const addDoctorDetails = async (req, res) => {
     try {
-        const { firstName, lastName, email, contactNumber, description, schedule } = req.body;
+        
+        
+        const { doctorId,firstName, lastName, email, contactNumber, description, schedule, specialization, hospital, address, certification } = req.body;
 
-        if (!firstName || !lastName || !email || !contactNumber || !description || !schedule) {
+        if (!firstName || !lastName || !email || !contactNumber || !description ) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
 
         const newDoctor = new Doctor({
-            firstName,
-            lastName,
-            email,
-            contactNumber,
-            description,
-            schedule
+            doctorId: doctorId,
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            contactNumber: contactNumber,
+            description: description,
+            schedule: schedule,
+            specialization: specialization,
+            hospital: hospital,
+            address: address,
+            certification: certification
         });
+        
 
         const savedDoctor = await newDoctor.save();
         return res.status(201).json(savedDoctor);
     } catch (error) {
-        console.error('Error adding doctor details:', error);
-        res.status(500).json({ message: 'Internal server error' });
+       
+        res.status(500).json({ message: error.message });
     }
 };
 

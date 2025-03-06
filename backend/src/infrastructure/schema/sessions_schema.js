@@ -4,7 +4,7 @@ const sessionsSchema = new mongoose.Schema({
     doctorId: {
         type:mongoose.Schema.Types.ObjectId,
         ref: 'Doctor',
-        required: false
+        required: true
     },
     date: {
         type: Date,
