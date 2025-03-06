@@ -54,7 +54,10 @@ const doctorsSchema = new mongoose.Schema({
             required: false
         }
     },
-   
+   location: {
+        type: String,
+        required: true
+    }
 });
 
 const Doctor = mongoose.model('Doctor', doctorsSchema);

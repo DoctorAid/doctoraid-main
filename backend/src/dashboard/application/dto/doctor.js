@@ -2,9 +2,9 @@ import Doctor from "../../../infrastructure/schema/doctor_schema.js";
 import Session from "../../../infrastructure/schema/sessions_schema.js";
 import Slot from "../../../infrastructure/schema/slots_schema.js";
 import Patient from "../../../infrastructure/schema/patient_schema.js";
-import e from "express";
 
-export const addDoctorDetails = async (req, res) => {
+
+export const createDoctor = async (req, res) => {
     try {
         
         
@@ -13,7 +13,7 @@ export const addDoctorDetails = async (req, res) => {
         if (!firstName || !lastName || !email || !contactNumber || !description ) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
-
+        
         const newDoctor = new Doctor({
             doctorId: doctorId,
             firstName: firstName,
@@ -36,7 +36,6 @@ export const addDoctorDetails = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-
 export const getDoctorDetails = async (req, res) => {
     try {
         const doctors = await Doctor.find({}, 'firstName lastName email contactNumber description schedule');
