@@ -27,7 +27,7 @@ const UserProfile = () => {
                     <UserProfInfo profile={selectedProfile} />
                 </View>
                 <View style={styles.svgContainer}>
-                    <FamPic width={350}  />
+                    <FamPic width={300}  />
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -37,18 +37,18 @@ const UserProfile = () => {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#F8F9FB',
+        backgroundColor: '#FEFAF6',
     },
     scrollContainer: {
         flexGrow: 1,
         padding: 20,
     },
     container: {
-        backgroundColor: '#F8F9FB',
+        backgroundColor: '#FEFAF6',
     },
     svgContainer: {
         alignItems: 'center',
-        marginBottom: -35,
+        marginBottom: -45,
     },
 });
 
