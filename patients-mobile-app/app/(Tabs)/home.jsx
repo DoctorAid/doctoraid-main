@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView, SafeAreaView } from "react-native";
 import WelcomeMessage from "../Components/WelcomeMessage";
 import SearchBar from "../Components/SearchBar";
 import DoctorCardType1 from "../Components/DoctorCardType1"; 
@@ -13,28 +13,32 @@ export default function Tab() {
   const handlePinSubmit = () => setCurrentStep("step3");
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <WelcomeMessage />
-      <SearchBar />
-      {currentStep === "step1" && <DoctorCardType1 onPress={handleCardClick} />}
-      {currentStep === "step2" && <DoctorCardType3 onSubmitPin={handlePinSubmit} />}
-      {currentStep === "step3" && <OngoingCardType1 />}
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <WelcomeMessage />
+        <SearchBar />
+        {currentStep === "step1" && <DoctorCardType1 onPress={handleCardClick} />}
+        {currentStep === "step2" && <DoctorCardType3 onSubmitPin={handlePinSubmit} />}
+        {currentStep === "step3" && <OngoingCardType1 />}
 
-      <Text style={styles.sectionTitle}>Subscribed Doctors</Text>
-      <DoctorCardType2/>
-    </ScrollView>
+        <Text style={styles.sectionTitle}>Subscribed Doctors</Text>
+        <DoctorCardType2 />
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#FAF9F6",
+  },
   container: {
     flexGrow: 1,
     paddingHorizontal: 20,
     paddingVertical: 20,
-    backgroundColor: "#FAF9F6",
   },
   sectionTitle: {
-    paddingHorizontal: 20,
     fontSize: 20,
     fontWeight: "bold",
     color: "#265A69",

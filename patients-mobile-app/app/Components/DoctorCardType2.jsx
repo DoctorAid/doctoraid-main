@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 20,
     flex: 1,
-    paddingLeft: 20,
+    paddingLeft: 10,
   },
   card: {
     backgroundColor: "white",
