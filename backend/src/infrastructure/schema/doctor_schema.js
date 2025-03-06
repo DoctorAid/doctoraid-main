@@ -1,6 +1,11 @@
 import mongoose from 'mongoose';
 
 const doctorsSchema = new mongoose.Schema({
+    doctorId: {
+        type: String,
+        required: false,
+        unique: true
+    },
     firstName: {
         type: String,
         required: true
@@ -42,11 +47,11 @@ const doctorsSchema = new mongoose.Schema({
     schedule: {
         weekdays: {
             type: String,
-            required: true
+            required: false
         },
         weekends: {
             type: String,
-            required: true
+            required: false
         }
     },
    location: {

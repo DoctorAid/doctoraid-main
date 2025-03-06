@@ -3,49 +3,38 @@ import Session from "../../../infrastructure/schema/sessions_schema.js";
 import Slot from "../../../infrastructure/schema/slots_schema.js";
 import Patient from "../../../infrastructure/schema/patient_schema.js";
 
+
 export const createDoctor = async (req, res) => {
     try {
-        const { 
-            firstName, 
-            lastName, 
-            email, 
-            specialization, 
-            hospital, 
-            address, 
-            contactNumber, 
-            certification, 
-            description, 
-            schedule,
-            location 
-        } = req.body;
         
-        // Check all required fields
-        if (!firstName || !lastName || !email || !specialization || 
-            !hospital || !address || !contactNumber || !certification || 
-            !description || !schedule || !schedule.weekdays || 
-            !schedule.weekends || !location) {
+        
+        const { firstName, lastName, email, contactNumber,location, description, schedule, specialization, hospital, address, certification } = req.body;
+
+        if (!firstName || !lastName || !email || !contactNumber || !description ) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
         
         const newDoctor = new Doctor({
-            firstName,
-            lastName,
-            email,
-            specialization,
-            hospital,
-            address,
-            contactNumber,
-            certification,
-            description,
-            schedule,
-            location
+          
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            contactNumber: contactNumber,
+            description: description,
+            schedule: schedule,
+            specialization: specialization,
+            hospital: hospital,
+            address: address,
+            location: location,
+            certification: certification
         });
         
+
         const savedDoctor = await newDoctor.save();
         return res.status(201).json(savedDoctor);
     } catch (error) {
-        console.error('Error adding doctor details:', error);
-        res.status(500).json({ message: 'Internal server error' });
+       
+        res.status(500).json({ message: error.message });
     }
 };
 export const getDoctorDetails = async (req, res) => {

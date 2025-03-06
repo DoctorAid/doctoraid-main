@@ -2,6 +2,7 @@ import Doctor from "../../../infrastructure/schema/doctor_schema.js";
 import Session from "../../../infrastructure/schema/sessions_schema.js";
 import Slot from "../../../infrastructure/schema/slots_schema.js";
 import Patient from "../../../infrastructure/schema/patient_schema.js";
+
 export const getSessions = async (req, res) => {
     try{
         const sessions = await Session.find();
