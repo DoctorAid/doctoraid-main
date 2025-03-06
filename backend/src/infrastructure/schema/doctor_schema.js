@@ -1,6 +1,12 @@
 import mongoose from 'mongoose';
+import { addDoctorDetails } from '../../dashboard/application/dto/doctor';
 
 const doctorsSchema = new mongoose.Schema({
+    doctorId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Doctor',
+        required: false
+    },
     firstName: {
         type: String,
         required: true
