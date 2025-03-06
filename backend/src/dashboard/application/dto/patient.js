@@ -71,7 +71,7 @@ export const createPatients = async (req, res) => {
     
 };
 
-//search patient by name or email
+//search patient by first name, last name  or email
 export const searchPatients = async (req, res)  => {
     try {
         const { firstName,lastName, email } =req.query;
@@ -86,6 +86,10 @@ export const searchPatients = async (req, res)  => {
         if (email) query.email = { $regex: new RegExp(email, "i") };
 
         const patients = await Patient.find(query);
+
+        if(!patients.length) {
+            return res.status(404).json({ message: "No patients found."});
+        }
         return res.status(200).json(patients);
 
     }catch (error) {
