@@ -13,11 +13,11 @@ const Records = () => {
         data={records}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => <RecordCard record={item} />}
-        ListEmptyComponent={ // Display SVG if no records exist
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>No records found</Text>
-          </View>
-        }
+        // ListEmptyComponent={ // Display SVG if no records exist
+        //   <View style={styles.emptyContainer}>
+        //     <Text style={styles.emptyText}>No records found</Text>
+        //   </View>
+        // }
         ListFooterComponent={ // Add SVG at the bottom of the list
           <View style={styles.svgContainer}>
             <EmptyRecordsSVG width={250} height={250} />

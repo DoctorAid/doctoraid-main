@@ -1,5 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { Clock, Calendar } from "lucide-react-native"; // Lucide Icons
+
 
 export const records = [
   {
@@ -31,8 +33,17 @@ const RecordCard = ({ record }) => {
       <Text style={styles.patientName}>{record.patientName}</Text>
       <Text style={styles.doctorName}>{record.doctorName}</Text>
       <Text style={styles.info}>
-        <Text style={styles.icon}>🕒</Text> {record.time}{"\n"}
-        <Text style={styles.icon}>📅</Text> {record.date}
+
+      <View style={styles.timeSection}>
+      <View style={styles.timeItem}>
+        <Clock size={16} color="#6B7280" />
+        <Text style={styles.timeText}>{record.time}</Text>
+      </View>
+      <View style={styles.timeItem}>
+        <Calendar size={16} color="#6B7280" />
+        <Text style={styles.timeText}>{record.date}</Text>
+      </View>
+    </View>
       </Text>
       <Text style={styles.label}>Presenting Complaint</Text>
       <Text style={styles.content}>{record.presentingComplaint}</Text>
@@ -42,7 +53,7 @@ const RecordCard = ({ record }) => {
       <Text style={styles.content}>{record.instructions}</Text>
       
       <View style={styles.prescriptionBox}>
-        <Text style={styles.label}>Prescription</Text>
+        <Text style={styles.labelPre}>Prescription</Text>
         <Text style={styles.prescription}>{record.prescription}</Text>
       </View>
     </View>
@@ -82,6 +93,11 @@ const styles = StyleSheet.create({
     color: "#2B3A4A",
     marginTop: 15,
   },
+  labelPre: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#2B3A4A",
+  },
   content: {
     fontSize: 14,
     color: "#6C757D",
@@ -96,6 +112,20 @@ const styles = StyleSheet.create({
   prescription: {
     fontSize: 14,
     color: "#2B3A4A",
+  },
+  timeSection: {
+    flexDirection: 'row',
+    marginBottom: 16,
+    gap: 16,
+  },
+  timeItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  timeText: {
+    color: '#6B7280',
+    fontSize: 14,
   },
 });
 
