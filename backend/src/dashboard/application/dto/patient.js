@@ -17,11 +17,12 @@ export const createPatients = async (req, res) => {
             contactNumber, 
             email, 
             address, 
-            medicalHistory 
+            medicalHistory, 
+            familyId
         } = req.body;
 
         // Validate required fields
-        if (!firstName || !lastName || !dateOfBirth || !gender || !doctors || !contactNumber || !email || !address) {
+        if (!firstName || !lastName || !dateOfBirth || !gender || !doctors || !contactNumber || !email || !address || !familyId) {
             return res.status(400).json({ message: "All required fields must be provided." });
         }
 
@@ -29,6 +30,22 @@ export const createPatients = async (req, res) => {
         const validGenders = ['Male', 'Female', 'Other'];
         if (!validGenders.includes(gender)) {
             return res.status(400).json({ message: "Invalid gender value." });
+        }
+
+        // Validate doctors field (ensure it's an array and has at least one doctor)
+        if (!Array.isArray(doctors) || doctors.length === 0) {
+            return res.status(400).json({ message: "Doctors must be an array and should contain at least one doctor." });
+        }
+
+        // Validate dateOfBirth format (ensure it's a valid date)
+        const dob = new Date(dateOfBirth);
+        if (isNaN(dob.getTime())) {
+            return res.status(400).json({ message: "Invalid date of birth format." });
+        }
+
+        // Validate medicalHistory (ensure it's an array)
+        if (medicalHistory && !Array.isArray(medicalHistory)) {
+            return res.status(400).json({ message: "Medical history must be an array." });
         }
 
         // Check if email already exists
@@ -41,15 +58,15 @@ export const createPatients = async (req, res) => {
         const newPatient = new Patient({
             firstName,
             lastName,
-            dateOfBirth,
+            dateOfBirth: dob,
             gender,
             doctors,
             contactNumber,
             email: email.toLowerCase(),
             address,
-            medicalHistory: medicalHistory || []
+            medicalHistory: medicalHistory || [],
+            familyId
         });
-
 
         // Save patient
         const savedPatient = await newPatient.save();
@@ -68,7 +85,6 @@ export const createPatients = async (req, res) => {
             error: error.message 
         });
     }
-    
 };
 
 //search patient by first name, last name  or email
