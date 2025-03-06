@@ -14,7 +14,7 @@ patientRouter.get('/search/byFirstName', searchPatients); //search patients by t
 patientRouter.get('/search/byLastName', searchPatients); //search patients by their last name
 patientRouter.get('/search/byEmail', searchPatients);    //search patients by thier email
 patientRouter.get('/getPatients', getPatientList);   //get the patient list
-patientRouter.get('/sort/byName', sortPatientList);    //sorting the patient list in ascending/ decending order
+patientRouter.get('/sort/byFirstName', sortPatientList);    //sorting the patient list in ascending/ decending order using first name
 patientRouter.get('/getPatientProfile/byPatientId', getPatientProfile);  //retrieving patient profile by the patient id
 patientRouter.get('/getMedicalRecords/byPatientId', getMedicalRecords); //getting patient medical records by thier Id
 
