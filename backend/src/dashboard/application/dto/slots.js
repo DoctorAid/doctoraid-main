@@ -26,12 +26,20 @@ export const createSlots = async (req, res) => {
     try {
         const { doctorid, startTime, endTime, date, duration } = req.body;
 
-        if ( !startTime || !endTime || !date || !duration) {
+        if ( !doctorid || !startTime || !endTime || !date || !duration) {
 
             return res.status(400).json({ message: 'Missing required data (doctorid,startTime, endTime, or duration)' });
         }
-        const doctor = await Doctor.find({ doctorId: doctorid });
-        const doctorId = doctor.doctor._id;
+        
+        const doctor = await Doctor.findOne({ doctorId: doctorid });
+        console.log("Doctor:", doctor);
+        if (doctor) {
+            const doctorId = doctor._id.toString() // Directly access _id
+            console.log("Doctor ID:", doctorId);
+        } else {
+            console.log("No doctor found with the given ID");
+        }
+
         const startDate = new Date(`1970-01-01T${startTime}:00`); // Corrected date format
         const endDate = new Date(`1970-01-01T${endTime}:00`);
         const availability = new Boolean(true);
@@ -46,7 +54,7 @@ export const createSlots = async (req, res) => {
 
         //creates a new session for the slots
         const session_time = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const new_session = new Session({doctorId:doctorId,date:date,time:session_time});   // creating a new session
+        const new_session = new Session({doctorId:new mongoose.Types.ObjectId(doctor._id),date:date,time:session_time});   // creating a new session
         const saved_session = await new_session.save(); // saving the session in db
         console.log("new session created successfully");
 

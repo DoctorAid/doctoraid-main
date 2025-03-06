@@ -17,11 +17,12 @@ export const createPatients = async (req, res) => {
             contactNumber, 
             email, 
             address, 
-            medicalHistory 
+            medicalHistory, 
+            familyId
         } = req.body;
 
         // Validate required fields
-        if (!firstName || !lastName || !dateOfBirth || !gender || !doctors || !contactNumber || !email || !address) {
+        if (!firstName || !lastName || !dateOfBirth || !gender || !doctors || !contactNumber || !email || !address || !familyId) {
             return res.status(400).json({ message: "All required fields must be provided." });
         }
 
@@ -29,6 +30,22 @@ export const createPatients = async (req, res) => {
         const validGenders = ['Male', 'Female', 'Other'];
         if (!validGenders.includes(gender)) {
             return res.status(400).json({ message: "Invalid gender value." });
+        }
+
+        // Validate doctors field (ensure it's an array and has at least one doctor)
+        if (!Array.isArray(doctors) || doctors.length === 0) {
+            return res.status(400).json({ message: "Doctors must be an array and should contain at least one doctor." });
+        }
+
+        // Validate dateOfBirth format (ensure it's a valid date)
+        const dob = new Date(dateOfBirth);
+        if (isNaN(dob.getTime())) {
+            return res.status(400).json({ message: "Invalid date of birth format." });
+        }
+
+        // Validate medicalHistory (ensure it's an array)
+        if (medicalHistory && !Array.isArray(medicalHistory)) {
+            return res.status(400).json({ message: "Medical history must be an array." });
         }
 
         // Check if email already exists
@@ -41,15 +58,15 @@ export const createPatients = async (req, res) => {
         const newPatient = new Patient({
             firstName,
             lastName,
-            dateOfBirth,
+            dateOfBirth: dob,
             gender,
             doctors,
             contactNumber,
             email: email.toLowerCase(),
             address,
-            medicalHistory: medicalHistory || []
+            medicalHistory: medicalHistory || [],
+            familyId
         });
-
 
         // Save patient
         const savedPatient = await newPatient.save();
@@ -68,10 +85,9 @@ export const createPatients = async (req, res) => {
             error: error.message 
         });
     }
-    
 };
 
-//search patient by name or email
+//search patient by first name, last name  or email
 export const searchPatients = async (req, res)  => {
     try {
         const { firstName,lastName, email } =req.query;
@@ -86,6 +102,10 @@ export const searchPatients = async (req, res)  => {
         if (email) query.email = { $regex: new RegExp(email, "i") };
 
         const patients = await Patient.find(query);
+
+        if(!patients.length) {
+            return res.status(404).json({ message: "No patients found."});
+        }
         return res.status(200).json(patients);
 
     }catch (error) {
@@ -136,10 +156,13 @@ export const sortPatientList = async (req, res) => {
 
         }
 
-        //validate doctor id
+        //validate doctor Id
         if (doctorId && !mongoose.Types.ObjectId.isValid(doctorId)) {
             return res.status(400).json({ message: "Invalid doctorId. Please provide a valid Id"});
         }
+
+        //logging the sort method
+        console.log("Sort method: ", sortMethod);
 
         //validating the sorting method
         const order = sortMethod === "desc" ? -1 : 1;
@@ -147,11 +170,17 @@ export const sortPatientList = async (req, res) => {
         //query to filter by doctors Id if provided
         const query = doctorId ? { doctors: doctorId } : {};
 
+        //debug the query
+        console.log("Query: ", query);
+
         //getting the patients with sorting and pagination
         const patients = await Patient.find(query).lean()
-            .sort({ lastName: order, firstName: order })  //sort by name, last name is pioritized
+            .sort({ firstName: order })  //sort by first name
             .skip((page - 1) * limit)
             .limit(limit);
+
+        //logging patients to check the output
+        console.log("Patients: ", patients);
 
         const totalPatients = await Patient.countDocuments(query);
 
