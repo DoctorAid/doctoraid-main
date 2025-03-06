@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const doctorsSchema = new mongoose.Schema({
     doctorId: {
         type: String,
-        required: true,
+        required: false,
         unique: true
     },
     firstName: {
