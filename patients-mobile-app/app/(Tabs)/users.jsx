@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
 import UserSwitch from '../Components/UserSwitch';
 import UserProfInfo from '../Components/UserProfInfo';
+import FamPic from '../Assets/images/fam.svg';
 
 const UserProfile = () => {
     const [selectedProfile, setSelectedProfile] = useState({
@@ -19,19 +20,36 @@ const UserProfile = () => {
     });
 
     return (
-        <View style={styles.container}>
-            <UserSwitch onProfileChange={setSelectedProfile} />
-            <UserProfInfo profile={selectedProfile} />
-        </View>
+        <SafeAreaView style={styles.safeArea}>
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+                <View style={styles.container}>
+                    <UserSwitch onProfileChange={setSelectedProfile} />
+                    <UserProfInfo profile={selectedProfile} />
+                </View>
+                <View style={styles.svgContainer}>
+                    <FamPic width={350}  />
+                </View>
+            </ScrollView>
+        </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
+    safeArea: {
         flex: 1,
         backgroundColor: '#F8F9FB',
-        paddingTop: 40
-    }
+    },
+    scrollContainer: {
+        flexGrow: 1,
+        padding: 20,
+    },
+    container: {
+        backgroundColor: '#F8F9FB',
+    },
+    svgContainer: {
+        alignItems: 'center',
+        marginBottom: -35,
+    },
 });
 
 export default UserProfile;
