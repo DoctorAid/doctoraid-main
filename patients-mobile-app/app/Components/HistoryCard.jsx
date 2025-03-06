@@ -62,15 +62,16 @@ const HistoryCard = () => {
 
 const styles = StyleSheet.create({
   container : {
+    backgroundColor: "#FEFAF6",
     flex:1,
     padding: 5,
-    paddingHorizontal: 20,
+    paddingHorizontal: 30,
     width: "100%",
   },
 
   cardContainer: {
     flexDirection: "row",
-    backgroundColor: "#E0F2FE",
+    backgroundColor: "#C9E4F3",
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
@@ -87,7 +88,6 @@ const styles = StyleSheet.create({
   imagePlaceholder: {
     width: 48,
     height: 48,
-    backgroundColor: "#FFFFFF",
     borderRadius: 24,
     borderWidth: 2,
     borderColor: "#7DD3FC",

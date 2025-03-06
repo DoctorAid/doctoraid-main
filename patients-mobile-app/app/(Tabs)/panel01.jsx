@@ -27,15 +27,16 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: "#F8F8F8",
-    marginBottom:20,
+    backgroundColor: "#FEFAF6",
   },
 
   header: {
-    fontSize:24,
+    fontSize:40,
+    fontFamily: "Raleway",
     fontWeight: "bold",
-    color: "#333",
+    color: "#295567",
     margin: 20,
+    padding: 10,
   },
 
   ScrollView: {
