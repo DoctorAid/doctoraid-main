@@ -1,5 +1,6 @@
 import Session from "../../../infrastructure/schema/sessions_schema.js";
 import Slot from "../../../infrastructure/schema/slots_schema.js";
+import mongoose from "mongoose";
 
 function generateTimeslots(startTime, endTime, duration) {
     const slots = [];
@@ -22,10 +23,11 @@ function generateTimeslots(startTime, endTime, duration) {
 
 export const createSlots = async (req, res) => {
     try {
-        const { startTime, endTime, date, duration } = req.body;
+        const { doctorid, startTime, endTime, date, duration } = req.body;
 
-        if (!startTime || !endTime || !date || !duration) {
-            return res.status(400).json({ message: 'Missing required data (startTime, endTime, or duration)' });
+        if ( !startTime || !endTime || !date || !duration) {
+
+            return res.status(400).json({ message: 'Missing required data (doctorid,startTime, endTime, or duration)' });
         }
 
         const startDate = new Date(`1970-01-01T${startTime}:00`); // Corrected date format
@@ -42,7 +44,7 @@ export const createSlots = async (req, res) => {
 
         //creates a new session for the slots
         const session_time = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const new_session = new Session({date:date,time:session_time});   // creating a new session
+        const new_session = new Session({doctorId:doctorid,date:date,time:session_time});   // creating a new session
         const saved_session = await new_session.save(); // saving the session in db
         console.log("new session created successfully");
 
@@ -72,48 +74,101 @@ export const createSlots = async (req, res) => {
     }
 };
 
-export const getSlotsbySession = async (req,res) => {
-    try{
-        const slots = await Slot.find({Session: req.params.id}).populate('Session');
+
+
+export const getSlotsbySession = async (req, res) => {
+    try {
+        const slot_id = req.params.id;
+
+        // Check if the session ID exists
+        const sessionExists  = await Session.exists({ _id: slot_id });
+        if (!sessionExists) {
+            res.status(404).json({ message: 'Session not found' });
+            return;
+        }
+
+        // Find slots linked to the session
+        const slots = await Slot.find({ Session: slot_id }).populate('Session');
+        if (slots.length === 0) {
+            res.status(200).json({ message: 'No slots found for this session' });
+            return;
+        }
+
         res.status(200).json(slots);
-    }catch(error){
-        res.status(404).json({message: 'cant retrieve slots'});
+    } catch (error) {
+        res.status(404).json({ message: error.message });
     }
 };
+
 
 //cancelling appointment using session id
 export const cancelAppointment = async (req, res) => {
     try {
-        const { session_id, slot_id } = req.params;
+        const slot_id = req.params.id;
 
-        if(!session_id || !slot_id) {
-            return res.status(400).json({ message: 'Session Id and Slot Id are needed'});
+        if (!slot_id) {
+            return res.status(400).json({ message: 'Slot ID is required' });
         }
 
+        // Check if the slot exists before updating
+        const existingSlot = await Slot.findById(slot_id);
+        if (!existingSlot) {
+            return res.status(404).json({ message: 'Slot not found in database' });
+        }
 
-        const updateSlot = await Slot.findOneAndUpdate(
-            {_id:slot_id, Session: session_id, status: { $ne: 'available'} },   //only updating if the status is not already available
+        console.log("Existing slot:", existingSlot); // Debugging log
+
+        // Update the slot
+        const updatedSlot = await Slot.findByIdAndUpdate(
+            slot_id,
             {
                 $set: {
                     status: 'available',
-                    patientNote: '',
-                    familyId: '',
+                    patientNote: null,
+                    familyId: null,
                     patientId: null,
-                    patientName: '',
+                    patientName: null,
                     recordId: null
-
                 }
             },
-            { new: true } //returns the updated document
+            { new: true }
         );
 
-        if (!updateSlot ) {
-            return res.status(404).json({ message: 'Slot not found or slot is already available'});
-        }
+        console.log("Updated slot:", updatedSlot); // Debugging log
 
-        res.status(200).json({ message: 'Appointment cancelled successfully', updateSlot });
-    }  catch (error) {
-        console.error('Error cancelling the appointment', error);
-        res.status(500).json({ message: 'Server error', error: error.message });
+        return res.status(200).json({ message: 'Slot cancelled successfully', updatedSlot });
+
+    } catch (error) {
+        console.error("Error:", error);
+        return res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
+
+
+// const updateSlot = await Slot.findOneAndUpdate(
+    
+//     {_id:slot_id, Session: session_id, status: { $ne: 'available'} },   //only updating if the status is not already available
+//     {
+//         $set: {
+//             status: 'available',
+//             patientNote: '',
+//             familyId: '',
+//             patientId: null,
+//             patientName: '',
+//             recordId: null
+
+//         }
+//     },
+//     { new: true } //returns the updated document
+
+
+//     if (!updateSlot ) {
+//         return res.status(404).json({ message: 'Slot not found or slot is already available'});
+//     }
+
+//     res.status(200).json({ message: 'Appointment cancelled successfully', updateSlot });
+//     catch (error) {
+//     console.error('Error cancelling the appointment', error);
+//     res.status(500).json({ message: 'Server error', error: error.message });
+//     }
+// );
