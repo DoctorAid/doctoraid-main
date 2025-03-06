@@ -24,6 +24,7 @@ export default function Tab() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
+    backgroundColor: "#F9F4EF"
   },
   container: {
     flex: 1,
