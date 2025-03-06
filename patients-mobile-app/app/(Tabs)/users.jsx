@@ -15,19 +15,30 @@ const UserProfile = () => {
         height: "5'3",
         gender: 'Female',
         image: 'https://i.pravatar.cc/100?img=1',
-        allergies: 'Arya Muller',
-        bloodType: 'Arya Muller'
+        // Starting with an array for allergies
+        allergies: ['Peanuts', 'Shellfish'],
+        bloodType: 'A+'
     });
+
+    const handleProfileUpdate = (updatedProfile) => {
+        setSelectedProfile(updatedProfile);
+    };
 
     return (
         <SafeAreaView style={styles.safeArea}>
-            <ScrollView contentContainerStyle={styles.scrollContainer}>
+            <ScrollView 
+                contentContainerStyle={styles.scrollContainer}
+                showsVerticalScrollIndicator={false}
+            >
                 <View style={styles.container}>
                     <UserSwitch onProfileChange={setSelectedProfile} />
-                    <UserProfInfo profile={selectedProfile} />
+                    <UserProfInfo 
+                        profile={selectedProfile} 
+                        onUpdateProfile={handleProfileUpdate} 
+                    />
                 </View>
                 <View style={styles.svgContainer}>
-                    <FamPic width={300}  />
+                    <FamPic width={300} />
                 </View>
             </ScrollView>
         </SafeAreaView>

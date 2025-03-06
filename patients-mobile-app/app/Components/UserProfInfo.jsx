@@ -1,21 +1,56 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import InfoRow from './InfoRow';
+import EditProfileModal from './EditProfileModal';
 
-const InfoRow = ({ label, value }) => (
-    <View style={styles.infoRow}>
-        <Text style={styles.label}>{label}</Text>
-        <Text style={styles.value}>{value}</Text>
-    </View>
-);
-
-const UserProfInfo = ({ profile }) => {
+// Component to display multiple allergies
+const AllergiesList = ({ allergies }) => {
+    // Handle both string and array formats
+    const allergiesArray = Array.isArray(allergies) ? allergies : 
+                          (allergies ? [allergies] : []);
+    
+    if (allergiesArray.length === 0) {
+        return <Text style={styles.noDataText}>None</Text>;
+    }
+    
     return (
-        <ScrollView style={styles.scrollView}>
-            <View style={styles.container}>
+        <View style={styles.allergiesContainer}>
+            {allergiesArray.map((allergy, index) => (
+                <View key={index} style={styles.allergyChip}>
+                    <Text style={styles.allergyText}>{allergy}</Text>
+                </View>
+            ))}
+        </View>
+    );
+};
+
+const UserProfInfo = ({ profile, onUpdateProfile }) => {
+    const [modalVisible, setModalVisible] = useState(false);
+    const [currentSection, setCurrentSection] = useState('');
+
+    const openModal = (section) => {
+        setCurrentSection(section);
+        setModalVisible(true);
+    };
+
+    const handleSave = (section, data) => {
+        // Create updated profile by merging the new data
+        const updatedProfile = { ...profile, ...data };
+        onUpdateProfile(updatedProfile);
+    };
+
+    return (
+        <View style={styles.container}>
+            <View style={styles.infoCard}>
                 <View style={styles.header}>
                     <Text style={styles.title}>General Info</Text>
-                    <Feather name="edit-2" size={20} color="#2C4157" />
+                    <TouchableOpacity 
+                        style={styles.editButton}
+                        onPress={() => openModal('general')}
+                    >
+                        <Feather name="edit-2" size={20} color="#2C4157" />
+                    </TouchableOpacity>
                 </View>
                 <InfoRow label="Name" value={profile.name} />
                 <InfoRow label="Relation" value={profile.relation} />
@@ -26,23 +61,44 @@ const UserProfInfo = ({ profile }) => {
                 <InfoRow label="Gender" value={profile.gender} />
             </View>
 
-            <View style={styles.container}>
+            <View style={styles.infoCard}>
                 <View style={styles.header}>
                     <Text style={styles.title}>Medical Info</Text>
-                    <Feather name="edit-2" size={20} color="#2C4157" />
+                    <TouchableOpacity 
+                        style={styles.editButton}
+                        onPress={() => openModal('medical')}
+                    >
+                        <Feather name="edit-2" size={20} color="#2C4157" />
+                    </TouchableOpacity>
                 </View>
-                <InfoRow label="Allergies" value={profile.allergies} />
+                
+                {/* Special handling for allergies */}
+                <View style={styles.infoRow}>
+                    <Text style={styles.label}>Allergies</Text>
+                    <View style={styles.allergiesWrapper}>
+                        <AllergiesList allergies={profile.allergies} />
+                    </View>
+                </View>
+                
                 <InfoRow label="Blood Type" value={profile.bloodType} />
             </View>
-        </ScrollView>
+
+            <EditProfileModal
+                isVisible={modalVisible}
+                onClose={() => setModalVisible(false)}
+                section={currentSection}
+                profile={profile}
+                onSave={handleSave}
+            />
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
-    scrollView: {
-        width: '100%'
-    },
     container: {
+        width: '100%',
+    },
+    infoCard: {
         width: '90%',
         alignSelf: 'center',
         backgroundColor: '#FFFFFF',
@@ -66,10 +122,17 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: '#2C4157',
     },
+    editButton: {
+        padding: 8,
+        borderRadius: 8,
+        backgroundColor: '#F8FBFE',
+        borderWidth: 1,
+        borderColor: '#E8F1F9',
+    },
     infoRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
+        alignItems: 'flex-start', // Changed to flex-start for allergies list
         paddingVertical: 12,
         borderBottomWidth: 1,
         borderBottomColor: '#E8F1F9',
@@ -79,10 +142,32 @@ const styles = StyleSheet.create({
         color: '#2C4157',
         fontWeight: '500',
     },
-    value: {
+    allergiesWrapper: {
+        flex: 1,
+        alignItems: 'flex-end',
+        maxWidth: '60%',
+    },
+    allergiesContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'flex-end',
+        gap: 6,
+    },
+    allergyChip: {
+        backgroundColor: '#E8F1F9',
+        borderRadius: 12,
+        paddingVertical: 4,
+        paddingHorizontal: 10,
+        marginBottom: 4,
+    },
+    allergyText: {
+        fontSize: 14,
+        color: '#2C4157',
+    },
+    noDataText: {
         fontSize: 16,
         color: '#6B7C8F',
-        textAlign: 'right',
+        fontStyle: 'italic',
     },
 });
 
