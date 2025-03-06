@@ -1,50 +1,55 @@
-import Doctor from "../../../infrastructure/schema/doctors_schema.js";
-import Patient from "../../../infrastructure/schema/patients_schema.js";
+import Doctor from "../../../infrastructure/schema/doctor_schema.js";
+import Patient from "../../../infrastructure/schema/patient_schema.js";
 import Slot from "../../../infrastructure/schema/slots_schema.js";
 
-export const getDoctorById = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const doctor = await Doctor.findById(id);
+// export const getDoctorById = async (req, res) => {
+//     try {
+//         const { id } = req.params;
+//         const doctor = await Doctor.findById(id);
         
-        if (!doctor) {
-            return res.status(404).json({ message: 'Doctor not found' });
-        }
+//         if (!doctor) {
+//             return res.status(404).json({ message: 'Doctor not found' });
+//         }
         
-        res.status(200).json(doctor);
-    } catch (error) {
-        res.status(500).json({ message: 'Error retrieving doctor', error: error.message });
-    }
-};
+//         res.status(200).json(doctor);
+//     } catch (error) {
+//         res.status(500).json({ message: 'Error retrieving doctor', error: error.message });
+//     }
+// };
 
 export const searchDoctors = async (req, res) => {
     try {
+        console.log("Search request received:", req.query); 
+
         const { name, location } = req.query;
         let query = {};
-        
+
         if (name) {
-            
             query.$or = [
                 { firstName: { $regex: name, $options: 'i' } },
                 { lastName: { $regex: name, $options: 'i' } }
             ];
         }
-        
+
         if (location) {
-            
-            query.$or = query.$or || [];
-            query.$or.push(
-                { address: { $regex: location, $options: 'i' } }
-            );
+            if (query.$or) {
+                query.$and = [{ $or: query.$or }, { location: { $regex: location, $options: 'i' } }];
+                delete query.$or;
+            } else {
+                query.location = { $regex: location, $options: 'i' };
+            }
         }
 
+        console.log("Final query:", JSON.stringify(query, null, 2)); 
+
         const doctors = await Doctor.find(query);
-        
         res.status(200).json(doctors);
     } catch (error) {
+        console.error("Error searching doctors:", error.message); 
         res.status(500).json({ message: 'Error searching doctors', error: error.message });
     }
 };
+
 
 export const subscribeToDoctor = async (req, res) => {
     try {
@@ -132,10 +137,11 @@ export const getActiveAppointments = async (req, res) => {
         }
         
         const currentDate = new Date();
+        
         const currentHours = currentDate.getHours();
         const currentMinutes = currentDate.getMinutes();
-        const currentTimeString = `${currentHours.toString().padStart(2, '0')}:${currentMinutes.toString().padStart(2, '0')}`;
-
+        const currentTotalMinutes = currentHours * 60 + currentMinutes;
+        
         const appointments = await Slot.find({
             patientId: patientId,
             status: 'booked'
@@ -143,28 +149,30 @@ export const getActiveAppointments = async (req, res) => {
         
         const activeAppointments = appointments.filter(slot => {
             if (!slot.Session || !slot.Session.date) return false;
-
+            
             const sessionDate = new Date(slot.Session.date);
             const isSameDay = 
                 sessionDate.getFullYear() === currentDate.getFullYear() &&
                 sessionDate.getMonth() === currentDate.getMonth() &&
                 sessionDate.getDate() === currentDate.getDate();
+            
+            if (!isSameDay) return false;
 
-            const isCurrentlyActive = 
-                isSameDay && 
-                slot.startTime <= currentTimeString && 
-                currentTimeString < slot.endTime; 
-                
-            return isCurrentlyActive;
+            const [startHours, startMinutes] = slot.startTime.split(':').map(Number);
+            const [endHours, endMinutes] = slot.endTime.split(':').map(Number);
+            
+            const startTotalMinutes = startHours * 60 + startMinutes;
+            const endTotalMinutes = endHours * 60 + endMinutes;
+            
+            return currentTotalMinutes >= startTotalMinutes && currentTotalMinutes < endTotalMinutes;
         });
-
+        
         return res.status(200).json({
-            message: activeAppointments.length 
-                ? 'Active appointments found' 
+            message: activeAppointments.length
+                ? 'Active appointments found'
                 : 'No currently active appointments found for this patient',
             appointments: activeAppointments
         });
-
     } catch (error) {
         res.status(500).json({ message: 'Error retrieving active appointments', error: error.message });
     }
