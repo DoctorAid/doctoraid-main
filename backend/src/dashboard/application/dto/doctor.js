@@ -8,7 +8,7 @@ export const createDoctor = async (req, res) => {
     try {
         
         
-        const { doctorId,firstName, lastName, email, contactNumber, description, schedule, specialization, hospital, address, certification } = req.body;
+        const { doctorId,firstName, lastName, email, contactNumber,location, description, schedule, specialization, hospital, address, certification } = req.body;
 
         if (!firstName || !lastName || !email || !contactNumber || !description ) {
             return res.status(400).json({ message: 'Missing required fields' });
@@ -25,6 +25,7 @@ export const createDoctor = async (req, res) => {
             specialization: specialization,
             hospital: hospital,
             address: address,
+            location: location,
             certification: certification
         });
         
