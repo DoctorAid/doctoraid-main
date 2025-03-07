@@ -6,10 +6,12 @@ import recordRouter from './dashboard/api/recordAPI.js'
 import patientRouter from './dashboard/api/patientAPI.js'
 import doctorsRouter from './dashboard/api/doctorAPI.js'
 
-import Cors from 'cors';
 
-app.use(Cors({ origin: '*' }));
+import cors from 'cors'
+
+
 const app = express();
+app.use(cors({ origin: '*' }));
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
