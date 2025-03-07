@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 import Record from "../../../infrastructure/schema/records_schema.js";
 import Patient from "../../../infrastructure/schema/patient_schema.js";
 import Doctor from "../../../infrastructure/schema/doctor_schema.js";
@@ -38,20 +40,26 @@ export const createRecord = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
-
 export const getRecordsByPatient = async (req, res) => {
     try {
         const { patientId, doctorId, page = 1, limit = 10 } = req.query;
+       
         if (!patientId || !doctorId) {
             return res.status(400).json({ message: 'Patient ID and Doctor ID are required' });
         }
-
-        const records = await Record.find({ patient: patientId, doctor: doctorId })
-            .populate('patient')
-            .populate('doctor')
-            .skip((page - 1) * limit)
-            .limit(parseInt(limit));
-
+       
+        // Validate ObjectId format
+        if (!mongoose.Types.ObjectId.isValid(patientId) || !mongoose.Types.ObjectId.isValid(doctorId)) {
+            return res.status(400).json({ message: 'Invalid patient or doctor ID format' });
+        }
+       
+        const records = await Record.find({
+            patientId: new mongoose.Types.ObjectId(patientId),
+            doctorId: new mongoose.Types.ObjectId(doctorId)
+        })
+        .skip((parseInt(page) - 1) * parseInt(limit))
+        .limit(parseInt(limit));
+           
         return res.status(200).json(records);
     } catch (error) {
         console.error('Error fetching records:', error);
@@ -61,20 +69,33 @@ export const getRecordsByPatient = async (req, res) => {
 
 export const getRecordById = async (req, res) => {
     try {
-        const { id } = req.params;
-        const { patientId, doctorId } = req.query;
+        const { id } = req.query;
         
-        // First find the record by ID
-        const record = await Record.findOne({ _id: id });
+        // Validate record ID format
+        if (!id) {
+            return res.status(400).json({ message: 'Record ID is required' });
+        }
+        
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: 'Invalid record ID format' });
+        }
+        
+        // Find the record by ID (explicit conversion)
+        const record = await Record.findOne({ _id: new mongoose.Types.ObjectId(id) });
         
         if (!record) {
             return res.status(404).json({ message: 'Record not found' });
         }
         
-        // Check if the record belongs to the specified patient and doctor
-        if (record.patientId.toString() !== patientId || record.doctorId.toString() !== doctorId) {
-            return res.status(403).json({ message: 'Record not found for this patient or doctor' });
-        }
+        // // Validate patient and doctor IDs
+        // if (!mongoose.Types.ObjectId.isValid(patientId) || !mongoose.Types.ObjectId.isValid(doctorId)) {
+        //     return res.status(400).json({ message: 'Invalid patient or doctor ID format' });
+        // }
+        
+        // // Check if the record belongs to the specified patient and doctor
+        // if (record.patientId.toString() !== patientId || record.doctorId.toString() !== doctorId) {
+        //     return res.status(403).json({ message: 'Record not found for this patient or doctor' });
+        // }
         
         return res.status(200).json(record);
     } catch (error) {
@@ -82,21 +103,50 @@ export const getRecordById = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
-
 export const updateRecord = async (req, res) => {
     try {
         const { id } = req.params;
-        const updateData = req.body;
-
-        const updatedRecord = await Record.findOneAndUpdate({ recordId: id }, updateData, { new: true });
-
-        if (!updatedRecord) {
+        const { prescription, observation, notes, date } = req.body;
+        
+        // Find the record first to check if it exists
+        const record = await Record.findById(id);
+        if (!record) {
             return res.status(404).json({ message: 'Record not found' });
         }
-
+        
+        // Create an object with only the fields that should be updated
+        const updateData = {};
+        
+        if (prescription !== undefined) updateData.prescription = prescription;
+        if (observation !== undefined) updateData.observation = observation;
+        if (notes !== undefined) updateData.notes = notes;
+        if (date !== undefined) updateData.date = date;
+        
+        // We don't allow updating patientId or doctorId for data integrity
+        
+        // Set the updatedAt timestamp
+        updateData.updatedAt = new Date();
+        
+        // Update the record and return the updated document
+        const updatedRecord = await Record.findByIdAndUpdate(
+            id,
+            updateData,
+            { new: true, runValidators: true }
+        );
+        
         return res.status(200).json(updatedRecord);
     } catch (error) {
         console.error('Error updating record:', error);
+        
+        // Provide more specific error messages for common issues
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({ message: 'Validation error', details: error.message });
+        }
+        
+        if (error.name === 'CastError') {
+            return res.status(400).json({ message: 'Invalid record ID format' });
+        }
+        
         res.status(500).json({ message: 'Internal server error' });
     }
 };
