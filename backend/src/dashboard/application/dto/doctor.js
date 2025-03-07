@@ -4,10 +4,8 @@ import Session from "../../../infrastructure/schema/sessions_schema.js";
 import Slot from "../../../infrastructure/schema/slots_schema.js";
 import Patient from "../../../infrastructure/schema/patient_schema.js";
 
-
 export const createDoctor = async (req, res) => {
     try {
-        
         
         const { doctorId,firstName, lastName, email, contactNumber,location, description, schedule, specialization, hospital, address, certification } = req.body;
 
@@ -38,6 +36,7 @@ export const createDoctor = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
 export const getAllDoctors = async (req, res) => {
     try {
         const doctors = await Doctor.find({}, 'firstName lastName email contactNumber description schedule');
@@ -51,18 +50,15 @@ export const getAllDoctors = async (req, res) => {
 export const getDoctorById = async (req, res) => {
     try {
         const { id } = req.params; // Get the `_id` from request URL
-
-        // ✅ Validate if the provided ID is a valid MongoDB ObjectId
+    
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(400).json({ message: "Invalid doctor ID format" });
         }
 
-        // ✅ Find the doctor strictly by `_id`
         const doctor = await Doctor.findById(id).select(
             "firstName lastName email contactNumber specialization hospital address certification description schedule location"
         );
 
-        // ✅ If no doctor found, return 404
         if (!doctor) {
             return res.status(404).json({ message: "Doctor not found" });
         }
@@ -73,6 +69,7 @@ export const getDoctorById = async (req, res) => {
         return res.status(500).json({ message: "Internal server error" });
     }
 };
+
 export const deleteDoctorDetails = async (req, res) => {
     try {
         const { doctorId } = req.query;
