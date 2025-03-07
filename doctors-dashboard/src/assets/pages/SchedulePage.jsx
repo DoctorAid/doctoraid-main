@@ -5,8 +5,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { createSlots } from '../api/slotsAPI.js';
 import { Clock, Calendar, Timer,CircleArrowRight,CircleArrowLeft } from 'lucide-react';
-import { getSessionsByDocId } from '../api/sessionsAPI.js';
-
+import { getAllSessions} from '../api/sessionsAPI.js';
 
 function SchedulePage() {
 
@@ -15,559 +14,9 @@ function SchedulePage() {
   const [startingTime, setStartingTime] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
 
- 
-
- 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [sessions, setSessions] = useState([]);
-
-  // const sessions = [
-  //   { _id: "67a8c7eec9bf90242a504f3d", date: "2025-03-06T00:00:00.000+00:00", event: "Morning Session at 10:00 AM" },
-  //   { _id: "67a8c7eec9bf90242a504f44", date: "2025-03-09T00:00:00.000+00:00", event: "Afternoon Session at 1:30 PM" },
-  //   { _id: "67a8c7eec9bf90242a504f4b", date: "2025-03-14T00:00:00.000+00:00", event: "Evening Session at 3:00 PM" }
-  // ];
-
-  // const slots = [
-  //   // Slots for session 1 (2025-02-14)
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f3f",
-  //     "sessionId": "67a8c7eec9bf90242a504f3d",
-  //     "startTime": "09:00 AM",
-  //     "endTime": "09:05 AM",
-  //     "duration": 5,
-  //     "status": "available"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f40",
-  //     "sessionId": "67a8c7eec9bf90242a504f3d",
-  //     "startTime": "09:05 AM",
-  //     "endTime": "09:10 AM",
-  //     "duration": 5,
-  //     "status": "booked",
-  //     "patientNote": "Fever and headache",
-  //     "familyId": "F101",
-  //     "patientId": "P101",
-  //     "patientName": "Alice Smith"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f41",
-  //     "sessionId": "67a8c7eec9bf90242a504f3d",
-  //     "startTime": "09:10 AM",
-  //     "endTime": "09:15 AM",
-  //     "duration": 5,
-  //     "status": "available"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f42",
-  //     "sessionId": "67a8c7eec9bf90242a504f3d",
-  //     "startTime": "09:15 AM",
-  //     "endTime": "09:20 AM",
-  //     "duration": 5,
-  //     "status": "booked",
-  //     "patientNote": "Cough and cold",
-  //     "familyId": "F102",
-  //     "patientId": "P102",
-  //     "patientName": "Bob Johnson"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f43",
-  //     "sessionId": "67a8c7eec9bf90242a504f3d",
-  //     "startTime": "09:20 AM",
-  //     "endTime": "09:25 AM",
-  //     "duration": 5,
-  //     "status": "available"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f44",
-  //     "sessionId": "67a8c7eec9bf90242a504f3d",
-  //     "startTime": "09:25 AM",
-  //     "endTime": "09:30 AM",
-  //     "duration": 5,
-  //     "status": "booked",
-  //     "patientNote": "Chest pain",
-  //     "familyId": "F103",
-  //     "patientId": "P103",
-  //     "patientName": "Mary Evans"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f45",
-  //     "sessionId": "67a8c7eec9bf90242a504f3d",
-  //     "startTime": "09:30 AM",
-  //     "endTime": "09:35 AM",
-  //     "duration": 5,
-  //     "status": "available"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f46",
-  //     "sessionId": "67a8c7eec9bf90242a504f3d",
-  //     "startTime": "09:35 AM",
-  //     "endTime": "09:40 AM",
-  //     "duration": 5,
-  //     "status": "booked",
-  //     "patientNote": "Flu-like symptoms",
-  //     "familyId": "F104",
-  //     "patientId": "P104",
-  //     "patientName": "John Doe"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f47",
-  //     "sessionId": "67a8c7eec9bf90242a504f3d",
-  //     "startTime": "09:40 AM",
-  //     "endTime": "09:45 AM",
-  //     "duration": 5,
-  //     "status": "available"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f48",
-  //     "sessionId": "67a8c7eec9bf90242a504f3d",
-  //     "startTime": "09:45 AM",
-  //     "endTime": "09:50 AM",
-  //     "duration": 5,
-  //     "status": "booked",
-  //     "patientNote": "Skin rash",
-  //     "familyId": "F105",
-  //     "patientId": "P105",
-  //     "patientName": "James Williams"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f49",
-  //     "sessionId": "67a8c7eec9bf90242a504f3d",
-  //     "startTime": "09:50 AM",
-  //     "endTime": "09:55 AM",
-  //     "duration": 5,
-  //     "status": "available"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f4a",
-  //     "sessionId": "67a8c7eec9bf90242a504f3d",
-  //     "startTime": "09:55 AM",
-  //     "endTime": "10:00 AM",
-  //     "duration": 5,
-  //     "status": "booked",
-  //     "patientNote": "Headache and nausea",
-  //     "familyId": "F106",
-  //     "patientId": "P106",
-  //     "patientName": "Sophie Clark"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f4b",
-  //     "sessionId": "67a8c7eec9bf90242a504f3d",
-  //     "startTime": "10:00 AM",
-  //     "endTime": "10:05 AM",
-  //     "duration": 5,
-  //     "status": "available"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f4c",
-  //     "sessionId": "67a8c7eec9bf90242a504f3d",
-  //     "startTime": "10:05 AM",
-  //     "endTime": "10:10 AM",
-  //     "duration": 5,
-  //     "status": "booked",
-  //     "patientNote": "Diabetes management",
-  //     "familyId": "F107",
-  //     "patientId": "P107",
-  //     "patientName": "Peter Parker"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f4d",
-  //     "sessionId": "67a8c7eec9bf90242a504f3d",
-  //     "startTime": "10:10 AM",
-  //     "endTime": "10:15 AM",
-  //     "duration": 5,
-  //     "status": "available"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f4e",
-  //     "sessionId": "67a8c7eec9bf90242a504f3d",
-  //     "startTime": "10:15 AM",
-  //     "endTime": "10:20 AM",
-  //     "duration": 5,
-  //     "status": "booked",
-  //     "patientNote": "Arthritis checkup",
-  //     "familyId": "F108",
-  //     "patientId": "P108",
-  //     "patientName": "Linda Johnson"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f4f",
-  //     "sessionId": "67a8c7eec9bf90242a504f3d",
-  //     "startTime": "10:20 AM",
-  //     "endTime": "10:25 AM",
-  //     "duration": 5,
-  //     "status": "available"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f50",
-  //     "sessionId": "67a8c7eec9bf90242a504f3d",
-  //     "startTime": "10:25 AM",
-  //     "endTime": "10:30 AM",
-  //     "duration": 5,
-  //     "status": "booked",
-  //     "patientNote": "Post-surgery follow-up",
-  //     "familyId": "F109",
-  //     "patientId": "P109",
-  //     "patientName": "Chris Hemsworth"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f51",
-  //     "sessionId": "67a8c7eec9bf90242a504f3d",
-  //     "startTime": "10:30 AM",
-  //     "endTime": "10:35 AM",
-  //     "duration": 5,
-  //     "status": "available"
-  //   },
-  
-  //   // Slots for session 2 (2025-02-15)
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f52",
-  //     "sessionId": "67a8c7eec9bf90242a504f44",
-  //     "startTime": "09:00 AM",
-  //     "endTime": "09:05 AM",
-  //     "duration": 5,
-  //     "status": "available"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f53",
-  //     "sessionId": "67a8c7eec9bf90242a504f44",
-  //     "startTime": "09:05 AM",
-  //     "endTime": "09:10 AM",
-  //     "duration": 5,
-  //     "status": "booked",
-  //     "patientNote": "Regular checkup",
-  //     "familyId": "F201",
-  //     "patientId": "P201",
-  //     "patientName": "Charlie Brown"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f54",
-  //     "sessionId": "67a8c7eec9bf90242a504f44",
-  //     "startTime": "09:10 AM",
-  //     "endTime": "09:15 AM",
-  //     "duration": 5,
-  //     "status": "available"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f55",
-  //     "sessionId": "67a8c7eec9bf90242a504f44",
-  //     "startTime": "09:15 AM",
-  //     "endTime": "09:20 AM",
-  //     "duration": 5,
-  //     "status": "booked",
-  //     "patientNote": "Blood pressure check",
-  //     "familyId": "F202",
-  //     "patientId": "P202",
-  //     "patientName": "Diana Prince"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f56",
-  //     "sessionId": "67a8c7eec9bf90242a504f44",
-  //     "startTime": "09:20 AM",
-  //     "endTime": "09:25 AM",
-  //     "duration": 5,
-  //     "status": "available"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f57",
-  //     "sessionId": "67a8c7eec9bf90242a504f44",
-  //     "startTime": "09:25 AM",
-  //     "endTime": "09:30 AM",
-  //     "duration": 5,
-  //     "status": "booked",
-  //     "patientNote": "Routine checkup",
-  //     "familyId": "F203",
-  //     "patientId": "P203",
-  //     "patientName": "Ethan Hunt"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f58",
-  //     "sessionId": "67a8c7eec9bf90242a504f44",
-  //     "startTime": "09:30 AM",
-  //     "endTime": "09:35 AM",
-  //     "duration": 5,
-  //     "status": "available"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f59",
-  //     "sessionId": "67a8c7eec9bf90242a504f44",
-  //     "startTime": "09:35 AM",
-  //     "endTime": "09:40 AM",
-  //     "duration": 5,
-  //     "status": "booked",
-  //     "patientNote": "Consultation",
-  //     "familyId": "F204",
-  //     "patientId": "P204",
-  //     "patientName": "Fiona Gallagher"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f5a",
-  //     "sessionId": "67a8c7eec9bf90242a504f44",
-  //     "startTime": "09:40 AM",
-  //     "endTime": "09:45 AM",
-  //     "duration": 5,
-  //     "status": "available"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f5b",
-  //     "sessionId": "67a8c7eec9bf90242a504f44",
-  //     "startTime": "09:45 AM",
-  //     "endTime": "09:50 AM",
-  //     "duration": 5,
-  //     "status": "booked",
-  //     "patientNote": "Health screening",
-  //     "familyId": "F205",
-  //     "patientId": "P205",
-  //     "patientName": "Gabriel Reyes"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f5c",
-  //     "sessionId": "67a8c7eec9bf90242a504f44",
-  //     "startTime": "09:50 AM",
-  //     "endTime": "09:55 AM",
-  //     "duration": 5,
-  //     "status": "available"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f5d",
-  //     "sessionId": "67a8c7eec9bf90242a504f44",
-  //     "startTime": "09:55 AM",
-  //     "endTime": "10:00 AM",
-  //     "duration": 5,
-  //     "status": "booked",
-  //     "patientNote": "Blood test review",
-  //     "familyId": "F206",
-  //     "patientId": "P206",
-  //     "patientName": "Olivia Wilde"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f5e",
-  //     "sessionId": "67a8c7eec9bf90242a504f44",
-  //     "startTime": "10:00 AM",
-  //     "endTime": "10:05 AM",
-  //     "duration": 5,
-  //     "status": "available"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f60",
-  //     "sessionId": "67a8c7eec9bf90242a504f4b",
-  //     "startTime": "09:00 AM",
-  //     "endTime": "09:05 AM",
-  //     "duration": 5,
-  //     "status": "available"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f61",
-  //     "sessionId": "67a8c7eec9bf90242a504f4b",
-  //     "startTime": "09:05 AM",
-  //     "endTime": "09:10 AM",
-  //     "duration": 5,
-  //     "status": "booked",
-  //     "patientNote": "Back pain",
-  //     "familyId": "F301",
-  //     "patientId": "P301",
-  //     "patientName": "Tom Hanks"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f62",
-  //     "sessionId": "67a8c7eec9bf90242a504f4b",
-  //     "startTime": "09:10 AM",
-  //     "endTime": "09:15 AM",
-  //     "duration": 5,
-  //     "status": "available"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f63",
-  //     "sessionId": "67a8c7eec9bf90242a504f4b",
-  //     "startTime": "09:15 AM",
-  //     "endTime": "09:20 AM",
-  //     "duration": 5,
-  //     "status": "booked",
-  //     "patientNote": "Fever and chills",
-  //     "familyId": "F302",
-  //     "patientId": "P302",
-  //     "patientName": "Emma Stone"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f64",
-  //     "sessionId": "67a8c7eec9bf90242a504f4b",
-  //     "startTime": "09:20 AM",
-  //     "endTime": "09:25 AM",
-  //     "duration": 5,
-  //     "status": "available"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f65",
-  //     "sessionId": "67a8c7eec9bf90242a504f4b",
-  //     "startTime": "09:25 AM",
-  //     "endTime": "09:30 AM",
-  //     "duration": 5,
-  //     "status": "booked",
-  //     "patientNote": "Headaches",
-  //     "familyId": "F303",
-  //     "patientId": "P303",
-  //     "patientName": "Ryan Reynolds"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f66",
-  //     "sessionId": "67a8c7eec9bf90242a504f4b",
-  //     "startTime": "09:30 AM",
-  //     "endTime": "09:35 AM",
-  //     "duration": 5,
-  //     "status": "available"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f67",
-  //     "sessionId": "67a8c7eec9bf90242a504f4b",
-  //     "startTime": "09:35 AM",
-  //     "endTime": "09:40 AM",
-  //     "duration": 5,
-  //     "status": "booked",
-  //     "patientNote": "Stomach cramps",
-  //     "familyId": "F304",
-  //     "patientId": "P304",
-  //     "patientName": "Scarlett Johansson"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f68",
-  //     "sessionId": "67a8c7eec9bf90242a504f4b",
-  //     "startTime": "09:40 AM",
-  //     "endTime": "09:45 AM",
-  //     "duration": 5,
-  //     "status": "available"
-  //   },
-  //   {
-  //     "_id": "67a8c7efc9bf90242a504f69",
-  //     "sessionId": "67a8c7eec9bf90242a504f4b",
-  //     "startTime": "09:45 AM",
-  //     "endTime": "09:50 AM",
-  //     "duration": 5,
-  //     "status": "booked",
-  //     "patientNote": "Allergy consultation",
-  //     "familyId": "F305",
-  //     "patientId": "P305",
-  //     "patientName": "Chris Evans"
-  //   }
-    
-  // ] 
-
-  // const timeSlots = [
-  //   {
-  //     id: "1",
-  //     time: "02:00 PM",
-  //     status: "Booked"
-  //   },
-  //   {
-  //     id: "2",
-  //     time: "02:15 PM",
-  //     status: "Available"
-  //   },
-  //   {
-  //     id: "3",
-  //     time: "02:30 PM",
-  //     status: "Available"
-  //   },
-  //   {
-  //     id: "4",
-  //     time: "02:45 PM",
-  //     status: "Available"
-  //   },
-  //   {
-  //     id: "5",
-  //     time: "03:00 PM",
-  //     status: "Booked"
-  //   },
-  //   {
-  //     id: "6",
-  //     time: "03:15 PM",
-  //     status: "Available"
-  //   },
-  //   {
-  //     id: "7",
-  //     time: "03:30 PM",
-  //     status: "Available"
-  //   },
-  //   {
-  //     id: "8",
-  //     time: "03:45 PM",
-  //     status: "Available"
-  //   },
-  //   {
-  //     id: "9",
-  //     time: "04:00 PM",
-  //     status: "Booked"
-  //   },
-  //   {
-  //     id: "10",
-  //     time: "04:15 PM",
-  //     status: "Available"
-  //   },
-  //   {
-  //     id: "11",
-  //     time: "04:30 PM",
-  //     status: "Booked"
-  //   },
-  //   {
-  //     id: "12",
-  //     time: "04:45 PM",
-  //     status: "Available"
-  //   },
-  //   {
-  //     id: "13",
-  //     time: "05:00 PM",
-  //     status: "Available"
-  //   },
-  //   {
-  //     id: "14",
-  //     time: "05:15 PM",
-  //     status: "Available"
-  //   },
-  //   {
-  //     id: "15",
-  //     time: "05:30 PM",
-  //     status: "Booked"
-  //   },
-  //   {
-  //     id: "16",
-  //     time: "05:45 PM",
-  //     status: "Available"
-  //   },
-  //   {
-  //     id: "17",
-  //     time: "06:00 PM",
-  //     status: "Booked"
-  //   },
-  //   {
-  //     id: "18",
-  //     time: "06:15 PM",
-  //     status: "Available"
-  //   },
-  //   {
-  //     id: "19",
-  //     time: "06:30 PM",
-  //     status: "Available"
-  //   },
-  //   {
-  //     id: "20",
-  //     time: "06:45 PM",
-  //     status: "Available"
-  //   },
-  //   {
-  //     id: "21",
-  //     time: "07:00 PM",
-  //     status: "Booked"
-  //   },
-  //   {
-  //     id: "22",
-  //     time: "07:15 PM",
-  //     status: "Available"
-  //   },
-  //   {
-  //     id: "23",
-  //     time: "07:30 PM",
-  //     status: "Booked"
-  //   }
-  // ];
 
   const [currentSlots, setCurrentSlots] = useState([]);
   const [currentSession, setCurrentSession] = useState(sessions[0]);
@@ -576,60 +25,6 @@ function SchedulePage() {
   const [daynumber, setDayNumber] = useState(0);
   const [dayname, setDayName] = useState(0);
   
-
-  function nextSession() {
-    const currentIndex = sessions.findIndex(session => session._id === currentSession._id);
-    const nextIndex = (currentIndex + 1) % sessions.length; // Loop back to the first session if at the end
-    setCurrentSession(sessions[nextIndex]);
-    
-    
-  }
-
-  function previousSession() {
-    const currentIndex = sessions.findIndex(session => session._id === currentSession._id);
-    const prevIndex = (currentIndex - 1 + sessions.length) % sessions.length; // Loop to last if at first
-    setCurrentSession(sessions[prevIndex]);
-  }
-
-  function setSlots(session) {
-    const sessionSlots = slots.filter((slot) => slot.sessionId === session._id);
-    const bookedCount = sessionSlots.filter((slot) => slot.status === "booked").length;
-    const availableCount = sessionSlots.filter((slot) => slot.status === "available").length;
-
-    const dateObj = new Date(currentSession.date); 
-    const dayNumber = dateObj.getDate(); // Get the day of the month
-    const dayName = dateObj.toLocaleDateString("en-US", { weekday: "short" });
-    
-    setDayNumber(dayNumber)
-    setDayName(dayName) 
-    setAvailableSlotsCount(availableCount);
-    setBookedSlotsCount(bookedCount);
-    setCurrentSlots(sessionSlots);
-
-    console.log("Current Session:", currentSession);
-    console.log("Current Slots:", currentSlots);
-    console.log("Booked Slots:", bookedSlotsCount);
-    console.log("Available Slots:", availableSlotsCount);
-    console.log(`Date Number: ${dayNumber}, Day Name: ${dayName}`); 
-   
-  }
-  
-
-  useEffect(() => {
-    setSlots(currentSession);
-  }, [currentSession]);
-
-
-
-  function slotsInfo(){
-    const bookedSlotsCount = currentSlots.filter((slot) => slot.status === "Booked" && slot.sessionId === currentSession._id);
-    const availableSlots = currentSlots.filter((slot) => slot.status === "Available" && slot.sessionId === currentSession._id);
-    setAvailableSlotsCount(availableSlots.length);
-    setBookedSlotsCount(bookedSlotsCount.length);
-    
-  }
-
- 
   const [selectedDate, setSelectedDate] = useState(null);
   const [bookedDates, setBookedDates] = useState([]);
   const [events, setEvents] = useState({});
@@ -667,36 +62,103 @@ function SchedulePage() {
   } finally {
     setLoading(false);
   }
-}
+};
 
 
 useEffect(() => {
-  // Simulating API call to fetch booked dates with events
-  setTimeout(() => {
+  const fetchSessions = async () => {
+    try {
+      const data = await getAllSessions();
+      setSessions(data);
+      console.log("sessions:slkdsjjhisfihfoihdfishofihs"); 
 
-    getSessionsByDocId()
-      .then((data) => setSessions(data))
-    const bookedData = sessions;
+      // Extract dates and create an event map with arrays of events
+      const dateList = data.map(item => new Date(item.date));
+      const eventMap = data.reduce((acc, item) => {
+        const dateKey = new Date(item.date).toDateString();
+        if (!acc[dateKey]) {
+          acc[dateKey] = [];
+        }
+        acc[dateKey].push(item.event);
+        return acc;
+      }, {});
 
-    console.log('Booked data:', bookedData);
+      setBookedDates(dateList);
+      setEvents(eventMap);
+      setLoading(True);
+    } catch (error) {
+      console.error('Error fetching sessions:', error);
+    }
+  };
 
-    // Extract dates and create an event map with arrays of events
-    const dateList = bookedData.map(item => new Date(item.date));
-    const eventMap = bookedData.reduce((acc, item) => {
-      const dateKey = new Date(item.date).toDateString();
-      if (!acc[dateKey]) {
-        acc[dateKey] = [];
-      }
-      acc[dateKey].push(item.event);
-      return acc;
-    }, {});
+  fetchSessions();
 
-    console.log(dateList);
+  if (sessions.length > 0) {
+    setCurrentSession(sessions[0]);
+  }
 
-    setBookedDates(dateList);
-    setEvents(eventMap);
-  }, 1000);
 }, []);
+
+
+
+// useEffect(() => {
+ 
+// }, [sessions]);
+
+function nextSession() {
+  if (!currentSession || sessions.length === 0) return;
+  const currentIndex = sessions.findIndex(session => session._id === currentSession._id);
+  const nextIndex = (currentIndex + 1) % sessions.length; // Loop back to the first session if at the end
+  setCurrentSession(sessions[nextIndex]);
+  
+  
+}
+
+function previousSession() {
+  if (!currentSession || sessions.length === 0) return;
+  const currentIndex = sessions.findIndex(session => session._id === currentSession._id);
+  const prevIndex = (currentIndex - 1 + sessions.length) % sessions.length; // Loop to last if at first
+  setCurrentSession(sessions[prevIndex]);
+}
+
+function setSlots(session) {
+  if (!session) return;
+  console.log("Current Session:");
+
+  const sessionSlots = slots.filter((slot) => slot.sessionId === session._id);
+  const bookedCount = sessionSlots.filter((slot) => slot.status === "booked").length;
+  const availableCount = sessionSlots.filter((slot) => slot.status === "available").length;
+
+  const dateObj = new Date(session.date); 
+  const dayNumber = dateObj.getDate(); // Get the day of the month
+  const dayName = dateObj.toLocaleDateString("en-US", { weekday: "short" });
+
+  setDayNumber(dayNumber);
+  setDayName(dayName);
+  setAvailableSlotsCount(availableCount);
+  setBookedSlotsCount(bookedCount);
+  setCurrentSlots(sessionSlots);
+
+  console.log("Current Session:", sessions);
+  console.log("Current Slots:", sessionSlots);
+  console.log("Booked Slots:", bookedCount);
+  console.log("Available Slots:", availableCount);
+  console.log(`Date Number: ${dayNumber}, Day Name: ${dayName}`); 
+}
+
+// useEffect(() => {
+//   setSlots(currentSession);
+// }, [currentSession]);
+
+
+
+function slotsInfo(){
+  const bookedSlotsCount = currentSlots.filter((slot) => slot.status === "Booked" && slot.sessionId === currentSession._id);
+  const availableSlots = currentSlots.filter((slot) => slot.status === "Available" && slot.sessionId === currentSession._id);
+  setAvailableSlotsCount(availableSlots.length);
+  setBookedSlotsCount(bookedSlotsCount.length);
+  
+}
   
   
   const handleDateChange = (date) => {
@@ -712,13 +174,16 @@ useEffect(() => {
     setSelectedSlot(el);
     console.log(SelectedSlot);
   };
-
+  if(!loading){
+    return <div>Loading...</div>
+  }
   return (
     <div className='flex gap-5 bg-[#FAFAF9] w-full  px-2 py-2 items-start justify-start text-black animate-[pop_0.3s_ease-out]'>
       <div className='flex justify-around gap-2 w-full h-[100%]  items-center px-1 py-1'>
 
         {/* left side */}
         <div className=' flex flex-col sm:flex-wrap justify-between w-full h-full'>
+
           {/* header */}
           <div className=' sm:flex-wrap w-full h-[15%]'>
 
@@ -726,6 +191,7 @@ useEffect(() => {
             <div className="text-black sm:text-xl text-3xl font-bold font-['Raleway'] leading-normal">Current Session</div>
             {/* header 02  */}
             <div className='flex sm:flex-wrap justify-between '>
+           
 
               {/* header date */}
               <div className="flex items-center bg-[#295567] rounded-[10px]">
