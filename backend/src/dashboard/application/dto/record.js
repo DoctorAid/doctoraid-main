@@ -44,6 +44,7 @@ export const getRecordsByPatient = async (req, res) => {
         const { patientId, doctorId, page = 1, limit = 10 } = req.query;
         if (!patientId || !doctorId) {
             return res.status(400).json({ message: 'Patient ID and Doctor ID are required' });
+            console.log("Patient ID and Doctor ID are required");
         }
 
         const records = await Record.find({ patient: patientId, doctor: doctorId })
@@ -55,7 +56,9 @@ export const getRecordsByPatient = async (req, res) => {
         return res.status(200).json(records);
     } catch (error) {
         console.error('Error fetching records:', error);
+        console.log("Error fetching records:", error);
         res.status(500).json({ message: 'Internal server error' });
+        console.log("Internal server error");
     }
 };
 
