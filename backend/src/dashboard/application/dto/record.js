@@ -62,12 +62,20 @@ export const getRecordsByPatient = async (req, res) => {
 export const getRecordById = async (req, res) => {
     try {
         const { id } = req.params;
-        const record = await Record.findOne({ recordId: id }).populate('patient').populate('doctor');
-
+        const { patientId, doctorId } = req.query;
+        
+        // First find the record by ID
+        const record = await Record.findOne({ _id: id });
+        
         if (!record) {
             return res.status(404).json({ message: 'Record not found' });
         }
-
+        
+        // Check if the record belongs to the specified patient and doctor
+        if (record.patientId.toString() !== patientId || record.doctorId.toString() !== doctorId) {
+            return res.status(403).json({ message: 'Record not found for this patient or doctor' });
+        }
+        
         return res.status(200).json(record);
     } catch (error) {
         console.error('Error fetching record:', error);
