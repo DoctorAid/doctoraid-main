@@ -40,7 +40,48 @@ export const createRecord = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
 export const getRecordsByPatient = async (req, res) => {
+    try {
+        const { patientId, page = 1, limit = 10 } = req.query;
+        
+        if (!patientId) {
+            return res.status(400).json({ message: 'Patient ID is required' });
+        }
+        
+        // Validate ObjectId format
+        if (!mongoose.Types.ObjectId.isValid(patientId)) {
+            return res.status(400).json({ message: 'Invalid patient ID format' });
+        }
+        
+        const records = await Record.find({
+            patientId: new mongoose.Types.ObjectId(patientId)
+        })
+        .sort({ date: -1 }) // Sort by date, most recent first
+        .skip((parseInt(page) - 1) * parseInt(limit))
+        .limit(parseInt(limit));
+        
+        // Get total count for pagination info
+        const totalRecords = await Record.countDocuments({
+            patientId: new mongoose.Types.ObjectId(patientId)
+        });
+        
+        return res.status(200).json({
+            records,
+            pagination: {
+                totalRecords,
+                totalPages: Math.ceil(totalRecords / parseInt(limit)),
+                currentPage: parseInt(page),
+                limit: parseInt(limit)
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching patient records:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+export const getRecordsByPatientandDoctor = async (req, res) => {
     try {
         const { patientId, doctorId, page = 1, limit = 10 } = req.query;
        
