@@ -236,3 +236,68 @@ export const getMedicalRecords = async (req,res) => {
     }
 };
 
+//editing patient details
+export const editPatientDetails = async (req, res) => {
+    try {
+        const { patientId } = req.params;
+        const updateData = req.body;
+
+        //validating the patient Id
+        if(!mongoose.Types.ObjectId.isValid(patientId)) {
+            return res.status(400).json({ message: "Invalid patient Id. Please provide a valid ID"});
+        }
+
+        //making sure at least one field is provided to update
+        if(Object.keys(updateData).length === 0) {
+            return res.status(400).json({ message: "Please provide at least one field to update"});
+        }
+
+        //validating gender if given
+        if(updateData.gender && !['Male', 'Female', 'Other'].includes(updateData.gender)){
+            return res.status(400).json({ message: "Invalid gender value"});
+        }
+
+        //validating doctors field if given
+        if(updateData.doctors && (!Array.isArray(updateData.doctors) || updateData.doctors.length === 0)){
+            return res.status(400).json({ message: "Doctors must be an array and should contain at least one doctor." });
+        }
+
+        //validating date of birth if given
+        if(updateData.dateOfBirth){
+            const dob = new Date(updateData.dateOfBirth);
+            if(isNaN(dob.getTime())) {
+                return res.status(400).json({ message: "Invalid date of birth format." });
+            }
+            updateData.dateOfBirth = dob;
+        }
+
+        //validating medical history if given
+        if(updateData.medicalHistory && !Array.isArray(updateData.medicalHistory)){
+            return res.status(400).json({ message: "Medical history must be an array." });
+        }
+
+        //validating email if given
+        if(updateData.email){
+            const existingPatient = await Patient.findOne({ email: updateData.email.toLowerCase(), _id: { $ne: patientId } });
+            if(existingPatient){
+                return res.status(400).json({ message: "A patient with this email already exists." });
+            }
+            updateData.email = updateData.email.toLowerCase();
+
+        }
+
+        //updating the patient details
+        const updatedPatient = await Patient.findByIdAndUpdate(patientId, updateData, { new: true, runValidators: true });
+
+        if(!updatedPatient){
+            return res.status(404).json({ message: "Patient not found." });
+        }
+
+        return res.status(200).json({ message: "Patient details updated successfully.", patient: updatedPatient });
+    } catch (error) {
+        console.error("Error updating patient details: ", error);
+        return res.status(500).json({ message: "Internal server error", error: error.message });
+    }
+};
+
+

@@ -6,6 +6,7 @@ import {sortPatientList} from '../application/dto/patient.js';
 import {getPatientProfile} from '../application/dto/patient.js';
 import {getMedicalRecords} from '../application/dto/patient.js';
 import {createPatients} from '../application/dto/patient.js';
+import {editPatientDetails} from '../application/dto/patient.js';
 
 const patientRouter = express.Router();
 
@@ -17,6 +18,7 @@ patientRouter.get('/getPatients', getPatientList);   //get the patient list
 patientRouter.get('/sort/byFirstName', sortPatientList);    //sorting the patient list in ascending/ decending order using first name
 patientRouter.get('/getPatientProfile/byPatientId', getPatientProfile);  //retrieving patient profile by the patient id
 patientRouter.get('/getMedicalRecords/byPatientId', getMedicalRecords); //getting patient medical records by thier Id
+patientRouter.put('/editPatientDetails/:patientId', editPatientDetails); //editing patient details by their Id
 
 
 export default patientRouter;
