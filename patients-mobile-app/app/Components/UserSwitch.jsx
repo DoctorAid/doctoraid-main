@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 32,
         fontWeight: '700',
-        color: '#2C4157',
+        color: '#295567',
         marginBottom: 20
     },
     selectedProfileContainer: {

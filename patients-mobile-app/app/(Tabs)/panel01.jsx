@@ -27,11 +27,11 @@ const styles = StyleSheet.create({
     alignItems: "left",
   },
   header: {
-    fontSize: 40,
+    fontSize: 32,
     fontFamily: "Raleway",
     fontWeight: "bold",
     color: "#295567",
-    margin: 20,
-    padding: 10,
+    paddingTop: 20,
+    paddingLeft: 30,
   },
 });

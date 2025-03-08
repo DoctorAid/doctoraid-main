@@ -649,7 +649,7 @@ const styles = StyleSheet.create({
     },
     changeImageButton: {
         flexDirection: 'row',
-        backgroundColor: '#3498db',
+        backgroundColor: '#295567',
         paddingVertical: 8,
         paddingHorizontal: 15,
         borderRadius: 20,
@@ -693,7 +693,7 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     addAllergyButton: {
-        backgroundColor: '#3498db',
+        backgroundColor: '#295567',
         borderRadius: 8,
         width: 40,
         height: 40,
@@ -723,13 +723,13 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     saveButton: {
-        backgroundColor: '#2ecc71',
+        backgroundColor: '#DBF3C9',
         borderRadius: 8,
         paddingVertical: 12,
         alignItems: 'center',
     },
     saveButtonText: {
-        color: '#FFFFFF',
+        color: '#295567',
         fontSize: 16,
         fontWeight: '600',
     },
