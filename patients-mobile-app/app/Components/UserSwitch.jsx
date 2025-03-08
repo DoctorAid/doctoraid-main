@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Image, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 
 const UserSwitch = ({ profiles, selectedProfile, onProfileChange }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -14,17 +15,21 @@ const UserSwitch = ({ profiles, selectedProfile, onProfileChange }) => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Family Profile</Text>
-            <TouchableOpacity onPress={toggleDropdown} style={styles.selectedProfile}>
-                <Image 
-                    source={{ uri: selectedProfile.image }} 
-                    style={styles.profileImage} 
-                />
-                <View style={styles.profileInfo}>
-                    <Text style={styles.name}>{selectedProfile.name}</Text>
-                    <Text style={styles.relation}>{selectedProfile.relation}</Text>
-                </View>
-                <Text style={[styles.arrow, isOpen && styles.arrowUp]}>▼</Text>
-            </TouchableOpacity>
+            <View style={styles.selectedProfileContainer}>
+                <TouchableOpacity onPress={toggleDropdown} style={styles.selectedProfile}>
+                    <View style={styles.imageContainer}>
+                        <Image 
+                            source={{ uri: selectedProfile.image }} 
+                            style={styles.profileImage} 
+                        />
+                    </View>
+                    <View style={styles.profileInfo}>
+                        <Text style={styles.name}>{selectedProfile.name}</Text>
+                        <Text style={styles.relation}>{selectedProfile.relation}</Text>
+                    </View>
+                    <Text style={[styles.arrow, isOpen && styles.arrowUp]}>▼</Text>
+                </TouchableOpacity>
+            </View>
 
             {isOpen && (
                 <View style={styles.dropdown}>
@@ -37,7 +42,9 @@ const UserSwitch = ({ profiles, selectedProfile, onProfileChange }) => {
                                 selectedProfile.id === profile.id && styles.selectedItem
                             ]}
                         >
-                            <Image source={{ uri: profile.image }} style={styles.dropdownImage} />
+                            <View style={styles.dropdownImageContainer}>
+                                <Image source={{ uri: profile.image }} style={styles.dropdownImage} />
+                            </View>
                             <View style={styles.dropdownInfo}>
                                 <Text style={styles.dropdownName}>{profile.name}</Text>
                                 <Text style={styles.dropdownRelation}>{profile.relation}</Text>
@@ -62,6 +69,9 @@ const styles = StyleSheet.create({
         color: '#2C4157',
         marginBottom: 20
     },
+    selectedProfileContainer: {
+        position: 'relative',
+    },
     selectedProfile: { 
         flexDirection: 'row', 
         alignItems: 'center', 
@@ -69,11 +79,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#E8F1F9', 
         borderRadius: 12
     },
+    imageContainer: {
+        position: 'relative',
+        marginRight: 12
+    },
     profileImage: { 
         width: 50, 
         height: 50, 
-        borderRadius: 25, 
-        marginRight: 12
+        borderRadius: 25,
     },
     profileInfo: { 
         flex: 1, 
@@ -117,11 +130,14 @@ const styles = StyleSheet.create({
     selectedItem: {
         backgroundColor: '#F5F9FC'
     },
+    dropdownImageContainer: {
+        position: 'relative',
+        marginRight: 10
+    },
     dropdownImage: { 
         width: 40, 
         height: 40, 
-        borderRadius: 20, 
-        marginRight: 10 
+        borderRadius: 20,
     },
     dropdownInfo: { 
         flex: 1, 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Text, Modal, TextInput, Alert } from 'react-native';
+import { View, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Text, Modal, TextInput, Alert, Image } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 import UserSwitch from '../Components/UserSwitch';
 import UserProfInfo from '../Components/UserProfInfo';
 import FamPic from '../Assets/images/fam.svg';
@@ -47,8 +48,11 @@ const UserProfile = () => {
         gender: '',
         allergies: [],
         bloodType: '',
+        image: 'https://i.pravatar.cc/100?img=20', // Default image
     });
     const [allergyInput, setAllergyInput] = useState('');
+    const [imagePickerVisible, setImagePickerVisible] = useState(false);
+    const [currentProfileForImage, setCurrentProfileForImage] = useState(null);
 
     const handleProfileUpdate = (updatedProfile) => {
         // Update the profile in the profiles array
@@ -79,8 +83,6 @@ const UserProfile = () => {
         const profileToAdd = {
             ...newProfile,
             id: newId,
-            // Generate a random avatar
-            image: `https://i.pravatar.cc/100?img=${newId + 10}`,
         };
 
         const updatedProfiles = [...profiles, profileToAdd];
@@ -133,6 +135,7 @@ const UserProfile = () => {
             gender: '',
             allergies: [],
             bloodType: '',
+            image: 'https://i.pravatar.cc/100?img=20', // Default image
         });
         setAllergyInput('');
     };
@@ -156,6 +159,86 @@ const UserProfile = () => {
         });
     };
 
+    const openImagePicker = async (isNewProfile = false, profileId = null) => {
+        // Ask for permission
+        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        
+        if (permissionResult.granted === false) {
+            Alert.alert('Permission Required', 'You need to allow access to your photos to change profile picture.');
+            return;
+        }
+
+        // Set which profile we're changing the image for
+        if (isNewProfile) {
+            setCurrentProfileForImage(null); // For new profile
+        } else {
+            setCurrentProfileForImage(profileId); // For existing profile
+        }
+        
+        setImagePickerVisible(true);
+    };
+
+    const takePhoto = async () => {
+        const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+        
+        if (permissionResult.granted === false) {
+            Alert.alert('Permission Required', 'You need to allow access to your camera to take a photo.');
+            return;
+        }
+
+        const result = await ImagePicker.launchCameraAsync({
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 0.5,
+        });
+
+        if (!result.canceled) {
+            handleImageSelected(result.assets[0].uri);
+        }
+        
+        setImagePickerVisible(false);
+    };
+
+    const pickImage = async () => {
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 0.5,
+        });
+
+        if (!result.canceled) {
+            handleImageSelected(result.assets[0].uri);
+        }
+        
+        setImagePickerVisible(false);
+    };
+
+    const handleImageSelected = (imageUri) => {
+        if (currentProfileForImage === null) {
+            // For new profile
+            setNewProfile({
+                ...newProfile,
+                image: imageUri
+            });
+        } else {
+            // For existing profile
+            const updatedProfiles = profiles.map(p => 
+                p.id === currentProfileForImage ? {...p, image: imageUri} : p
+            );
+            setProfiles(updatedProfiles);
+            
+            // Update selected profile if it's the one being modified
+            if (selectedProfile.id === currentProfileForImage) {
+                setSelectedProfile({...selectedProfile, image: imageUri});
+            }
+        }
+    };
+
+    const changeProfilePicture = (profileId) => {
+        openImagePicker(false, profileId);
+    };
+
     return (
         <SafeAreaView style={styles.safeArea}>
             <ScrollView 
@@ -167,7 +250,8 @@ const UserProfile = () => {
                         <UserSwitch 
                             profiles={profiles} 
                             selectedProfile={selectedProfile}
-                            onProfileChange={handleProfileChange} 
+                            onProfileChange={handleProfileChange}
+                            // Removed onChangeImage prop from here as per updated code
                         />
                         <View style={styles.actionsContainer}>
                             <TouchableOpacity 
@@ -190,7 +274,8 @@ const UserProfile = () => {
                     </View>
                     <UserProfInfo 
                         profile={selectedProfile} 
-                        onUpdateProfile={handleProfileUpdate} 
+                        onUpdateProfile={handleProfileUpdate}
+                        onChangeImage={changeProfilePicture} // Added onChangeImage prop here as per updated code
                     />
                 </View>
                 <View style={styles.svgContainer}>
@@ -223,6 +308,21 @@ const UserProfile = () => {
                         </View>
 
                         <ScrollView style={styles.modalForm}>
+                            {/* Profile Picture Selection */}
+                            <View style={styles.profileImageContainer}>
+                                <Image 
+                                    source={{ uri: newProfile.image }} 
+                                    style={styles.profileImagePreview} 
+                                />
+                                <TouchableOpacity 
+                                    style={styles.changeImageButton}
+                                    onPress={() => openImagePicker(true)}
+                                >
+                                    <Feather name="camera" size={16} color="#FFFFFF" />
+                                    <Text style={styles.changeImageText}>Change Picture</Text>
+                                </TouchableOpacity>
+                            </View>
+
                             <Text style={styles.inputLabel}>Name *</Text>
                             <TextInput
                                 style={styles.input}
@@ -324,6 +424,45 @@ const UserProfile = () => {
                     </View>
                 </View>
             </Modal>
+
+            {/* Image Picker Modal */}
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={imagePickerVisible}
+                onRequestClose={() => {
+                    setImagePickerVisible(false);
+                }}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.imagePickerContent}>
+                        <Text style={styles.imagePickerTitle}>Choose Profile Picture</Text>
+                        
+                        <TouchableOpacity 
+                            style={styles.imagePickerOption}
+                            onPress={takePhoto}
+                        >
+                            <Feather name="camera" size={24} color="#2C4157" />
+                            <Text style={styles.imagePickerOptionText}>Take Photo</Text>
+                        </TouchableOpacity>
+                        
+                        <TouchableOpacity 
+                            style={styles.imagePickerOption}
+                            onPress={pickImage}
+                        >
+                            <Feather name="image" size={24} color="#2C4157" />
+                            <Text style={styles.imagePickerOptionText}>Choose from Gallery</Text>
+                        </TouchableOpacity>
+                        
+                        <TouchableOpacity 
+                            style={styles.cancelButton}
+                            onPress={() => setImagePickerVisible(false)}
+                        >
+                            <Text style={styles.cancelButtonText}>Cancel</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </SafeAreaView>
     );
 };
@@ -392,6 +531,46 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 5,
     },
+    imagePickerContent: {
+        width: '80%',
+        backgroundColor: 'white',
+        borderRadius: 12,
+        padding: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    imagePickerTitle: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: '#2C4157',
+        textAlign: 'center',
+        marginBottom: 20,
+    },
+    imagePickerOption: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: '#E8F1F9',
+    },
+    imagePickerOptionText: {
+        fontSize: 16,
+        color: '#2C4157',
+        marginLeft: 15,
+    },
+    cancelButton: {
+        padding: 15,
+        alignItems: 'center',
+        marginTop: 10,
+    },
+    cancelButtonText: {
+        fontSize: 16,
+        color: '#e74c3c',
+        fontWeight: '600',
+    },
     modalHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -405,6 +584,29 @@ const styles = StyleSheet.create({
     },
     modalForm: {
         maxHeight: '70%',
+    },
+    profileImageContainer: {
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    profileImagePreview: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        marginBottom: 10,
+    },
+    changeImageButton: {
+        flexDirection: 'row',
+        backgroundColor: '#3498db',
+        paddingVertical: 8,
+        paddingHorizontal: 15,
+        borderRadius: 20,
+        alignItems: 'center',
+    },
+    changeImageText: {
+        color: '#FFFFFF',
+        marginLeft: 6,
+        fontWeight: '500',
     },
     inputLabel: {
         fontSize: 16,
