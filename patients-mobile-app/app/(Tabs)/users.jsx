@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Text, Modal, TextInput, Alert, Image } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Text, Modal, 
+         TextInput, Alert, Image, KeyboardAvoidingView, Platform, Dimensions } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import UserSwitch from '../Components/UserSwitch';
 import UserProfInfo from '../Components/UserProfInfo';
 import FamPic from '../Assets/images/fam.svg';
+import MaxProfilesPopup from '../Components/MaxProfilesPopup';
 
 const UserProfile = () => {
+    // All your existing state variables
     const [profiles, setProfiles] = useState([
         {
             id: 1,
@@ -36,8 +39,10 @@ const UserProfile = () => {
         }
     ]);
     
+    // Rest of your state variables
     const [selectedProfile, setSelectedProfile] = useState(profiles[0]);
     const [addModalVisible, setAddModalVisible] = useState(false);
+    const [maxProfilesPopupVisible, setMaxProfilesPopupVisible] = useState(false);
     const [newProfile, setNewProfile] = useState({
         name: '',
         relation: '',
@@ -53,7 +58,14 @@ const UserProfile = () => {
     const [allergyInput, setAllergyInput] = useState('');
     const [imagePickerVisible, setImagePickerVisible] = useState(false);
     const [currentProfileForImage, setCurrentProfileForImage] = useState(null);
+    
+    // References
+    const modalScrollViewRef = useRef(null);
+    
+    // Add window dimensions
+    const windowHeight = Dimensions.get('window').height;
 
+    // Your existing functions
     const handleProfileUpdate = (updatedProfile) => {
         // Update the profile in the profiles array
         const updatedProfiles = profiles.map(p => 
@@ -75,7 +87,7 @@ const UserProfile = () => {
         }
 
         if (profiles.length >= 5) {
-            Alert.alert('Maximum Reached', 'You can only have up to 5 profiles.');
+            setMaxProfilesPopupVisible(true);
             return;
         }
 
@@ -92,6 +104,7 @@ const UserProfile = () => {
         setAddModalVisible(false);
     };
 
+    // Rest of your functions remain the same
     const removeProfile = (profileId) => {
         if (profiles.length <= 1) {
             Alert.alert('Cannot Remove', 'You must have at least one profile.');
@@ -138,6 +151,11 @@ const UserProfile = () => {
             image: 'https://i.pravatar.cc/100?img=20', // Default image
         });
         setAllergyInput('');
+        
+        // Reset modal scroll position when form is reset
+        if (modalScrollViewRef.current) {
+            modalScrollViewRef.current.scrollTo({ x: 0, y: 0, animated: false });
+        }
     };
 
     const addAllergy = () => {
@@ -244,6 +262,7 @@ const UserProfile = () => {
             <ScrollView 
                 contentContainerStyle={styles.scrollContainer}
                 showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="handled"
             >
                 <View style={styles.container}>
                     <View style={styles.header}>
@@ -251,19 +270,27 @@ const UserProfile = () => {
                             profiles={profiles} 
                             selectedProfile={selectedProfile}
                             onProfileChange={handleProfileChange}
-                            // Removed onChangeImage prop from here as per updated code
                         />
                         <View style={styles.actionsContainer}>
                             <TouchableOpacity 
                                 style={[styles.actionButton, styles.addButton]} 
-                                onPress={() => setAddModalVisible(true)}
-                                disabled={profiles.length >= 5}
+                                onPress={() => {
+                                    if (profiles.length >= 5) {
+                                        setMaxProfilesPopupVisible(true);
+                                    } else {
+                                        setAddModalVisible(true);
+                                    }
+                                }}
                             >
                                 <Feather name="user-plus" size={18} color="#FFFFFF" />
                                 <Text style={styles.buttonText}>Add</Text>
                             </TouchableOpacity>
                             <TouchableOpacity 
-                                style={[styles.actionButton, styles.removeButton]}
+                                style={[
+                                    styles.actionButton, 
+                                    styles.removeButton,
+                                    profiles.length <= 1 && styles.disabledButton
+                                ]}
                                 onPress={() => removeProfile(selectedProfile.id)}
                                 disabled={profiles.length <= 1}
                             >
@@ -275,7 +302,7 @@ const UserProfile = () => {
                     <UserProfInfo 
                         profile={selectedProfile} 
                         onUpdateProfile={handleProfileUpdate}
-                        onChangeImage={changeProfilePicture} // Added onChangeImage prop here as per updated code
+                        onChangeImage={changeProfilePicture}
                     />
                 </View>
                 <View style={styles.svgContainer}>
@@ -293,8 +320,11 @@ const UserProfile = () => {
                     resetNewProfileForm();
                 }}
             >
-                <View style={styles.modalOverlay}>
-                    <View style={styles.modalContent}>
+                <KeyboardAvoidingView 
+                    behavior={Platform.OS === "ios" ? "padding" : "height"}
+                    style={styles.modalOverlay}
+                >
+                    <View style={[styles.modalContent, { maxHeight: windowHeight * 0.85 }]}>
                         <View style={styles.modalHeader}>
                             <Text style={styles.modalTitle}>Add New Profile</Text>
                             <TouchableOpacity 
@@ -307,7 +337,12 @@ const UserProfile = () => {
                             </TouchableOpacity>
                         </View>
 
-                        <ScrollView style={styles.modalForm}>
+                        <ScrollView 
+                            ref={modalScrollViewRef}
+                            style={styles.modalForm}
+                            showsVerticalScrollIndicator={true}
+                            keyboardShouldPersistTaps="handled"
+                        >
                             {/* Profile Picture Selection */}
                             <View style={styles.profileImageContainer}>
                                 <Image 
@@ -413,16 +448,21 @@ const UserProfile = () => {
                                     </View>
                                 ))}
                             </View>
+                            
+                            {/* Add extra padding at the bottom for better scrolling */}
+                            <View style={{ height: 80 }} />
                         </ScrollView>
 
-                        <TouchableOpacity 
-                            style={styles.saveButton}
-                            onPress={addProfile}
-                        >
-                            <Text style={styles.saveButtonText}>Add Profile</Text>
-                        </TouchableOpacity>
+                        <View style={styles.saveButtonContainer}>
+                            <TouchableOpacity 
+                                style={styles.saveButton}
+                                onPress={addProfile}
+                            >
+                                <Text style={styles.saveButtonText}>Add Profile</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                </View>
+                </KeyboardAvoidingView>
             </Modal>
 
             {/* Image Picker Modal */}
@@ -463,6 +503,12 @@ const UserProfile = () => {
                     </View>
                 </View>
             </Modal>
+
+            {/* Max Profiles Popup */}
+            <MaxProfilesPopup 
+                visible={maxProfilesPopupVisible}
+                onClose={() => setMaxProfilesPopupVisible(false)}
+            />
         </SafeAreaView>
     );
 };
@@ -481,6 +527,7 @@ const styles = StyleSheet.create({
     },
     header: {
         marginBottom: 20,
+        zIndex: 100, // Ensure dropdown appears above other content
     },
     actionsContainer: {
         flexDirection: 'row',
@@ -488,6 +535,7 @@ const styles = StyleSheet.create({
         width: '90%',
         alignSelf: 'center',
         marginTop: 10,
+        zIndex: 1, // Lower than dropdown
     },
     actionButton: {
         flexDirection: 'row',
@@ -499,10 +547,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     addButton: {
-        backgroundColor: '#3498db',
+        backgroundColor: '#295567',
     },
     removeButton: {
-        backgroundColor: '#e74c3c',
+        backgroundColor: '#FF5D5D',
+    },
+    disabledButton: {
+        backgroundColor: '#CCCCCC',
+        opacity: 0.7,
     },
     buttonText: {
         color: '#FFFFFF',
@@ -512,6 +564,7 @@ const styles = StyleSheet.create({
     svgContainer: {
         alignItems: 'center',
         marginBottom: -45,
+        zIndex: 1, // Lower than dropdown
     },
     modalOverlay: {
         flex: 1,
@@ -521,7 +574,6 @@ const styles = StyleSheet.create({
     },
     modalContent: {
         width: '90%',
-        maxHeight: '80%',
         backgroundColor: 'white',
         borderRadius: 12,
         padding: 20,
@@ -667,12 +719,14 @@ const styles = StyleSheet.create({
         color: '#2C4157',
         marginRight: 6,
     },
+    saveButtonContainer: {
+        marginTop: 10,
+    },
     saveButton: {
         backgroundColor: '#2ecc71',
         borderRadius: 8,
         paddingVertical: 12,
         alignItems: 'center',
-        marginTop: 10,
     },
     saveButtonText: {
         color: '#FFFFFF',
