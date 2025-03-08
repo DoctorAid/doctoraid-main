@@ -1,20 +1,12 @@
 import React, { useState } from 'react';
 import { View, Image, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const sampleProfiles = [
-    { id: 1, name: 'Nimesha Dahanayake', relation: 'Daughter', birthDate: '10.02.2014', age: '10 years', weight: '50kg', height: "5'3", gender: 'Female', image: 'https://i.pravatar.cc/100?img=1', allergies: 'Arya Muller', bloodType: 'Arya Muller' },
-    { id: 2, name: 'John Smith', relation: 'Son', birthDate: '12.05.2016', age: '8 years', weight: '40kg', height: "4'8", gender: 'Male', image: 'https://i.pravatar.cc/100?img=2', allergies: 'None', bloodType: 'O+' },
-    { id: 3, name: 'Sarah Johnson', relation: 'Daughter', birthDate: '20.09.2012', age: '12 years', weight: '55kg', height: "5'5", gender: 'Female', image: 'https://i.pravatar.cc/100?img=3', allergies: 'Peanuts', bloodType: 'A+' }
-];
-
-const UserSwitch = ({ onProfileChange }) => {
+const UserSwitch = ({ profiles, selectedProfile, onProfileChange }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedProfile, setSelectedProfile] = useState(sampleProfiles[0]);
-
+    
     const toggleDropdown = () => setIsOpen(!isOpen);
     
     const selectProfile = (profile) => {
-        setSelectedProfile(profile);
         setIsOpen(false);
         onProfileChange(profile);
     };
@@ -23,7 +15,10 @@ const UserSwitch = ({ onProfileChange }) => {
         <View style={styles.container}>
             <Text style={styles.title}>Family Profile</Text>
             <TouchableOpacity onPress={toggleDropdown} style={styles.selectedProfile}>
-                <Image source={{ uri: selectedProfile.image }} style={styles.profileImage} />
+                <Image 
+                    source={{ uri: selectedProfile.image }} 
+                    style={styles.profileImage} 
+                />
                 <View style={styles.profileInfo}>
                     <Text style={styles.name}>{selectedProfile.name}</Text>
                     <Text style={styles.relation}>{selectedProfile.relation}</Text>
@@ -33,8 +28,15 @@ const UserSwitch = ({ onProfileChange }) => {
 
             {isOpen && (
                 <View style={styles.dropdown}>
-                    {sampleProfiles.map((profile) => (
-                        <TouchableOpacity key={profile.id} onPress={() => selectProfile(profile)} style={styles.dropdownItem}>
+                    {profiles.map((profile) => (
+                        <TouchableOpacity 
+                            key={profile.id} 
+                            onPress={() => selectProfile(profile)} 
+                            style={[
+                                styles.dropdownItem,
+                                selectedProfile.id === profile.id && styles.selectedItem
+                            ]}
+                        >
                             <Image source={{ uri: profile.image }} style={styles.dropdownImage} />
                             <View style={styles.dropdownInfo}>
                                 <Text style={styles.dropdownName}>{profile.name}</Text>
@@ -52,7 +54,7 @@ const styles = StyleSheet.create({
     container: { 
         width: '90%',
         alignSelf: 'center',
-        marginBottom: 20
+        marginBottom: 10
     },
     title: {
         fontSize: 32,
@@ -102,7 +104,8 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
-        elevation: 3
+        elevation: 3,
+        maxHeight: 250
     },
     dropdownItem: { 
         flexDirection: 'row', 
@@ -110,6 +113,9 @@ const styles = StyleSheet.create({
         padding: 12,
         borderBottomWidth: 1, 
         borderBottomColor: '#E8F1F9'
+    },
+    selectedItem: {
+        backgroundColor: '#F5F9FC'
     },
     dropdownImage: { 
         width: 40, 
