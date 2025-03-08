@@ -1,4 +1,5 @@
 export const createSlots = async (formData) => {
+  console.log(formData);
   try {
     const response = await fetch(`http://localhost:5000/api/slots/create`, {
       method: 'POST',
