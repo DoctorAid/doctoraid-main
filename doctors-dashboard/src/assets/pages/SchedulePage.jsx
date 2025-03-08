@@ -6,15 +6,14 @@ import "react-datepicker/dist/react-datepicker.css";
 import { createSlots } from '../api/slotsAPI.js';
 import { Clock, Calendar, Timer,CircleArrowRight,CircleArrowLeft } from 'lucide-react';
 import { getAllSessions} from '../api/sessionsAPI.js';
+import { getSlotsbySessionId } from '../api/slotsAPI.js';
 
 function SchedulePage() {
-
   const [SelectedSlot, setSelectedSlot] = useState({});
   const [endTime, setEndTime] = useState(null);
   const [startingTime, setStartingTime] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
-
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [sessions, setSessions] = useState([]);
 
@@ -31,19 +30,24 @@ function SchedulePage() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [text, setText] = useState("");
 
+
+  useEffect(() => {
+    console.log("Loading state changed:", loading);
+  }, [loading]);
+
   const handleSubmit = async (e) => {
   e.preventDefault();
   
-  setLoading(true);
+  
   setMessage('');
 
   if (!selectedDate || !startingTime || !endTime || !selectedTime) {
     setMessage('Please fill in all fields');
-    setLoading(false);
+    
     return;
   }
   const formData = {
-    doctorid:"8273482674632764",
+    _id:"8273482674632764",
     date: selectedDate.toISOString().split('T')[0],
     startTime: startingTime.toTimeString().slice(0, 5),
     endTime: endTime.toTimeString().slice(0, 5),
@@ -60,7 +64,7 @@ function SchedulePage() {
   } catch (error) {
     setMessage(error.message);
   } finally {
-    setLoading(false);
+    
   }
 };
 
@@ -68,50 +72,47 @@ function SchedulePage() {
 useEffect(() => {
   const fetchSessions = async () => {
     try {
-      const data = await getAllSessions();
-      setSessions(data);
-      console.log("sessions:slkdsjjhisfihfoihdfishofihs"); 
-
+      setLoading(true);
+      const sessionData = await getAllSessions();
+      console.log("Session data fetched:", sessionData);
+      setSessions(sessionData);
+      
       // Extract dates and create an event map with arrays of events
-      const dateList = data.map(item => new Date(item.date));
-      const eventMap = data.reduce((acc, item) => {
-        const dateKey = new Date(item.date).toDateString();
-        if (!acc[dateKey]) {
-          acc[dateKey] = [];
-        }
-        acc[dateKey].push(item.event);
-        return acc;
-      }, {});
+      if (sessionData && sessionData.length > 0) {
+        const dateList = sessionData.map(item => new Date(item.date));
+        console.log("Date List:", dateList);
+        const eventMap = sessionData.reduce((acc, item) => {
+          const dateKey = new Date(item.date).toDateString();
+          if (!acc[dateKey]) {
+            acc[dateKey] = [];
+          }
+          if (item.event) {
+            acc[dateKey].push(item.event);
+          }
+          return acc;
+        }, {});
 
-      setBookedDates(dateList);
-      setEvents(eventMap);
-      setLoading(True);
+        setBookedDates(dateList);
+        setEvents(eventMap);
+        setCurrentSession(sessionData[0]);
+      }
     } catch (error) {
       console.error('Error fetching sessions:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   fetchSessions();
+}, [])
 
-  if (sessions.length > 0) {
-    setCurrentSession(sessions[0]);
-  }
-
-}, []);
-
-
-
-// useEffect(() => {
- 
-// }, [sessions]);
 
 function nextSession() {
   if (!currentSession || sessions.length === 0) return;
   const currentIndex = sessions.findIndex(session => session._id === currentSession._id);
   const nextIndex = (currentIndex + 1) % sessions.length; // Loop back to the first session if at the end
   setCurrentSession(sessions[nextIndex]);
-  
-  
+  setSelectedSlot({});
 }
 
 function previousSession() {
@@ -119,17 +120,21 @@ function previousSession() {
   const currentIndex = sessions.findIndex(session => session._id === currentSession._id);
   const prevIndex = (currentIndex - 1 + sessions.length) % sessions.length; // Loop to last if at first
   setCurrentSession(sessions[prevIndex]);
+  setSelectedSlot({});
 }
 
-function setSlots(session) {
-  if (!session) return;
-  console.log("Current Session:");
+function setSlots() {
 
-  const sessionSlots = slots.filter((slot) => slot.sessionId === session._id);
-  const bookedCount = sessionSlots.filter((slot) => slot.status === "booked").length;
-  const availableCount = sessionSlots.filter((slot) => slot.status === "available").length;
+  if (!currentSession) {
+    console.log("Current session is undefined");
+    return; // Exit early if currentSession is not set yet
+  }
+  
+  // const currentSlots = slots.filter((slot) => slot.sessionId === session._id);
+  const bookedCount = currentSlots.filter((slot) => slot.status === "booked").length;
+  const availableCount = currentSlots.filter((slot) => slot.status === "available").length;
 
-  const dateObj = new Date(session.date); 
+  const dateObj = new Date(currentSession.date); 
   const dayNumber = dateObj.getDate(); // Get the day of the month
   const dayName = dateObj.toLocaleDateString("en-US", { weekday: "short" });
 
@@ -137,28 +142,64 @@ function setSlots(session) {
   setDayName(dayName);
   setAvailableSlotsCount(availableCount);
   setBookedSlotsCount(bookedCount);
-  setCurrentSlots(sessionSlots);
+  setCurrentSlots(currentSlots);
 
   console.log("Current Session:", sessions);
-  console.log("Current Slots:", sessionSlots);
+  console.log("Current Slots:", currentSlots);
   console.log("Booked Slots:", bookedCount);
   console.log("Available Slots:", availableCount);
   console.log(`Date Number: ${dayNumber}, Day Name: ${dayName}`); 
 }
 
-// useEffect(() => {
-//   setSlots(currentSession);
-// }, [currentSession]);
+const fetchSlots = async () => {
+  try {
+    const slotsData = await getSlotsbySessionId(currentSession._id);
+    console.log("Slots data fetched:", slotsData);
+    setCurrentSlots(slotsData);
+    
+  } catch (error) {
+    console.error('Error fetching slots:', error);
+  } finally {
+   
+  }
+};
+
+
+useEffect(() => {
+  if (currentSession) {  // Only run if currentSession is defined
+    fetchSlots();
+    // setSlots will be called after fetchSlots completes in the fetchSlots function
+  }
+}, [currentSession]);
+
+useEffect(() => {
+  if (currentSlots.length > 0 && currentSession) {
+    setSlots();
+  }
+}, [currentSlots, currentSession]);
 
 
 
-function slotsInfo(){
-  const bookedSlotsCount = currentSlots.filter((slot) => slot.status === "Booked" && slot.sessionId === currentSession._id);
-  const availableSlots = currentSlots.filter((slot) => slot.status === "Available" && slot.sessionId === currentSession._id);
-  setAvailableSlotsCount(availableSlots.length);
-  setBookedSlotsCount(bookedSlotsCount.length);
+// function slotsInfo(){
+ 
   
-}
+//   console.log("Current Session:", currentSession);
+  
+//   // Get day number and day name only if currentSession has a date
+//   let dayNumber = 0;
+//   let dayName = '';
+//   if (currentSession.date) {
+//     const dateObj = new Date(currentSession.date);
+//     dayNumber = dateObj.getDate();
+//     dayName = dateObj.toLocaleDateString("en-US", { weekday: "short" });
+//   }
+  
+//   const bookedSlotsCount = currentSlots.filter((slot) => slot.status === "Booked" && slot.sessionId === currentSession._id);
+//   const availableSlots = currentSlots.filter((slot) => slot.status === "Available" && slot.sessionId === currentSession._id);
+//   setAvailableSlotsCount(availableSlots.length);
+//   setBookedSlotsCount(bookedSlotsCount.length);
+  
+// }
   
   
   const handleDateChange = (date) => {
@@ -174,9 +215,12 @@ function slotsInfo(){
     setSelectedSlot(el);
     console.log(SelectedSlot);
   };
-  if(!loading){
-    return <div>Loading...</div>
+  
+  console.log("Current Session:", currentSession);
+  if(loading){
+    return (<div className="flex text-9xl w-full items-center justify-center h-screen">Loading...</div>)
   }
+  
   return (
     <div className='flex gap-5 bg-[#FAFAF9] w-full  px-2 py-2 items-start justify-start text-black animate-[pop_0.3s_ease-out]'>
       <div className='flex justify-around gap-2 w-full h-[100%]  items-center px-1 py-1'>
@@ -224,7 +268,7 @@ function slotsInfo(){
 
               <div className='flex flex-col'>
                 <div className='text-4xl font-bold'>ID</div>
-                <div className="text-center text-[#6394b5] text-5xl font-bold font-['Instrument Sans']">#{currentSession._id.slice(-6)}</div>
+                <div className="text-center text-[#6394b5] text-5xl font-bold font-['Instrument Sans']">#{!loading?currentSession._id.slice(-6):"0"}</div>
               </div>
               <CircleArrowLeft className="w-8 h-8 text-[#295567] cursor-pointer" onClick={previousSession} />
               <CircleArrowRight className="w-8 h-8 text-[#295567] cursor-pointer" onClick={nextSession} />
@@ -234,7 +278,7 @@ function slotsInfo(){
           </div>
 
           <div className='bg-[#f2eaf1] w-full h-[50%] grid-cols-4 grid gap-1 overflow-auto'>
-            {currentSlots.map((el) => {
+            {!currentSlots.length ? "No Slots Available" : currentSlots.map((el) => {
               return (
                 <TimeSlot
                   selectedSlotId={SelectedSlot?._id}

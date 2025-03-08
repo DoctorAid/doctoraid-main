@@ -26,7 +26,7 @@ export const createSlots = async (formData) => {
 export const getSlotsbySessionId = async (id) => {
   //const token = await window.Clerk?.session?.getToken();
 
-  const res = await fetch(`http://localhost:5000/api/slots/get/${id}`, {
+  const res = await fetch(`http://localhost:5000/api/slots/getbySessionId/${id}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -35,5 +35,5 @@ export const getSlotsbySessionId = async (id) => {
   });
   const slots = await res.json();
   return slots;
-  console.log("sessions:", slots)
+  console.log("sessions:", res)
 };
