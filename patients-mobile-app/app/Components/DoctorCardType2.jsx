@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
 import { Calendar, Clock } from "lucide-react-native";
+import { useNavigation } from "@react-navigation/native"; // Import navigation hook
 
 const doctorAppointments = [
   {
@@ -34,6 +35,13 @@ const doctorAppointments = [
 ];
 
 const DoctorCardType2 = ({ item }) => {
+  const navigation = useNavigation(); // Initialize navigation hook
+  
+  const handleAppointmentPress = () => {
+    // Navigate to appointments screen with doctor data
+    navigation.navigate('DoctorAppointment', { doctorId: item.id, doctorName: item.name });
+  };
+  
   return (
     <View style={styles.card}>
       <View style={styles.header}>
@@ -54,7 +62,10 @@ const DoctorCardType2 = ({ item }) => {
         </View>
       </View>
 
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity 
+        style={styles.button}
+        onPress={handleAppointmentPress} // Add onPress handler
+      >
         <Text style={styles.buttonText}>Appointments</Text>
       </TouchableOpacity>
     </View>
@@ -68,8 +79,8 @@ export default function DoctorCardList() {
         data={doctorAppointments}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <DoctorCardType2 item={item} />}
-        horizontal={true} // Enables horizontal scrolling
-        showsHorizontalScrollIndicator={false} // Hides scroll bar for cleaner UI
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
       />
     </View>
   );
