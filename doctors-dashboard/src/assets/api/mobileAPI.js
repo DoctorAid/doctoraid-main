@@ -32,3 +32,19 @@ export const getDoctorById = async (doctorId) => {
     console.log("search results:", doctors); // Debugging log
     return doctors;
   };
+
+  export const getFamilyById = async (familyId) => {
+    console.log(`getFamilyById API called for family: ${familyId}`); // Debugging log
+  
+    const res = await fetch(`http://localhost:5000/api/mobile/family-profile/${familyId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        // Authorization: `Bearer ${token}`, 
+      },
+    });
+  
+    const family = await res.json();
+    console.log("family profile:", family); // Debugging log
+    return family;
+  };
