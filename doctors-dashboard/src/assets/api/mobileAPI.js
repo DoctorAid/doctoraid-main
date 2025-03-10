@@ -48,3 +48,22 @@ export const getDoctorById = async (doctorId) => {
     console.log("family profile:", family); // Debugging log
     return family;
   };
+
+  export const bookSlot = async (bookingData) => {
+    console.log("bookSlot API called with data:", bookingData); // Debugging log
+  
+    const res = await fetch("http://localhost:5000/api/mobile/slots/book", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // Authorization: `Bearer ${token}`, // Uncomment if authentication is needed
+      },
+      body: JSON.stringify(bookingData),
+    });
+  
+    const bookingResult = await res.json();
+    console.log("booking result:", bookingResult); // Debugging log
+    return bookingResult;
+  };
+
+  
