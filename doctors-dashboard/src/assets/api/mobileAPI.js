@@ -66,4 +66,18 @@ export const getDoctorById = async (doctorId) => {
     return bookingResult;
   };
 
+  export const getActiveAppointments = async (patientId) => {
+    console.log(`getActiveAppointments API called for patient: ${patientId}`); // Debugging log
   
+    const res = await fetch(`http://localhost:5000/api/mobile/appointments/active/${patientId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        // Authorization: `Bearer ${token}`, // Uncomment if authentication is needed
+      },
+    });
+  
+    const appointments = await res.json();
+    console.log("active appointments:", appointments); // Debugging log
+    return appointments;
+  };
