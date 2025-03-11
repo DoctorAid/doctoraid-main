@@ -228,6 +228,7 @@ useEffect(() => {
   
   console.log("Current Session:", currentSession);
   if(loading){
+    //loading Screen
     return (<div className="flex text-9xl w-full items-center justify-center h-screen">Loading...</div>)
   }
   
@@ -267,8 +268,6 @@ useEffect(() => {
                 </div>
               </div>
 
-
-
               <div className='flex items-end'>
                 <div className="rounded-[8px] h-8 w-48 flex items-center justify-center border p-1 border-[#295567]">
                   <div><span class="text-[#295567] font-semibold w-5 text-2xl lg:text-xl font-bold font-['Raleway'] leading-normal">Available - </span>
@@ -298,7 +297,6 @@ useEffect(() => {
 
               );
             })}
-
           </div>
 
           {/* Patient's detail section */}

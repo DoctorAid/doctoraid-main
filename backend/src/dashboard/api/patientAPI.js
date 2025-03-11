@@ -20,5 +20,4 @@ patientRouter.get('/getPatientProfile/byPatientId', getPatientProfile);  //retri
 patientRouter.get('/getMedicalRecords/byPatientId', getMedicalRecords); //getting patient medical records by thier Id
 patientRouter.put('/editPatientDetails/:patientId', editPatientDetails); //editing patient details by their Id
 
-
 export default patientRouter;
