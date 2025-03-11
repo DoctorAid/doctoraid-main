@@ -1,14 +1,14 @@
 import React from 'react';
-import DashboardNavigation from './assets/page_sections/dashboard/DashboardNavigation';
+import DashboardNavigation from '../page_sections/dashboard/DashboardNavigation';
 import { SignOutButton } from '@clerk/clerk-react';
 import { useClerk,UserButton,useUser } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 import { Plus } from "lucide-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import PatientCardType1 from './assets/components/PatientCardType1';
-import PatientCardType2 from './assets/components/PatientCardType2';
-import SessionInfo from './assets/components/SessionInfo';
-import PatientDetailsCardType1 from './assets/components/PatientDetailsCardType1';
+import PatientCardType1 from '../components/PatientCardType1';
+import PatientCardType2 from '../components/PatientCardType2';
+import SessionInfo from '../components/SessionInfo';
+import PatientDetailsCardType1 from '../components/PatientDetailsCardType1';
 
 function App() {
 
