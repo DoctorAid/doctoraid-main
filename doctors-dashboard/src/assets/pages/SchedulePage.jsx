@@ -12,7 +12,7 @@ function SchedulePage() {
   const [SelectedSlot, setSelectedSlot] = useState({});
   const [endTime, setEndTime] = useState(null);
   const [startingTime, setStartingTime] = useState(null);
-  const [selectedTime, setSelectedTime] = useState(null);
+  const [selectedTime, setSelectedTime] = useState('5');
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [sessions, setSessions] = useState([]);
@@ -39,6 +39,7 @@ function SchedulePage() {
   e.preventDefault();
   
   
+  
   setMessage('');
 
   if (!selectedDate || !startingTime || !endTime || !selectedTime) {
@@ -47,8 +48,9 @@ function SchedulePage() {
     return;
   }
   const formData = {
-    _id:"8273482674632764",
-    date: selectedDate.toISOString().split('T')[0],
+    doctorid:"12345",
+    date: new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000))
+       .toISOString().split('T')[0],
     startTime: startingTime.toTimeString().slice(0, 5),
     endTime: endTime.toTimeString().slice(0, 5),
     duration: selectedTime,
@@ -58,9 +60,17 @@ function SchedulePage() {
   console.log(formData);
 
   try {
+    console.log(formData);
     const data = await createSlots(formData);
     console.log('Slots created:', data);
     setMessage('Slots created successfully!');
+
+    setSelectedDate(null);
+    setStartingTime(null);
+    setEndTime(null);
+    setSelectedTime(null);
+    setText("");
+
   } catch (error) {
     setMessage(error.message);
   } finally {
@@ -218,6 +228,7 @@ useEffect(() => {
   
   console.log("Current Session:", currentSession);
   if(loading){
+    //loading Screen
     return (<div className="flex text-9xl w-full items-center justify-center h-screen">Loading...</div>)
   }
   
@@ -257,8 +268,6 @@ useEffect(() => {
                 </div>
               </div>
 
-
-
               <div className='flex items-end'>
                 <div className="rounded-[8px] h-8 w-48 flex items-center justify-center border p-1 border-[#295567]">
                   <div><span class="text-[#295567] font-semibold w-5 text-2xl lg:text-xl font-bold font-['Raleway'] leading-normal">Available - </span>
@@ -288,7 +297,6 @@ useEffect(() => {
 
               );
             })}
-
           </div>
 
           {/* Patient's detail section */}
@@ -356,7 +364,7 @@ useEffect(() => {
 
                   <div>
                     {/* Events Display */}
-                    {selectedEvent && (
+                    {selectedEvent && selectedDate && (
                       <div className="bg-blue-50 p-4 rounded-lg">
                         <h3 className="font-medium text-gray-700 mb-2">Events for {selectedDate.toLocaleDateString()}</h3>
                         <div className="max-h-32 overflow-y-auto">
@@ -420,7 +428,7 @@ useEffect(() => {
             <div> {/*  Duration picker */}
               <label className="block text-sm text-gray-600 mb-1">Duration</label>
               <select
-                value={selectedTime}
+                value={selectedTime || ''}
                 onChange={(e) => setSelectedTime(e.target.value)}
                 className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >

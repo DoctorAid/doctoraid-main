@@ -1,6 +1,6 @@
 import React, { Children } from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
+import App from './assets/pages/DashboardPage.jsx'
 import './index.css'
 import {createBrowserRouter,RouterProvider} from 'react-router-dom'
 import RootLayout from './assets/layouts/RootLayout.jsx'
