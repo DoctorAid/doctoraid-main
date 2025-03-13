@@ -18,10 +18,10 @@ const patientsSchema = new mongoose.Schema({
         enum: ['Male', 'Female', 'Other'],
         required: true
     },
-    doctors: {
-        type: [String],
-        required: true
-    },
+    // doctors: {
+    //     type: [String],
+    //     required: true
+    // },
     contactNumber: {
         type: String,
         required: true
@@ -32,16 +32,39 @@ const patientsSchema = new mongoose.Schema({
         unique: true
     },
     address: {
-        type: String,
+        line1: {
+            type: String,
+            required: true
+        },
+        line2: {
+            type: String,
+            default: ''
+        },
+        city: {
+            type: String,
+            required: true
+        }
+    },
+    // medicalHistory: {
+    //     type: [String],
+    //     default: []
+    // },
+    // familyId: {
+    //     type: String,
+    //     default: null
+    // }
+    weight: {
+        type: Number,
         required: true
     },
-    medicalHistory: {
-        type: [String],
-        default: []
+    height: {
+        type: Number,
+        required: true
     },
-    familyId: {
+    relation: {
         type: String,
-        default: null
+        enum: ['Father', 'Mother', 'Son', 'Daughter', 'Husband', 'Wife', 'Sibling', 'Other'],
+        required: true
     }
 });
 

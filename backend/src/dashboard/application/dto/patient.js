@@ -8,33 +8,48 @@ import Doctor from "../../../infrastructure/schema/doctor_schema.js";
 
 export const createPatients = async (req, res) => {
     try {
-        const { 
-            firstName, 
-            lastName, 
-            dateOfBirth, 
-            gender, 
-            doctors, 
-            contactNumber, 
-            email, 
-            address, 
-            medicalHistory 
+        const {
+            firstName,
+            lastName,
+            dateOfBirth,
+            gender,
+            // doctors,
+            contactNumber,
+            email,
+            address,
+            // medicalHistory
+            weight,
+            height,
+            relation
         } = req.body;
-
+        
         // Validate required fields
-        if (!firstName || !lastName || !dateOfBirth || !gender || !doctors || !contactNumber || !email || !address) {
+        if (!firstName || !lastName || !dateOfBirth || !gender || !contactNumber || !email || !weight || !height || !relation) {
             return res.status(400).json({ message: "All required fields must be provided." });
         }
-
+        
+        // Validate address fields
+        if (!address || !address.line1 || !address.city) {
+            return res.status(400).json({ message: "Address line 1 and city are required." });
+        }
+        
         // Validate gender
         const validGenders = ['Male', 'Female', 'Other'];
         if (!validGenders.includes(gender)) {
             return res.status(400).json({ message: "Invalid gender value." });
         }
-
+        
         // Check if email already exists
         const existingPatient = await Patient.findOne({ email: email.toLowerCase() });
         if (existingPatient) {
             return res.status(400).json({ message: "A patient with this email already exists." });
+        }
+        
+        
+        // Validate relation
+        const validRelations = ['Father', 'Mother', 'Son', 'Daughter', 'Husband', 'Wife', 'Sibling', 'Other'];
+        if (!validRelations.includes(relation)) {
+            return res.status(400).json({ message: "Invalid relation value." });
         }
 
         // Create new patient
@@ -43,32 +58,36 @@ export const createPatients = async (req, res) => {
             lastName,
             dateOfBirth,
             gender,
-            doctors,
+            // doctors,
             contactNumber,
             email: email.toLowerCase(),
-            address,
-            medicalHistory: medicalHistory || []
+            address: {
+                line1: address.line1,
+                line2: address.line2 || '',
+                city: address.city
+            },
+            weight,
+            height,
+            relation
+            // medicalHistory: medicalHistory || []
         });
-
-
+        
         // Save patient
         const savedPatient = await newPatient.save();
-        console.log(savedPatient)
-
+        console.log(savedPatient);
+        
         // Return success response
         return res.status(201).json({
             message: "Patient created successfully",
             patient: savedPatient
         });
-
     } catch (error) {
         console.error('Error creating patient:', error);
-        return res.status(500).json({ 
+        return res.status(500).json({
             message: 'Internal server error',
-            error: error.message 
+            error: error.message
         });
     }
-    
 };
 
 //search patient by first name, last name  or email
