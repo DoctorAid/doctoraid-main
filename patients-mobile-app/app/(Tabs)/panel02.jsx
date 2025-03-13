@@ -36,15 +36,16 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingTop: 40,
+    paddingTop: 20,
     paddingRight: 40,
     paddingLeft: 40,
   },
   title: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "#2B3A4A",
-    marginBottom: 20,
+    color: "#295567",
+    marginBottom: 30,
+    
   },
   svgContainer: {
     alignItems: "center",

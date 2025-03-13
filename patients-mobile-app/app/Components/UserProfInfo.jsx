@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import InfoRow from './InfoRow';
 import EditProfileModal from './EditProfileModal';
@@ -25,7 +25,7 @@ const AllergiesList = ({ allergies }) => {
     );
 };
 
-const UserProfInfo = ({ profile, onUpdateProfile }) => {
+const UserProfInfo = ({ profile, onUpdateProfile, onChangeImage }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [currentSection, setCurrentSection] = useState('');
 
@@ -52,6 +52,24 @@ const UserProfInfo = ({ profile, onUpdateProfile }) => {
                         <Feather name="edit-2" size={20} color="#2C4157" />
                     </TouchableOpacity>
                 </View>
+                
+                {/* Profile Image Section */}
+                <View style={styles.profileImageSection}>
+                    <View style={styles.imageContainer}>
+                        <Image 
+                            source={{ uri: profile.image }} 
+                            style={styles.profileImage} 
+                        />
+                        <TouchableOpacity 
+                            style={styles.editImageButton}
+                            onPress={() => onChangeImage(profile.id)}
+                        >
+                            <Feather name="camera" size={14} color="#FFFFFF" />
+                        </TouchableOpacity>
+                    </View>
+                    <Text style={styles.imageLabel}>Profile Picture</Text>
+                </View>
+                
                 <InfoRow label="Name" value={profile.name} />
                 <InfoRow label="Relation" value={profile.relation} />
                 <InfoRow label="Birth Date" value={profile.birthDate} />
@@ -128,6 +146,40 @@ const styles = StyleSheet.create({
         backgroundColor: '#F8FBFE',
         borderWidth: 1,
         borderColor: '#E8F1F9',
+    },
+    profileImageSection: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: '#E8F1F9',
+    },
+    imageContainer: {
+        position: 'relative',
+        marginRight: 15
+    },
+    profileImage: {
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+    },
+    editImageButton: {
+        position: 'absolute',
+        bottom: 0,
+        right: 0,
+        backgroundColor: '#3498db',
+        borderRadius: 12,
+        width: 24,
+        height: 24,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 2,
+        borderColor: '#FFFFFF',
+    },
+    imageLabel: {
+        fontSize: 16,
+        color: '#2C4157',
+        fontWeight: '500',
     },
     infoRow: {
         flexDirection: 'row',
