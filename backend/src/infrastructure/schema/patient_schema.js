@@ -65,6 +65,15 @@ const patientsSchema = new mongoose.Schema({
         type: String,
         enum: ['Father', 'Mother', 'Son', 'Daughter', 'Husband', 'Wife', 'Sibling', 'Other'],
         required: true
+    },
+    familyId: {
+        type: String,
+        required: true
+    },
+    patientId: {
+        type: String,
+        required: true,
+        unique: true
     }
 });
 
