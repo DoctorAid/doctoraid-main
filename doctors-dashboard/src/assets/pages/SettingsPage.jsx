@@ -1,6 +1,6 @@
 import React from 'react'
 
-function MessagePage() {
+function SettingsPage() {
   return (
     <div className='flex bg-[#FAFAF9]  w-full items-center justify-center text-black'>
 
@@ -12,4 +12,4 @@ function MessagePage() {
   )
 }
 
-export default MessagePage
+export default SettingsPage
