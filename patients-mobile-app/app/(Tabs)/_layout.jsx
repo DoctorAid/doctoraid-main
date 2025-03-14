@@ -28,12 +28,12 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-  name="panel01"
-  options={{
-    title: 'Panel 01',
-    tabBarIcon: ({ focused }) => focused ? <FrameActive width={30} height={30} /> : <Frame width={30} height={30} />,
-  }}
-/>
+        name="panel01"
+        options={{
+          title: 'Panel 01',
+          tabBarIcon: ({ focused }) => focused ? <FrameActive width={30} height={30} /> : <Frame width={30} height={30} />,
+        }}
+      />
       <Tabs.Screen
         name="panel02"
         options={{

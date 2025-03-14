@@ -1,6 +1,6 @@
 // UserProfile.js - Main component
 import React, { useState, useRef } from 'react';
-import { View, StyleSheet, SafeAreaView, ScrollView, Dimensions } from 'react-native';
+import { View, StyleSheet, SafeAreaView, ScrollView, Dimensions, TouchableOpacity, Text, Alert } from 'react-native';
 import FamPic from '../Assets/images/fam.svg';
 import MaxProfilesPopup from '../Components/MaxProfilesPopup';
 import ProfileHeader from '../Components/ProfileHeader';
@@ -8,7 +8,8 @@ import UserProfInfo from '../Components/UserProfInfo';
 import AddProfileModal from '../Components/ProfileModal';
 import ImagePickerModal from '../Components/ImagePickerModal';
 import * as ImagePicker from 'expo-image-picker';
-import { Alert } from 'react-native';
+import { useAuth } from '@clerk/clerk-expo';
+import { useRouter } from 'expo-router';
 
 const UserProfile = () => {
     // Profile state
@@ -68,6 +69,10 @@ const UserProfile = () => {
     
     // Add window dimensions
     const windowHeight = Dimensions.get('window').height;
+    
+    // Authentication and navigation
+    const { signOut, isLoaded } = useAuth();
+    const router = useRouter();
 
     // Profile management functions
     const handleProfileUpdate = (updatedProfile) => {
@@ -275,6 +280,26 @@ const UserProfile = () => {
         resetNewProfileForm();
     };
 
+    // Fixed logout handler
+    const handleLogout = async () => {
+        if (!isLoaded) {
+            return;
+        }
+    
+        try {
+            await signOut();
+            
+            // Navigate to sign-in screen
+            router.replace('/(auth)/Sign-in');
+        } catch (error) {
+            console.error('Error signing out:', error);
+            Alert.alert(
+                'Logout Failed',
+                'There was a problem logging you out. Please try again.'
+            );
+        }
+    };
+
     return (
         <SafeAreaView style={styles.safeArea}>
             <ScrollView 
@@ -328,6 +353,14 @@ const UserProfile = () => {
                 visible={maxProfilesPopupVisible}
                 onClose={() => setMaxProfilesPopupVisible(false)}
             />
+
+            <TouchableOpacity
+                style={styles.logoutButton}
+                onPress={handleLogout}
+                disabled={!isLoaded}
+            >
+                <Text style={styles.buttonText}>Logout</Text>
+            </TouchableOpacity>
         </SafeAreaView>
     );
 };
@@ -348,6 +381,20 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: -45,
         zIndex: 1, // Lower than dropdown
+    },
+    logoutButton: {
+        backgroundColor: '#f44336',
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        borderRadius: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: 20,
+    },
+    buttonText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: '600',
     },
 });
 
