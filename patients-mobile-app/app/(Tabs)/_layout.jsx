@@ -1,11 +1,11 @@
 import { Tabs } from 'expo-router';
 import { Platform, Image } from 'react-native';
-import FrameActive from '../Assets/images/frame-active.svg';
-import Frame from '../Assets/images/Frame.svg';
+import FrameActive from '../Assets/images/docpanel Active.svg';
+import Frame from '../Assets/images/docpanel.svg';
 import HomeActive from '../Assets/images/Home Active.svg';
 import Home from '../Assets/images/Home.svg';
-import Frame02Active from '../Assets/images/Frame02 Active.svg';
-import Frame02 from '../Assets/images/Frame02.svg';
+import Frame02Active from '../Assets/images/frame-active.svg';
+import Frame02 from '../Assets/images/Frame.svg';
 import Frame03Active from '../Assets/images/Frame03 Active.svg';
 import Frame03 from '../Assets/images/Frame03.svg';
 

@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import DateSelector from '../Components/DoctorAppoinmentDate';
 import TimeSelector from '../Components/DoctorAppointmentTime';
 
 export default function AppointmentScreen() {
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  
+  const toggleSubscription = () => {
+    setIsSubscribed(!isSubscribed);
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container}>
@@ -27,7 +33,20 @@ export default function AppointmentScreen() {
                   <Ionicons name="call" size={24} color="#FFFFFF" />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.actionButton}>
-                  <Ionicons name="chatbubble-ellipses" size={24} color="#FFFFFF" />
+                  <Ionicons name="location" size={24} color="#FFFFFF" />
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={[styles.subscribeButton, isSubscribed && styles.subscribedButton]}
+                  onPress={toggleSubscription}
+                >
+                  <Ionicons 
+                    name={isSubscribed ? "notifications" : "notifications-outline"} 
+                    size={20} 
+                    color={isSubscribed ? "#295567" : "#FFFFFF"} 
+                  />
+                  <Text style={[styles.subscribeText, isSubscribed && styles.subscribedButtonText]}>
+                    {isSubscribed ? "Subscribed" : "Subscribe"}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -121,6 +140,7 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: 'row',
     gap: 12,
+    alignItems: 'center',
   },
   actionButton: {
     width: 44,
@@ -129,6 +149,29 @@ const styles = StyleSheet.create({
     backgroundColor: '#295567',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  subscribeButton: {
+    flexDirection: 'row',
+    backgroundColor: '#295567',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    alignItems: 'center',
+    marginLeft: 8,
+  },
+  subscribedButton: {
+    backgroundColor: '#E6F4F1',
+    borderWidth: 1,
+    borderColor: '#295567',
+  },
+  subscribeText: {
+    color: '#FFFFFF',
+    fontWeight: '500',
+    fontSize: 14,
+    marginLeft: 4,
+  },
+  subscribedButtonText: {
+    color: '#295567',
   },
   section: {
     marginBottom: 24,
@@ -180,8 +223,6 @@ const styles = StyleSheet.create({
     marginBottom: 32,
     marginRight: -20,
     marginLeft: -20,
-
-
   },
   sectionLabel: {
     marginLeft: 20,

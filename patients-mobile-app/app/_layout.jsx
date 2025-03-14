@@ -9,6 +9,7 @@ const Layout = () => {
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(Tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="UserOnboarding" options={{ headerShown: false }} />
         {/* Add other Stack.Screen components as needed */}
       </Stack>
     </ClerkProvider>
