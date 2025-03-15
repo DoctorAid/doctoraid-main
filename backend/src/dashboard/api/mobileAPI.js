@@ -1,5 +1,5 @@
 import express from 'express';
-import { getDoctorById, searchDoctors, subscribeToDoctor, getFamilyById, bookSlot, getActiveAppointments } from '../application/dto/mobile.js';
+import { getDoctorById, searchDoctors, subscribeToDoctor, getFamilyById, bookSlot, getActiveAppointments, enterPin } from '../application/dto/mobile.js';
 
 const mobileRouter = express.Router();
 
@@ -16,4 +16,5 @@ mobileRouter.post('/slots/book', bookSlot);
 
 mobileRouter.get('/appointments/active/:patientId', getActiveAppointments);
 
+mobileRouter.post('/pin', enterPin); 
 export default mobileRouter;
