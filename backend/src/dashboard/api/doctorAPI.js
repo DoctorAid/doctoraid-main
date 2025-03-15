@@ -3,7 +3,7 @@ import {getDoctorDetails,createDoctor, deleteDoctorDetails  ,getSessionsByDoctor
 
 const doctorRouter = express.Router();
 
-doctorRouter.get('/details', getDoctorDetails); //get the doctor details
+doctorRouter.get('/details', getDoctorDetails); //get the doctor details  
 doctorRouter.delete('/delete', deleteDoctorDetails); //delete the doctor
 doctorRouter.post('/create', createDoctor ); //create a doctor profile
 doctorRouter.get('/sessions', getSessionsByDoctor); //get the sessions based on doctorAid

@@ -7,8 +7,10 @@ function SettingsPage() {
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam velit, vulputate eu pharetra nec, mattis ac neque. Duis vulputate commodo lectus, ac blandit elit tincidunt id. Sed rhoncus, tortor sed eleifend tristique, tortor mauris arcu et leo.",
     telephone: "0712345678",
     location: "",
-    weekendHours: "7.00am - 5.00pm",
-    weekdayHours: "3.00pm - 6.00pm",
+    weekendOpenTime: "07:00",
+    weekendCloseTime: "17:00",
+    weekdayOpenTime: "15:00",
+    weekdayCloseTime: "18:00",
   });
 
   const [profileImage, setProfileImage] = useState(null);
@@ -66,6 +68,10 @@ function SettingsPage() {
       contact: false,
       businessHours: false,
     });
+  };
+
+  const formatTimeDisplay = (openTime, closeTime) => {
+    return `${openTime} - ${closeTime}`;
   };
 
   return (
@@ -284,7 +290,8 @@ function SettingsPage() {
                 </button>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-6">
+                {/** Weekend Hours */}
                 <div>
                   <label
                     htmlFor="weekendHours"
@@ -292,16 +299,53 @@ function SettingsPage() {
                   >
                     Weekends
                   </label>
-                  <input
-                    type="text"
-                    id="weekendHours"
-                    name="weekendHours"
-                    value={userInfo.weekendHours}
-                    onChange={handleInputChange}
-                    disabled={!isEditing.businessHours}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  {isEditing.businessHours ? (
+                    <div className="flex items-center space-x-2">
+                      <div className="w-1/2">
+                        <label className="text-xs text-gray-500 mb-1 block">
+                          Open
+                        </label>
+
+                        <input
+                          type="text"
+                          id="weekendOpenTime"
+                          name="weekendOpenTime"
+                          value={userInfo.weekendOpenTime}
+                          onChange={handleInputChange}
+                          //disabled={!isEditing.businessHours}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div className="w-1/2">
+                        <label className="text-xs text-gray-500 mb-1 block">
+                          Close
+                        </label>
+
+                        <input
+                          type="text"
+                          id="weekendCloseTime"
+                          name="weekendCloseTime"
+                          value={userInfo.weekendCloseTime}
+                          onChange={handleInputChange}
+                          //disabled={!isEditing.businessHours}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <input
+                      type="text"
+                      value={formatTimeDisplay(
+                        userInfo.weekendOpenTime,
+                        userInfo.weekendCloseTime
+                      )}
+                      disabled
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50"
+                    />
+                  )}
                 </div>
+
+                {/* Weekdays Time Selection */}
                 <div>
                   <label
                     htmlFor="weekdayHours"
@@ -309,15 +353,46 @@ function SettingsPage() {
                   >
                     Weekdays
                   </label>
-                  <input
-                    type="text"
-                    id="weekdayHours"
-                    name="weekdayHours"
-                    value={userInfo.weekdayHours}
-                    onChange={handleInputChange}
-                    disabled={!isEditing.businessHours}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  {isEditing.businessHours ? (
+                    <div className="flex items-center space-x-2">
+                      <div className="w-1/2">
+                        <label className="text-xs text-gray-500 mb-1 block">
+                          Open
+                        </label>
+                        <input
+                          type="time"
+                          id="weekdayOpenTime"
+                          name="weekdayOpenTime"
+                          value={userInfo.weekdayOpenTime}
+                          onChange={handleInputChange}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div className="w-1/2">
+                        <label className="text-xs text-gray-500 mb-1 block">
+                          Close
+                        </label>
+                        <input
+                          type="time"
+                          id="weekdayCloseTime"
+                          name="weekdayCloseTime"
+                          value={userInfo.weekdayCloseTime}
+                          onChange={handleInputChange}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <input
+                      type="text"
+                      value={formatTimeDisplay(
+                        userInfo.weekdayOpenTime,
+                        userInfo.weekdayCloseTime
+                      )}
+                      disabled
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50"
+                    />
+                  )}
                 </div>
               </div>
             </div>
