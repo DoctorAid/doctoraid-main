@@ -8,8 +8,8 @@ import PatientCardType1 from '../components/PatientCardType1';
 import PatientCardType2 from '../components/PatientCardType2';
 import SessionInfo from '../components/SessionInfo';
 import PatientDetailsCardType1 from '../components/PatientDetailsCardType1';
-import { createRecord, getRecordsByPatient, getRecordsByPatientAndDoctor } from '../api/recordsAPI.js';
-
+// import { createRecord, getRecordsByPatient, getRecordsByPatientAndDoctor } from '../api/recordsAPI.js';
+import { createRecord } from '../api/recordsAPI';
 function App() {
   // State variables
   const [loading, setLoading] = useState(false);
@@ -56,83 +56,83 @@ function App() {
   };
 
   // Function to fetch patient records
-  const fetchPatientRecords = async (patientId, page = 1) => {
-    if (!patientId) return;
+  // const fetchPatientRecords = async (patientId, page = 1) => {
+  //   if (!patientId) return;
     
-    try {
-      setLoading(true);
-      const data = await getRecordsByPatient(patientId, page, limit);
+  //   try {
+  //     setLoading(true);
+  //     const data = await getRecordsByPatient(patientId, page, limit);
       
-      // Update the records for this specific patient
-      setPatientRecords(prevState => ({
-        ...prevState,
-        [patientId]: data.records
-      }));
+  //     // Update the records for this specific patient
+  //     setPatientRecords(prevState => ({
+  //       ...prevState,
+  //       [patientId]: data.records
+  //     }));
       
-      // Update pagination info
-      setCurrentPage(data.pagination.currentPage);
-      setTotalPages(data.pagination.totalPages);
+  //     // Update pagination info
+  //     setCurrentPage(data.pagination.currentPage);
+  //     setTotalPages(data.pagination.totalPages);
       
-    } catch (error) {
-      console.error('Error fetching patient records:', error);
-      setMessage('Failed to fetch patient records');
-    } finally {
-      setLoading(false);
-    }
-  };
+  //   } catch (error) {
+  //     console.error('Error fetching patient records:', error);
+  //     setMessage('Failed to fetch patient records');
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   // Function to fetch records by patient and doctor
-  const fetchPatientDoctorRecords = async (patientId) => {
-    if (!patientId || !doctorId) return;
+  // const fetchPatientDoctorRecords = async (patientId) => {
+  //   if (!patientId || !doctorId) return;
     
-    try {
-      setLoading(true);
-      const records = await getRecordsByPatientAndDoctor(patientId, doctorId, 1, limit);
+  //   try {
+  //     setLoading(true);
+  //     const records = await getRecordsByPatientAndDoctor(patientId, doctorId, 1, limit);
       
-      // Store these records specifically for this patient
-      setPatientRecords(prevState => ({
-        ...prevState,
-        [patientId]: records
-      }));
+  //     // Store these records specifically for this patient
+  //     setPatientRecords(prevState => ({
+  //       ...prevState,
+  //       [patientId]: records
+  //     }));
       
-    } catch (error) {
-      console.error('Error fetching patient-doctor records:', error);
-      setMessage('Failed to fetch records');
-    } finally {
-      setLoading(false);
-    }
-  };
+  //   } catch (error) {
+  //     console.error('Error fetching patient-doctor records:', error);
+  //     setMessage('Failed to fetch records');
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  // Set doctor ID from user info when available
-  useEffect(() => {
-    if (user?.id) {
-      setDoctorId(user.id);
-    }
-  }, [user]);
+  // // Set doctor ID from user info when available
+  // useEffect(() => {
+  //   if (user?.id) {
+  //     setDoctorId(user.id);
+  //   }
+  // }, [user]);
 
-  // Handle pagination
-  const handlePageChange = (newPage) => {
-    if (selectedPatient?.id && newPage > 0 && newPage <= totalPages) {
-      setCurrentPage(newPage);
-      fetchPatientRecords(selectedPatient.id, newPage);
-    }
-  };
+  // // Handle pagination
+  // const handlePageChange = (newPage) => {
+  //   if (selectedPatient?.id && newPage > 0 && newPage <= totalPages) {
+  //     setCurrentPage(newPage);
+  //     fetchPatientRecords(selectedPatient.id, newPage);
+  //   }
+  // };
 
-  // Handle patient selection from PatientCardType1
-  const handlePatientSelect = (patient) => {
-    setSelectedPatient(patient);
-    if (patient?.id) {
-      fetchPatientRecords(patient.id, 1);
-    }
-  };
+  // // Handle patient selection from PatientCardType1
+  // const handlePatientSelect = (patient) => {
+  //   setSelectedPatient(patient);
+  //   if (patient?.id) {
+  //     fetchPatientRecords(patient.id, 1);
+  //   }
+  // };
 
-  // Handle patient selection from PatientCardType2 (session patients)
-  const handleSessionPatientSelect = (patient) => {
-    setSelectedPatient(patient);
-    if (patient?.id) {
-      fetchPatientDoctorRecords(patient.id);
-    }
-  };
+  // // Handle patient selection from PatientCardType2 (session patients)
+  // const handleSessionPatientSelect = (patient) => {
+  //   setSelectedPatient(patient);
+  //   if (patient?.id) {
+  //     fetchPatientDoctorRecords(patient.id);
+  //   }
+  // };
 
   return (
     <div className='flex flex-col h-[100%] gap-5 bg-[#FAFAF9] w-full px-2 py-2 items-start justify-start text-black animate-[pop_0.3s_ease-out]'>

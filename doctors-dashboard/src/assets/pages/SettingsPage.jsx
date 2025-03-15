@@ -6,7 +6,7 @@ function SettingsPage() {
 
 
        <div>
-       <img src="/Images/temp.png" className="w-40 h-64" />Information about messages</div> 
+       <img src="/Images/temp.png" className="w-40 h-64" />Settings Page</div> 
       
     </div>
   )
