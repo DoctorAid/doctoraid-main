@@ -13,7 +13,7 @@ import DoctorCardType1 from "../Components/DoctorCardType1";
 import DoctorCardType2 from "../Components/DoctorCardType2";
 import OngoingCardType1 from "../Components/OngoingCardType1";
 import Homebrowse from '../Assets/images/homebrowse.svg';
-
+import DoctorCardType4 from "../Components/DoctorCardType4";
 export default function Tab() {
   const [currentStep, setCurrentStep] = useState("step1"); // "step1" -> "step3"
   const fadeAnim = useRef(new Animated.Value(1)).current;
@@ -47,6 +47,7 @@ export default function Tab() {
 
         <Text style={styles.sectionTitle}>Subscribed Doctors</Text>
         <DoctorCardType2 />
+        <DoctorCardType4 />
         <View style={styles.svgContainer}>
           <Homebrowse width={350} />
         </View>
