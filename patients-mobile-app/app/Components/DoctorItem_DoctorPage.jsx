@@ -2,13 +2,14 @@ import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const DoctorItem = ({ doctor }) => {
+const DoctorItem = ({ doctor, onPress }) => {
   return (
     <Pressable 
       style={({ pressed }) => [
         styles.doctorItem,
         pressed && styles.doctorItemPressed
       ]}
+      onPress={onPress}
     >
       <View style={styles.doctorProfile}>
         <View style={styles.doctorAvatar}>
@@ -24,6 +25,9 @@ const DoctorItem = ({ doctor }) => {
           <Ionicons name="checkmark-circle" size={20} color="#295567" />
         </View>
       )}
+      <View style={styles.chevronContainer}>
+        <Ionicons name="chevron-forward" size={20} color="#AAAAAA" />
+      </View>
     </Pressable>
   );
 };
@@ -44,6 +48,7 @@ const styles = StyleSheet.create({
   doctorProfile: {
     flexDirection: 'row',
     alignItems: 'center',
+    flex: 1,
   },
   doctorAvatar: {
     width: 30,
@@ -54,6 +59,7 @@ const styles = StyleSheet.create({
   },
   doctorInfo: {
     justifyContent: 'center',
+    flex: 1,
   },
   doctorName: {
     fontSize: 16,
@@ -65,8 +71,12 @@ const styles = StyleSheet.create({
     color: '#757575',
   },
   subscriptionIndicator: {
-    marginLeft: 10,
+    marginRight: 10,
   },
+  chevronContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
 });
 
 export default DoctorItem;

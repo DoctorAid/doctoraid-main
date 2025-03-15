@@ -1,10 +1,10 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, TextInput, Animated, Platform } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Animated, Platform, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import DoctorList from '../Components/DoctorList_DoctorPage';
 import DoctorSearch from '../Assets/images/doctsearch.svg';
-
 
 // Sample doctor data
 const doctors = [
@@ -16,6 +16,7 @@ export default function Tab() {
   const [searchText, setSearchText] = useState('');
   const [showResults, setShowResults] = useState(false);
   const animatedValue = useRef(new Animated.Value(0)).current;
+  const navigation = useNavigation();
   
   // Filter doctors based on search input
   const filteredDoctors = doctors.filter(doctor => 
@@ -33,6 +34,11 @@ export default function Tab() {
       duration: 500,
       useNativeDriver: false,
     }).start();
+  };
+
+  // Handle doctor selection
+  const handleDoctorSelect = (doctor) => {
+    navigation.navigate('AppointmentScreen', { doctor });
   };
 
   const contentTranslateY = animatedValue.interpolate({
@@ -73,7 +79,10 @@ export default function Tab() {
           {showResults && (
             <View style={styles.resultsContainer}>
               {filteredDoctors.length > 0 ? (
-                <DoctorList doctors={filteredDoctors} />
+                <DoctorList 
+                  doctors={filteredDoctors} 
+                  onDoctorSelect={handleDoctorSelect} 
+                />
               ) : (
                 <View style={styles.emptyResultsContainer}>
                   <Ionicons name="medical-outline" size={24} color="#295567" />
@@ -118,12 +127,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   searchContainer: {
-
     width: '100%',
     zIndex: 10,
     position: 'relative',
     paddingHorizontal: 5,
-
   },
   searchWrapper: {
     flexDirection: 'row',

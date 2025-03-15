@@ -1,14 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import DateSelector from '../Components/DoctorAppoinmentDate';
 import TimeSelector from '../Components/DoctorAppointmentTime';
 
 export default function AppointmentScreen() {
-  const [isSubscribed, setIsSubscribed] = useState(false);
+  const navigation = useNavigation();
+  const route = useRoute();
+  const doctor= { 
+    id: '1', 
+    name: 'Dr. Lakee Jayamanne', 
+    location: 'Kandy', 
+    subscribed: true 
+  };
+  
+  const [isSubscribed, setIsSubscribed] = useState(doctor.subscribed);
   
   const toggleSubscription = () => {
     setIsSubscribed(!isSubscribed);
+  };
+
+  const handleGoBack = () => {
+    navigation.goBack();
   };
 
   return (
@@ -16,7 +30,7 @@ export default function AppointmentScreen() {
       <ScrollView style={styles.container}>
         <View style={styles.content}>
           <View style={styles.header}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleGoBack}>
               <Ionicons name="chevron-back" size={24} color="#334155" />
             </TouchableOpacity>
           </View>
@@ -27,7 +41,8 @@ export default function AppointmentScreen() {
               style={styles.doctorImage}
             />
             <View style={styles.doctorDetails}>
-              <Text style={styles.doctorName}>Dr. Lakee Jayamanne</Text>
+              <Text style={styles.doctorName}>{doctor.name}</Text>
+              <Text style={styles.doctorLocation}>{doctor.location}</Text>
               <View style={styles.actions}>
                 <TouchableOpacity style={styles.actionButton}>
                   <Ionicons name="call" size={24} color="#FFFFFF" />
@@ -135,6 +150,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '600',
     color: '#334155',
+    marginBottom: 8,
+  },
+  doctorLocation: {
+    fontSize: 14,
+    color: '#64748B',
     marginBottom: 12,
   },
   actions: {
