@@ -47,6 +47,8 @@ function SchedulePage() {
     
     return;
   }
+  const pin = Math.floor(1000 + Math.random() * 9999);
+  
   const formData = {
     doctorid:"12345",
     date: new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000))
@@ -54,7 +56,8 @@ function SchedulePage() {
     startTime: startingTime.toTimeString().slice(0, 5),
     endTime: endTime.toTimeString().slice(0, 5),
     duration: selectedTime,
-    text: text
+    text: text,
+    pin: pin
   };
 
   console.log(formData);
