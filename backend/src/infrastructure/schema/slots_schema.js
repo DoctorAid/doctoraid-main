@@ -45,6 +45,10 @@ const slotsSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref: 'Record',
         default: null
+    },
+    activated: {
+        type: Boolean,
+        default: false
     }
 });
 

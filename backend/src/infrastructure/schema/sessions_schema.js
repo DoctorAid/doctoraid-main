@@ -1,4 +1,3 @@
-import { Pin } from '@mui/icons-material';
 import mongoose from 'mongoose';
 
 const sessionsSchema = new mongoose.Schema({
@@ -16,7 +15,7 @@ const sessionsSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    Pin: {
+    pin: {
         type: String,
         required: true
     }
