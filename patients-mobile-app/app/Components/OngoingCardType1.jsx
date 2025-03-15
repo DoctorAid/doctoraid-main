@@ -8,37 +8,36 @@ const OngoingCardType1 = () => {
   const queueCount = 1;
   const doctorName = "Dr. Lakee Jayamanne";
   const patientName = "Nimesha";
-  const appointmentTime = "11:00am - 12:00pm";
-  const profilePic = "https://via.placeholder.com/50";
+  const appointmentTime = "11:00 AM - 12:00 PM";
   const notificationMessage = "No: 6 haven't joined the queue";
   const upNextText = "Up Next"; 
 
   return (
     <View style={styles.container}>
       {/* Header Section */}
-      <View style={styles.headerContainer}>
-        <View style={styles.headerTextContainer}>
-          <Text style={styles.header}>Ongoing</Text>
-          <Text style={styles.header}>Appointment</Text>
-        </View>
-        <View style={styles.timeContainer}>
-          <Text style={styles.timeText}>{appointmentTime}</Text>
-        </View>
+      <View>
+        <Text style={styles.titleText}>Ongoing</Text>
+        <Text style={styles.titleText}>Appointment</Text>
       </View>
       
       {/* Appointment Card */}
       <View style={styles.card}>
         {/* Doctor Info */}
-        <View style={styles.doctorInfo}>
-          <Image source={{ uri: profilePic }} style={styles.profilePic} />
-          <View>
+        <View style={styles.header}>  
+          <View style={styles.imagePlaceholder} />
+          <View style={styles.textContainer}>
             <Text style={styles.doctorName}>{doctorName}</Text>
-            <Text style={styles.patientName}>For {patientName}</Text>
+            <Text style={styles.forPatient}>
+              For <Text style={styles.patientName}>{patientName}</Text>
+            </Text>
+          </View>
+          <View style={styles.timeContainer}>
+            <Text style={styles.timeText}>{appointmentTime}</Text>
           </View>
         </View>
 
         {/* Divider Line */}
-        <View style={styles.line} />
+        <View style={styles.divider} />
 
         {/* Appointment Number */}
         <Text style={styles.number}>No: {appointmentNo.toString().padStart(2, '0')}</Text>
@@ -56,7 +55,7 @@ const OngoingCardType1 = () => {
 
         {/* Notification Message */}
         <View style={styles.queueInfo}>
-          <MaterialIcons name="notifications" size={16} color="#295567" />
+          <MaterialIcons name="notifications" size={16} color="#265A69" />
           <Text style={styles.queueText}>{notificationMessage}</Text>
         </View>
       </View>
@@ -68,70 +67,66 @@ export default OngoingCardType1;
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
-    width: '100%',
+    paddingHorizontal: 20,
   },
-  headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 5,
-    paddingRight: 10,
+  titleText: {
+    paddingHorizontal: 10,
+    fontSize: 24, 
+    fontWeight: 'bold', 
+    color: '#265A69',
   },
-  headerTextContainer: {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    minWidth: 120, 
-    flexShrink: 1, 
+  card: {
+    backgroundColor: '#265A69', 
+    padding: 20, 
+    borderRadius: 15, 
+    marginTop: 10,
+    borderWidth: 2,
+    borderColor: "#AFCDE7",
   },
   header: {
-    fontSize: 22,
+    flexDirection: 'row', 
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  imagePlaceholder: {
+    width: 50, 
+    height: 50, 
+    borderRadius: 25, 
+    backgroundColor: '#AFCDE7',
+    marginRight: 10,
+  },
+  textContainer: {
+    flex: 1,
+  },
+  doctorName: {
+    color: 'white', 
+    fontSize: 18, 
+    fontWeight: 'bold'
+  },
+  forPatient: {
+    color: '#AFCDE7', 
+    fontSize: 14
+  },
+  patientName: {
     fontWeight: 'bold',
-    color: '#0A5A72',
-    textAlign: 'left',
+    color: '#AFCDE7',
   },
   timeContainer: {
-    backgroundColor: '#295567',
+    marginRight: 20,
+    backgroundColor: '#AFCDE7',
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 15,
-    marginLeft: 5, 
   },
   timeText: {
-    color: '#FEFAF6',
-    fontSize: 14,
-  },
-  card: {
-    backgroundColor: '#0A5A72',
-    padding: 15,
-    borderRadius: 10,
-  },
-  doctorInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  profilePic: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
-  },
-  doctorName: {
-    color: 'white',
+    color: '#265A69',
+    fontSize: 12,
     fontWeight: 'bold',
-    fontSize: 16,
   },
-  patientName: {
-    color: '#C0E4E9',
-    fontWeight: 'bold',
-    fontSize: 14,
-  },
-  line: {
-    height: 1,
-    backgroundColor: '#C0E4E9',
-    marginVertical: 5,
-    width: '100%',
+  divider: {
+    borderBottomWidth: 1, 
+    borderBottomColor: '#AFCDE7', 
+    marginVertical: 10
   },
   number: {
     color: 'white',
@@ -143,12 +138,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row', 
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
-    paddingRight: 10,
+    marginVertical: 10,
   },
   whiteText: {
     color: 'white',
     fontSize: 14,
+    marginVertical: 2,
   },
   upNextContainer: {
     backgroundColor: '#DBF3C9',
@@ -157,12 +152,12 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   upNextText: {
-    color: '#295567',
+    color: '#265A69',
     fontSize: 14,
     fontWeight: 'bold',
   },
   queueInfo: {
-    backgroundColor: '#C9E4F3',
+    backgroundColor: '#AFCDE7',
     marginTop: 10,
     padding: 10,
     borderRadius: 10,
@@ -170,7 +165,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   queueText: {
-    color: '#295567',
+    color: '#265A69',
     fontSize: 14,
+    marginLeft: 5,
   },
 });

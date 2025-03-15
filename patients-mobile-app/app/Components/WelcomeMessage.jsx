@@ -24,6 +24,7 @@ export default WelcomeMessage;
 
 const styles = StyleSheet.create({
   container: {
+    paddingHorizontal: 30,
     padding: 20,
     marginTop: 0,
     backgroundColor: "#FAF9F6",

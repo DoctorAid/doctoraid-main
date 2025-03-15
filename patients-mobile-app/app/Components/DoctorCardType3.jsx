@@ -1,13 +1,13 @@
+// PinEntryCard.js (renamed from DoctorCardType3 for clarity)
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from "react-native";
 import { Calendar, Clock, ChevronRight } from "lucide-react-native";
 
-const DoctorCardType3 = ({ onSubmitPin }) => {
+const PinEntryCard = ({ onSubmitPin }) => {
   const [pin, setPin] = useState("");
-  const item = {
-    id: "1",
-    doctor: "Dr. Lakee Jayamanne",
-    patient: "Nimesha",
+  const appointment = {
+    doctorName: "Dr. Lakee Jayamanne",
+    patientName: "Nimesha",
     date: "Sunday, 12 June",
     time: "11:00 am - 12:00 pm",
   };
@@ -22,16 +22,16 @@ const DoctorCardType3 = ({ onSubmitPin }) => {
   };
   
   return (
-    <View>
+    <View style={styles.container}>
       <Text style={styles.titleText}>Enter the pin number</Text>
       <View style={styles.card}>
         {/* Header with Doctor Name & Patient */}
         <View style={styles.header}>
           <View style={styles.imagePlaceholder} />
           <View style={styles.textContainer}>
-            <Text style={styles.doctorName}>{item.doctor}</Text>
+            <Text style={styles.doctorName}>{appointment.doctorName}</Text>
             <Text style={styles.forPatient}>
-              For <Text style={styles.patientName}>{item.patient}</Text>
+              For <Text style={styles.patientName}>{appointment.patientName}</Text>
             </Text>
           </View>
           <ChevronRight size={24} color="white" />
@@ -41,11 +41,11 @@ const DoctorCardType3 = ({ onSubmitPin }) => {
         <View style={styles.infoContainer}>
           <View style={styles.row}>
             <Calendar size={16} color="#AFCDE7" />
-            <Text style={styles.date}>{item.date}</Text>
+            <Text style={styles.date}>{appointment.date}</Text>
           </View>
           <View style={styles.row}>
             <Clock size={16} color="#AFCDE7" />
-            <Text style={styles.time}>{item.time}</Text>
+            <Text style={styles.time}>{appointment.time}</Text>
           </View>
         </View>
        
@@ -57,7 +57,7 @@ const DoctorCardType3 = ({ onSubmitPin }) => {
           secureTextEntry
           value={pin}
           onChangeText={setPin}
-          keyboardType="number-pad" // Better for PIN entry
+          keyboardType="number-pad"
         />
        
         {/* Enter Queue Button */}
@@ -70,18 +70,18 @@ const DoctorCardType3 = ({ onSubmitPin }) => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    paddingHorizontal: 20,
+  },
   titleText: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#265A69',
-    marginLeft: 20,
     marginBottom: 10,
     marginTop: 20,
   },
   card: {
-    backgroundColor: "#164A63",
-    width: "300",
-    marginLeft: 20,
+    backgroundColor: "#265A69",
     borderRadius: 15,
     padding: 20,
     marginBottom: 20,
@@ -162,4 +162,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DoctorCardType3;
+export default PinEntryCard;
