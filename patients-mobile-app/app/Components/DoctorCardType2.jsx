@@ -1,159 +1,174 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
-import { Calendar, Clock } from "lucide-react-native";
-import { useNavigation } from "@react-navigation/native"; // Import navigation hook
+import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, SafeAreaView } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
-const doctorAppointments = [
+// Sample data for multiple doctors
+const doctorProfiles = [
   {
     id: "1",
     name: "Dr. Chanugi",
     location: "Kandy",
-    date: "Sunday, 12 June",
-    time: "11:00 - 12:00 AM",
+    weekdayHours: "8:00pm - 10:00pm",
+    weekendHours: "8:00pm - 10:00pm",
+    // imageUrl: require("./assets/doctor1.png"), // Replace with actual image path
   },
   {
     id: "2",
-    name: "Dr. Senarath",
+    name: "Dr. Perera",
     location: "Colombo",
-    date: "Monday, 13 June",
-    time: "10:00 - 11:00 AM",
+    weekdayHours: "9:00am - 11:00am",
+    weekendHours: "10:00am - 12:00pm",
+    // imageUrl: require("./assets/doctor2.png"), // Replace with actual image path
   },
   {
     id: "3",
-    name: "Dr. Wijesinghe",
+    name: "Dr. Fernando",
     location: "Galle",
-    date: "Tuesday, 14 June",
-    time: "9:00 - 10:00 AM",
-  },
-  {
-    id: "4",
-    name: "Dr. Perera",
-    location: "Jaffna",
-    date: "Wednesday, 15 June",
-    time: "2:00 - 3:00 PM",
+    weekdayHours: "4:00pm - 6:00pm",
+    weekendHours: "3:00pm - 5:00pm",
+    // imageUrl: require("./assets/doctor3.png"), // Replace with actual image path
   },
 ];
 
-const DoctorCardType2 = ({ item }) => {
-  const navigation = useNavigation(); // Initialize navigation hook
+const DoctorCard = ({ doctor }) => {
+  const navigation = useNavigation();
   
-  const handleAppointmentPress = () => {
-    // Navigate to appointments screen with doctor data
-    navigation.navigate('DoctorAppointment', { doctorId: item.id, doctorName: item.name });
+  const handleViewAppointments = () => {
+    navigation.navigate('DoctorAppointment', { 
+      doctorId: doctor.id, 
+      doctorName: doctor.name 
+    });
   };
   
   return (
     <View style={styles.card}>
-      <View style={styles.header}>
-        <View style={styles.imagePlaceholder} />
-        <View style={styles.textContainer}>
-          <Text style={styles.name}>{item.name}</Text>
-          <Text style={styles.location}>{item.location}</Text>
+      <View style={styles.content}>
+        <View style={styles.imageContainer}>
+          {/* You can replace this with actual doctor images */}
+          <Image 
+            // source={doctor.imageUrl} 
+            style={styles.doctorImage}
+            resizeMode="cover"
+          />
+        </View>
+        
+        <View style={styles.infoContainer}>
+          <Text style={styles.doctorName}>{doctor.name}</Text>
+          <Text style={styles.location}>{doctor.location}</Text>
+          
+          <View style={styles.scheduleContainer}>
+            <Text style={styles.scheduleTitle}>Weekdays</Text>
+            <Text style={styles.scheduleTime}>{doctor.weekdayHours}</Text>
+            
+            <Text style={[styles.scheduleTitle, styles.weekendTitle]}>Weekends</Text>
+            <Text style={styles.scheduleTime}>{doctor.weekendHours}</Text>
+          </View>
         </View>
       </View>
-      <View style={styles.infoContainer}>
-        <View style={styles.row}>
-          <Calendar size={16} color="#7A7D9C" />
-          <Text style={styles.date}>{item.date}</Text>
-        </View>
-        <View style={styles.row}>
-          <Clock size={16} color="#7A7D9C" />
-          <Text style={styles.time}>{item.time}</Text>
-        </View>
-      </View>
-
+      
       <TouchableOpacity 
-        style={styles.button}
-        onPress={handleAppointmentPress} // Add onPress handler
+        style={styles.appointmentButton}
+        onPress={handleViewAppointments}
       >
-        <Text style={styles.buttonText}>Appointments</Text>
+        <Text style={styles.buttonText}>View Appointments</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
-export default function DoctorCardList() {
+const DoctorProfileList = () => {
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <FlatList
-        data={doctorAppointments}
+        data={doctorProfiles}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <DoctorCardType2 item={item} />}
+        renderItem={({ item }) => <DoctorCard doctor={item} />}
         horizontal={true}
         showsHorizontalScrollIndicator={false}
+        pagingEnabled={true}
+        snapToAlignment="center"
+        contentContainerStyle={styles.listContainer}
       />
-    </View>
+    </SafeAreaView>
   );
-}
+};
+
+export default DoctorProfileList;
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 10,
-    marginBottom: 20,
     flex: 1,
-    paddingLeft: 15,
+  },
+  listContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 20,
   },
   card: {
-    backgroundColor: "white",
-    width: 300,
+    backgroundColor: "#FFFFFF",
     borderRadius: 15,
     padding: 20,
-    marginRight: 25, 
+    width: 320,
+    marginHorizontal: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  header: {
+  content: {
     flexDirection: "row",
-    alignItems: "center",
     marginBottom: 15,
   },
-  imagePlaceholder: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: "#d9d9d9",
-    marginRight: 10,
+  imageContainer: {
+    marginRight: 20,
   },
-  textContainer: {
-    flexDirection: "column",
-  },
-  name: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#265A69",
-  },
-  location: {
-    fontSize: 14,
-    color: "#265A69",
+  doctorImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "#F0F0F0",
   },
   infoContainer: {
-    borderTopWidth: 1,
-    borderColor: "#EAEAEA",
-    paddingTop: 10,
+    flex: 1,
+    justifyContent: "center",
+  },
+  doctorName: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#1A2E35",
+    marginBottom: 4,
+  },
+  location: {
+    fontSize: 16,
+    color: "#8F9BB3",
     marginBottom: 10,
   },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 5,
+  scheduleContainer: {
+    marginTop: 5,
   },
-  date: {
+  scheduleTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#1A2E35",
+  },
+  weekendTitle: {
+    marginTop: 8,
+  },
+  scheduleTime: {
     fontSize: 14,
-    color: "#7A7D9C",
-    marginLeft: 5,
+    color: "#8F9BB3",
+    marginBottom: 4,
   },
-  time: {
-    fontSize: 14,
-    color: "#7A7D9C",
-    marginLeft: 5,
-  },
-  button: {
-    backgroundColor: "#A7D2FA",
-    paddingVertical: 12,
+  appointmentButton: {
+    backgroundColor: "#E6F1FA",
     borderRadius: 10,
+    paddingVertical: 15,
     alignItems: "center",
+    justifyContent: "center",
   },
   buttonText: {
+    color: "#6B96B9",
     fontSize: 16,
-    color: "#1D1E2C",
-    fontWeight: "bold",
+    fontWeight: "600",
   },
 });
