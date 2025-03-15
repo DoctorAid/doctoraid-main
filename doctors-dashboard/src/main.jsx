@@ -5,7 +5,7 @@ import './index.css'
 import {createBrowserRouter,RouterProvider} from 'react-router-dom'
 import RootLayout from './assets/layouts/RootLayout.jsx'
 import SchedulePage from './assets/pages/SchedulePage.jsx'
-import MessagePage from './assets/pages/MessagePage.jsx'
+import SettingsPage from './assets/pages/SettingsPage.jsx'
 import MedicinesPage from './assets/pages/MedicinesPage.jsx'
 import PatientsPage from './assets/pages/PatientsPage.jsx'
 import SignInPage from './assets/pages/Auth/SignInPage.jsx'
@@ -62,10 +62,10 @@ const router = createBrowserRouter(
               <PatientsPage/>
             </ProtectedRoute>),
         },
-        { path:"/messages",
+        { path:"/settings",
           element:(
             <ProtectedRoute>
-              <MessagePage/>
+              <SettingsPage/>
             </ProtectedRoute>),
         },
         { path:"/medicines",

@@ -14,6 +14,10 @@ const sessionsSchema = new mongoose.Schema({
     time: {
         type: String,
         required: true
+    },
+    pin: {
+        type: String,
+        required: true
     }
 })
 

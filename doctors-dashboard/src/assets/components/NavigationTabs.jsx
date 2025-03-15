@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 function NavigationTabs() {
   const [activeItem, setActiveItem] = useState('Dashboard');
 
-  const menuItems = ['Dashboard', 'Schedule', 'Patients', 'Messages', 'Medicines'];
+  const menuItems = ['Dashboard', 'Schedule', 'Patients', 'Settings', 'Medicines'];
 
   return (
     <div className='flex flex-col gap-8 items-end text-white justify-end'>

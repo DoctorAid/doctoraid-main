@@ -1,7 +1,7 @@
 import Doctor from "../../../infrastructure/schema/doctors_schema.js";
 import Patient from "../../../infrastructure/schema/patients_schema.js";
 import Slot from "../../../infrastructure/schema/slots_schema.js";
-
+import Session from "../../../infrastructure/schema/sessions_schema.js";
 export const getDoctorById = async (req, res) => {
     try {
         const { id } = req.params;
@@ -167,5 +167,59 @@ export const getActiveAppointments = async (req, res) => {
 
     } catch (error) {
         res.status(500).json({ message: 'Error retrieving active appointments', error: error.message });
+    }
+};
+
+// export const enterPin = async (req, res) => {
+//     try {
+//         const { pin, patientId, slotId } = req.body;
+        
+//         const patient = await Patient.findById(patientId);
+//         if (!patient) {
+//             return res.status(404).json({ message: 'Patient not found' });
+//         }
+        
+//         if (patient.pin !== pin) {
+//             return res.status(401).json({ message: 'Invalid PIN' });
+//         }
+        
+//         res.status(200).json({ message: 'PIN entered successfully' });
+//     } catch (error) {
+//         res.status(500).json({ message: 'Error entering PIN', error: error.message });
+//     }
+// };
+
+export const enterPin = async (req, res) => {
+    try {
+        const { pin, slotId } = req.body;
+        
+        // Find the slot
+        const slot = await Slot.findById(slotId);
+        if (!slot) {
+            return res.status(404).json({ message: 'Slot not found' });
+        }
+        
+        // Get session using sessionId from the slot
+        const session = await Session.findById(slot.Session);
+        if (!session) {
+            return res.status(404).json({ message: 'Session not found' });
+        }
+        
+        // Verify if PIN is correct
+        if (session.pin !== pin) {
+            return res.status(401).json({ message: 'Invalid PIN' });
+        }
+        
+        // Update slot activation status
+        slot.activated = true;
+        await slot.save();
+        
+        res.status(200).json({ 
+            message: 'PIN entered successfully', 
+            activated: true,
+            slot: slot
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Error entering PIN', error: error.message });
     }
 };

@@ -24,9 +24,9 @@ function generateTimeslots(startTime, endTime, duration) {
 
 export const createSlots = async (req, res) => {
     try {
-        const { doctorid, startTime, endTime, date, duration } = req.body;
+        const { doctorid, startTime, endTime, date, duration, pin } = req.body;
 
-        if ( !doctorid || !startTime || !endTime || !date || !duration) {
+        if ( !doctorid || !startTime || !endTime || !date || !duration || !pin) {
 
             return res.status(400).json({ message: 'Missing required data (doctorid,startTime, endTime, or duration)' });
         }
@@ -54,7 +54,7 @@ export const createSlots = async (req, res) => {
 
         //creates a new session for the slots
         const session_time = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const new_session = new Session({doctorId:new mongoose.Types.ObjectId(doctor._id),date:date,time:session_time});   // creating a new session
+    const new_session = new Session({doctorId:new mongoose.Types.ObjectId(doctor._id),date:date,time:session_time, pin:pin});   // creating a new session
         const saved_session = await new_session.save(); // saving the session in db
         console.log("new session created successfully");
 
@@ -67,7 +67,7 @@ export const createSlots = async (req, res) => {
             startTime: slot.startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             endTime: slot.endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             duration: duration,
-            status: 'available',
+            status: 'available'
         }));
 
         formattedSlots.map(async (slot) => {
