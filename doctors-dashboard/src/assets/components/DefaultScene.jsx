@@ -1,6 +1,6 @@
 import React from 'react';
 
-const MedicinesPage = () => {
+const DefaultScene = () => {
   // Sample sessions data array
   const sessions = [
     {
@@ -33,7 +33,7 @@ const MedicinesPage = () => {
       <div className="w-1/2 flex items-center justify-center p-8">
         <div className="relative">
           <img 
-            src="/src/assets/images/img.png" 
+            src="/images/analyst-illustration.svg" 
             alt="Data analyst with charts" 
             className="w-96 h-auto"
           />
@@ -83,4 +83,4 @@ const MedicinesPage = () => {
   );
 };
 
-export default MedicinesPage;
+export default DefaultScene;
