@@ -7,7 +7,6 @@ import Patient from "../../../infrastructure/schema/patient_schema.js";
 export const createDoctor = async (req, res) => {
     try {
         
-        
         const { doctorId, firstName, lastName, email, contactNumber,location, description, schedule, specialization, hospital, address, certification } = req.body;
 
         if (!firstName || !lastName || !email || !contactNumber || !description ) {

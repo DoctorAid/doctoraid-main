@@ -17,12 +17,10 @@ import Family from "../../../infrastructure/schema/family_schema.js";
 //     return `FAM${newNumericPart.toString().padStart(4, '0')}`;
 // };
 
-
 // // Helper function to generate a patient ID
 // const generatePatientId = (familyId, memberCount) => {
 //     return `${familyId}-${memberCount + 1}`;
 // };
-
 
 export const createPatients = async (req, res) => {
     try {
@@ -39,7 +37,8 @@ export const createPatients = async (req, res) => {
             // medicalHistory
             weight,
             height,
-            relation
+            relation,
+            familyId
         } = req.body;
         
         // Validate required fields
@@ -64,7 +63,6 @@ export const createPatients = async (req, res) => {
             return res.status(400).json({ message: "A patient with this email already exists." });
         }
         
-        
         // Validate relation
         const validRelations = ['Father', 'Mother', 'Son', 'Daughter', 'Husband', 'Wife', 'Sibling', 'Other'];
         if (!validRelations.includes(relation)) {
@@ -87,7 +85,10 @@ export const createPatients = async (req, res) => {
             },
             weight,
             height,
-            relation
+            relation,
+            familyId,
+            patientId
+
             // medicalHistory: medicalHistory || []
         });
         
@@ -108,103 +109,104 @@ export const createPatients = async (req, res) => {
         });
     }
 };
-export const createPatient = async (req, res) => {
-    try {
-        const {
-            firstName,
-            lastName,
-            dateOfBirth,
-            gender,
-            patientId,
-            contactNumber,
-            email,
-            address,
-            weight,
-            height,
-            relation,
-            familyId
-        } = req.body;
-       
-        // Validate required fields
-        if (!firstName || !lastName || !dateOfBirth || !gender || !patientId || !contactNumber || 
-            !email || !weight || !height || !relation || !familyId) {
-            return res.status(400).json({ message: "All required fields must be provided." });
-        }
 
-        // After extracting fields, explicitly check these two
-        if (!patientId) {
-            return res.status(400).json({ message: "patientId is required." });
-        }
-        if (!familyId) {
-            return res.status(400).json({ message: "familyId is required." });
-        }
+// export const createPatient = async (req, res) => {
+//     try {
+//         const {
+//             firstName,
+//             lastName,
+//             dateOfBirth,
+//             gender,
+//             patientId,
+//             contactNumber,
+//             email,
+//             address,
+//             weight,
+//             height,
+//             relation,
+//             familyId
+//         } = req.body;
        
-        // Validate address fields
-        if (!address || !address.line1 || !address.city) {
-            return res.status(400).json({ message: "Address line 1 and city are required." });
-        }
+//         // Validate required fields
+//         if (!firstName || !lastName || !dateOfBirth || !gender || !patientId || !contactNumber || 
+//             !email || !weight || !height || !relation || !familyId) {
+//             return res.status(400).json({ message: "All required fields must be provided." });
+//         }
+
+//         // After extracting fields, explicitly check these two
+//         // if (!patientId) {
+//         //     return res.status(400).json({ message: "patientId is required." });
+//         // }
+//         // if (!familyId) {
+//         //     return res.status(400).json({ message: "familyId is required." });
+//         // }
        
-        // Validate gender
-        const validGenders = ['Male', 'Female', 'Other'];
-        if (!validGenders.includes(gender)) {
-            return res.status(400).json({ message: "Invalid gender value." });
-        }
+//         // Validate address fields
+//         if (!address || !address.line1 || !address.city) {
+//             return res.status(400).json({ message: "Address line 1 and city are required." });
+//         }
        
-        // Check if email already exists
-        const existingPatient = await Patient.findOne({ email: email.toLowerCase() });
-        if (existingPatient) {
-            return res.status(400).json({ message: "A patient with this email already exists." });
-        }
+//         // Validate gender
+//         const validGenders = ['Male', 'Female', 'Other'];
+//         if (!validGenders.includes(gender)) {
+//             return res.status(400).json({ message: "Invalid gender value." });
+//         }
+       
+//         // Check if email already exists
+//         const existingPatient = await Patient.findOne({ email: email.toLowerCase() });
+//         if (existingPatient) {
+//             return res.status(400).json({ message: "A patient with this email already exists." });
+//         }
         
-        // Check if patientId already exists
-        const existingPatientId = await Patient.findOne({ patientId });
-        if (existingPatientId) {
-            return res.status(400).json({ message: "A patient with this ID already exists." });
-        }
+//         // Check if patientId already exists
+//         const existingPatientId = await Patient.findOne({ patientId });
+//         if (existingPatientId) {
+//             return res.status(400).json({ message: "A patient with this ID already exists." });
+//         }
        
-        // Validate relation
-        const validRelations = ['Father', 'Mother', 'Son', 'Daughter', 'Husband', 'Wife', 'Sibling', 'Other'];
-        if (!validRelations.includes(relation)) {
-            return res.status(400).json({ message: "Invalid relation value." });
-        }
+//         // Validate relation
+//         const validRelations = ['Father', 'Mother', 'Son', 'Daughter', 'Husband', 'Wife', 'Sibling', 'Other'];
+//         if (!validRelations.includes(relation)) {
+//             return res.status(400).json({ message: "Invalid relation value." });
+//         }
         
-        // Create new patient
-        const newPatient = new Patient({
-            firstName,
-            lastName,
-            dateOfBirth,
-            gender,
-            patientId,
-            contactNumber,
-            email: email.toLowerCase(),
-            address: {
-                line1: address.line1,
-                line2: address.line2 || '',
-                city: address.city
-            },
-            weight,
-            height,
-            relation,
-            familyId
-        });
+//         // Create new patient
+//         const newPatient = new Patient({
+//             firstName,
+//             lastName,
+//             dateOfBirth,
+//             gender,
+//             patientId,
+//             contactNumber,
+//             email: email.toLowerCase(),
+//             address: {
+//                 line1: address.line1,
+//                 line2: address.line2 || '',
+//                 city: address.city
+//             },
+//             weight,
+//             height,
+//             relation,
+//             familyId
+//         });
        
-        // Save patient
-        const savedPatient = await newPatient.save();
-        console.log(savedPatient);
+//         // Save patient
+//         const savedPatient = await newPatient.save();
+//         console.log(savedPatient);
        
-        // Return success response
-        return res.status(201).json({
-            message: "Patient created successfully",
-            patient: savedPatient
-        });
-    } catch (error) {
-        console.error('Error creating patient:', error);
-        return res.status(500).json({
-            message: 'Internal server error',
-            error: error.message
-        });
-    }
-};
+//         // Return success response
+//         return res.status(201).json({
+//             message: "Patient created successfully",
+//             patient: savedPatient
+//         });
+//     } catch (error) {
+//         console.error('Error creating patient:', error);
+//         return res.status(500).json({
+//             message: 'Internal server error',
+//             error: error.message
+//         });
+//     }
+// };
 
 
 // export const createPatients = async (req, res) => {
