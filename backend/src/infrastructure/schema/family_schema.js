@@ -1,11 +1,7 @@
 import mongoose from 'mongoose';
 
 const familySchema = new mongoose.Schema({
-    familyId: {
-        type: String,
-        required: true,
-        unique: true
-    },
+    
     userId: {
         type: String, // Changed to String to store Clerk userId directly
         required: true,
@@ -29,5 +25,5 @@ const familySchema = new mongoose.Schema({
     }
 });
 
-const Family = mongoose.model('Family', familySchema, 'Family');
+const Family = mongoose.model('Family', familySchema);
 export default Family;

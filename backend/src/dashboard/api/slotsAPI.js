@@ -6,7 +6,7 @@ import { cancelAppointment } from "../application/dto/slots.js";
 const slotsRouter = express.Router();
 
 slotsRouter.post('/create', createSlots);
-slotsRouter.get('/getbySessionId/:id', getSlotsbySession);
+slotsRouter.get('/getbySessionId/:id', getSlotsbySession);  //done
 slotsRouter.put('/cancel/bySessionId/:id', cancelAppointment);
 
 export default slotsRouter;
