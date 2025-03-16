@@ -8,6 +8,7 @@ import PatientCardType1 from '../components/PatientCardType1';
 import PatientCardType2 from '../components/PatientCardType2';
 import SessionInfo from '../components/SessionInfo';
 import PatientDetailsCardType1 from '../components/PatientDetailsCardType1';
+import { io } from "socket.io-client";
 // import { createRecord, getRecordsByPatient, getRecordsByPatientAndDoctor } from '../api/recordsAPI.js';
 import { createRecord } from '../api/recordsAPI';
 function App() {
@@ -23,6 +24,18 @@ function App() {
 
   // Current user information
   const { user } = useUser();
+
+  const socket = io("http://localhost:5000", { transports: ["websocket"] });
+
+socket.on("connect", () => {
+  console.log("Connected to server with ID:", socket.id);
+  // Send request only after connection is established
+  socket.emit("process_request", "hello server");
+});
+
+socket.on("process_response", (response) => {
+  console.log("Response from server:", response);
+});
 
   // Handle new record creation
   const handleCreateRecord = async (recordData) => {

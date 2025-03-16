@@ -18,10 +18,10 @@ const patientsSchema = new mongoose.Schema({
         enum: ['Male', 'Female', 'Other'],
         required: true
     },
-    // doctors: {
-    //     type: [String],
-    //     required: true
-    // },
+    doctors: {
+        type: [mongoose.Schema.Types.ObjectId],
+        required: false
+    },
     contactNumber: {
         type: String,
         required: true

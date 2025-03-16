@@ -3,7 +3,7 @@ import { Server } from "socket.io";
 export const initSocket = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: "http://localhost:5173",
+      origin: "*",
     },
   });
 
@@ -17,7 +17,7 @@ export const initSocket = (server) => {
       console.log("Received from client:", data);
       
       // Process data
-      const result = `Processed: ${data.toUpperCase()}`;
+      const result = `Prsued data: ${data.toUpperCase()}`;
       
       // Emit result back to the same client
       socket.emit("process_response", result);
