@@ -1,5 +1,5 @@
-import Doctor from "../../../infrastructure/schema/doctors_schema.js";
-import Patient from "../../../infrastructure/schema/patients_schema.js";
+// import Doctor from "../../../infrastructure/schema/doctors_schema.js";
+// import Patient from "../../../infrastructure/schema/patients_schema.js";
 import Slot from "../../../infrastructure/schema/slots_schema.js";
 import Session from "../../../infrastructure/schema/sessions_schema.js";
 export const getDoctorById = async (req, res) => {

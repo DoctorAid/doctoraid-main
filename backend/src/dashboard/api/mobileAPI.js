@@ -17,4 +17,5 @@ mobileRouter.post('/slots/book', bookSlot);
 mobileRouter.get('/appointments/active/:patientId', getActiveAppointments);
 
 mobileRouter.post('/pin', enterPin); 
+
 export default mobileRouter;
