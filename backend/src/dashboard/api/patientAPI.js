@@ -7,27 +7,13 @@ import {getPatientProfile} from '../application/dto/patient.js';
 import {getMedicalRecords} from '../application/dto/patient.js';
 import {createPatients} from '../application/dto/patient.js';
 import { addPatient } from '../application/dto/patient.js';
-import {editPatientDetails} from '../application/dto/patient.js';
-// import {createPatient} from '../application/dto/patient.js';
-// import { 
-//     createPatients, 
-//     addPatient, 
-//     testCreatePatient, 
-//     getFamilyMembers,
-//     getPatientById
-//   } from '../application/dto/patient.js';
+import { updatePatient } from '../application/dto/patient.js';
 
-// import { authMiddleware } from '../middleware/clerkMiddleware.js';
 const patientRouter = express.Router();
-
-// patientRouter.post('/create', authMiddleware.requireAuth, createPatients);
-// patientRouter.post('/add', authMiddleware.requireAuth, addPatient);
-// patientRouter.get('/family', authMiddleware.requireAuth, getFamilyMembers);
-// patientRouter.get('/:patientId', authMiddleware.requireAuth, getPatientById);
-
 
 patientRouter.post('/create', createPatients); //creating patients
 patientRouter.post('/add', addPatient); //adding patients
+patientRouter.put('/update/:id', updatePatient); //updating patients
 // patientRouter.post('/createPatient', createPatient);
 //patientRouter.post('/addPatient', addPatient);  //adding a patient
 // patientRouter.get('/search/byFirstName', searchPatients); //search patients by their first name

@@ -6,7 +6,7 @@ const familySchema = new mongoose.Schema({
         required: true,
         // unique: true
     },
-    userId: {
+    clerkId: {
         type: String,
         required: true,
         unique: true
