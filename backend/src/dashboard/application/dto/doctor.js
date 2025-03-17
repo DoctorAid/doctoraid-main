@@ -6,15 +6,32 @@ import Patient from "../../../infrastructure/schema/patient_schema.js";
 
 export const createDoctor = async (req, res) => {
     try {
+        const { 
+            doctorId, 
+            firstName, 
+            lastName, 
+            email, 
+            contactNumber,
+            ppLocation,
+            description, 
+            schedule, 
+            specialization, 
+            hospital, 
+            address, 
+            certification 
+        } = req.body;
         
-        const { doctorId, firstName, lastName, email, contactNumber,location, description, schedule, specialization, hospital, address, certification } = req.body;
-
-        if (!firstName || !lastName || !email || !contactNumber || !description ) {
+        // Validate required fields
+        if (!firstName || !lastName || !email || !contactNumber || !description || !specialization || !hospital || !certification || !ppLocation) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
         
-        const newDoctor = new Doctor(
-            {
+        // Validate address fields
+        if (!address || !address.line1 || !address.city) {
+            return res.status(400).json({ message: "Address line 1 and city are required." });
+        }
+        
+        const newDoctor = new Doctor({
             doctorId: doctorId,
             firstName: firstName,
             lastName: lastName,
@@ -24,16 +41,18 @@ export const createDoctor = async (req, res) => {
             schedule: schedule,
             specialization: specialization,
             hospital: hospital,
-            address: address,
-            location: location,
+            address: {
+                line1: address.line1,
+                line2: address.line2 || '',
+                city: address.city
+            },
+            ppLocation: ppLocation,
             certification: certification
         });
-        
-
+       
         const savedDoctor = await newDoctor.save();
         return res.status(201).json(savedDoctor);
     } catch (error) {
-       
         res.status(500).json({ message: error.message });
     }
 };

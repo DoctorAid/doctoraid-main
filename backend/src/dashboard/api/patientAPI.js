@@ -14,15 +14,9 @@ const patientRouter = express.Router();
 patientRouter.post('/create', createPatients); //creating patients
 patientRouter.post('/add', addPatient); //adding patients
 patientRouter.put('/update/:id', updatePatient); //updating patients
-// patientRouter.post('/createPatient', createPatient);
-//patientRouter.post('/addPatient', addPatient);  //adding a patient
-// patientRouter.get('/search/byFirstName', searchPatients); //search patients by their first name
-// patientRouter.get('/search/byLastName', searchPatients); //search patients by their last name
-// patientRouter.get('/search/byEmail', searchPatients);    //search patients by thier email
 // patientRouter.get('/getPatients', getPatientList);   //get the patient list
 // patientRouter.get('/sort/byFirstName', sortPatientList);    //sorting the patient list in ascending/ decending order using first name
 // patientRouter.get('/getPatientProfile/byPatientId', getPatientProfile);  //retrieving patient profile by the patient id
 // patientRouter.get('/getMedicalRecords/byPatientId', getMedicalRecords); //getting patient medical records by thier Id
-// patientRouter.put('/editPatientDetails/:patientId', editPatientDetails); //editing patient details by their Id
 
 export default patientRouter;

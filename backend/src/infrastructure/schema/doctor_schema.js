@@ -27,9 +27,19 @@ const doctorsSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    address: {
-        type: String,
-        required: true
+      address: {
+        line1: {
+            type: String,
+            required: true
+        },
+        line2: {
+            type: String,
+            default: ''
+        },
+        city: {
+            type: String,
+            required: true
+        }
     },
     contactNumber: {
         type: String,
@@ -54,7 +64,7 @@ const doctorsSchema = new mongoose.Schema({
             required: false
         }
     },
-   location: {
+    ppLocation: {
         type: String,
         required: true
     }
