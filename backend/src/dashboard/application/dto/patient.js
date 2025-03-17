@@ -30,52 +30,62 @@ export const createPatients = async (req, res) => {
             dateOfBirth,
             gender,
             patientId,
-            // doctors,
             contactNumber,
             email,
             address,
-            // medicalHistory
             weight,
             height,
-            relation,
-            familyId
+            relation
         } = req.body;
-        
+       
         // Validate required fields
         if (!firstName || !lastName || !dateOfBirth || !gender || !patientId || !contactNumber || !email || !weight || !height || !relation) {
             return res.status(400).json({ message: "All required fields must be provided." });
         }
-        
+       
         // Validate address fields
         if (!address || !address.line1 || !address.city) {
             return res.status(400).json({ message: "Address line 1 and city are required." });
         }
-        
+       
         // Validate gender
         const validGenders = ['Male', 'Female', 'Other'];
         if (!validGenders.includes(gender)) {
             return res.status(400).json({ message: "Invalid gender value." });
         }
-        
+       
         // Check if email already exists
         const existingPatient = await Patient.findOne({ email: email.toLowerCase() });
         if (existingPatient) {
             return res.status(400).json({ message: "A patient with this email already exists." });
         }
-        
+       
         // Validate relation
         const validRelations = ['Father', 'Mother', 'Son', 'Daughter', 'Husband', 'Wife', 'Sibling', 'Other'];
         if (!validRelations.includes(relation)) {
             return res.status(400).json({ message: "Invalid relation value." });
         }
-
-        // Create new patient
+        
+        // Generate a temporary familyId before creating the Family document
+        const tempId = new mongoose.Types.ObjectId();
+        const formattedFamilyId = `FM${tempId.toString().slice(-4)}`;
+        
+        // Create a new Family document with the familyId already set
+        const newFamily = new Family({
+            familyId: formattedFamilyId,
+            members: [] // Empty initially
+        });
+        
+        // Save the family with the pre-generated familyId
+        const savedFamily = await newFamily.save();
+        
+        // Create new patient with the family reference
         const newPatient = new Patient({
             firstName,
             lastName,
             dateOfBirth,
             gender,
-            // doctors,
+            // doctors: [],
             contactNumber,
             email: email.toLowerCase(),
             address: {
@@ -86,30 +96,43 @@ export const createPatients = async (req, res) => {
             weight,
             height,
             relation,
-            familyId,
+            familyId: formattedFamilyId,
             patientId
-
-            // medicalHistory: medicalHistory || []
         });
-        
+       
         // Save patient
         const savedPatient = await newPatient.save();
-        console.log(savedPatient);
+        
+        // Update family members array with the new patient
+        await Family.findByIdAndUpdate(
+            savedFamily._id,
+            {
+                $push: {
+                    members: {
+                        patient: savedPatient._id,
+                        relation: relation
+                    }
+                }
+            }
+        );
         
         // Return success response
         return res.status(201).json({
-            message: "Patient created successfully",
-            patient: savedPatient
+            message: "Patient and family created successfully",
+            patient: savedPatient,
+            family: {
+                familyId: formattedFamilyId,
+                _id: savedFamily._id
+            }
         });
     } catch (error) {
-        console.error('Error creating patient:', error);
+        console.error('Error creating patient and family:', error);
         return res.status(500).json({
             message: 'Internal server error',
             error: error.message
         });
     }
 };
-
 // export const createPatient = async (req, res) => {
 //     try {
 //         const {
