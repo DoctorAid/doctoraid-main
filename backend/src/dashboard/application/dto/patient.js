@@ -301,34 +301,47 @@ export const updatePatient = async (req, res) => {
         });
     }
 };
-export const getPatientList = async(req, res) => {
+
+export const getNearbyDoctors = async (req, res) => {
     try {
-        // Use 'let' instead of 'const' so we can reassign values
-        let {page = 1, limit = 10} = req.query;
-
-        // Convert to numbers
-        page = Number(page);
-        limit = Number(limit);
-
-        if(isNaN(page) || isNaN(limit) || page < 1 || limit < 1){
-            return res.status(400).json({ message: "Invalid page or limit values. Page and limit must be positive numbers"});
+        const { id } = req.params; 
+        
+        // Validate if id exists and is a valid ObjectId
+        if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: "Valid patient ID is required." });
         }
-
-        const patients = await Patient.find()
-            .skip((page - 1) * limit)  // Fixed parentheses issue
-            .limit(limit)
-            .lean();
-
-        const totalPatients = await Patient.countDocuments();
-
-        return res.status(200).json({ totalPatients, patients});
+        
+        // Find the patient by MongoDB ObjectId
+        const patient = await Patient.findById(id);
+        if (!patient) {
+            return res.status(404).json({ message: "Patient not found." });
+        }
+        
+        const patientCity = patient.address.city;
+        
+        // Find doctors with matching city in their practice location
+        // Using a case-insensitive regex for more flexible matching
+        const nearbyDoctors = await Doctor.find({
+            $or: [
+                { "address.city": { $regex: new RegExp(patientCity, "i") }},
+                { "ppLocation": { $regex: new RegExp(patientCity, "i") }}
+            ]
+        }).select('firstName lastName specialization hospital address ppLocation contactNumber email certification schedule description');
+        
+        return res.status(200).json({
+            message: `Found ${nearbyDoctors.length} doctors near ${patientCity}`,
+            patientCity: patientCity,
+            doctors: nearbyDoctors
+        });
     } catch (error) {
-        console.error("Error fetching patient list: ", error);
-        res.status(500).json({ message: "Internal server error", error: error.message});
+        console.error('Error finding nearby doctors:', error);
+        return res.status(500).json({
+            message: 'Internal server error',
+            error: error.message
+        });
     }
 };
 
-//sorting the patient list
 export const sortPatientList = async (req, res) => {
     try {
         let { page = 1, limit = 10, doctorId, sortMethod = "asc" } = req.query;
@@ -439,67 +452,3 @@ export const getMedicalRecords = async (req,res) => {
 };
 
 //editing patient details
-export const editPatientDetails = async (req, res) => {
-    try {
-        const { patientId } = req.params;
-        const updateData = req.body;
-
-        //validating the patient Id
-        if(!mongoose.Types.ObjectId.isValid(patientId)) {
-            return res.status(400).json({ message: "Invalid patient Id. Please provide a valid ID"});
-        }
-
-        //making sure at least one field is provided to update
-        if(Object.keys(updateData).length === 0) {
-            return res.status(400).json({ message: "Please provide at least one field to update"});
-        }
-
-        //validating gender if given
-        if(updateData.gender && !['Male', 'Female', 'Other'].includes(updateData.gender)){
-            return res.status(400).json({ message: "Invalid gender value"});
-        }
-
-        //validating doctors field if given
-        if(updateData.doctors && (!Array.isArray(updateData.doctors) || updateData.doctors.length === 0)){
-            return res.status(400).json({ message: "Doctors must be an array and should contain at least one doctor." });
-        }
-
-        //validating date of birth if given
-        if(updateData.dateOfBirth){
-            const dob = new Date(updateData.dateOfBirth);
-            if(isNaN(dob.getTime())) {
-                return res.status(400).json({ message: "Invalid date of birth format." });
-            }
-            updateData.dateOfBirth = dob;
-        }
-
-        //validating medical history if given
-        if(updateData.medicalHistory && !Array.isArray(updateData.medicalHistory)){
-            return res.status(400).json({ message: "Medical history must be an array." });
-        }
-
-        //validating email if given
-        if(updateData.email){
-            const existingPatient = await Patient.findOne({ email: updateData.email.toLowerCase(), _id: { $ne: patientId } });
-            if(existingPatient){
-                return res.status(400).json({ message: "A patient with this email already exists." });
-            }
-            updateData.email = updateData.email.toLowerCase();
-
-        }
-
-        //updating the patient details
-        const updatedPatient = await Patient.findByIdAndUpdate(patientId, updateData, { new: true, runValidators: true });
-
-        if(!updatedPatient){
-            return res.status(404).json({ message: "Patient not found." });
-        }
-
-        return res.status(200).json({ message: "Patient details updated successfully.", patient: updatedPatient });
-    } catch (error) {
-        console.error("Error updating patient details: ", error);
-        return res.status(500).json({ message: "Internal server error", error: error.message });
-    }
-};
-
-
