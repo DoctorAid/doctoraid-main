@@ -6,6 +6,7 @@ import {sortPatientList} from '../application/dto/patient.js';
 import {getPatientProfile} from '../application/dto/patient.js';
 import {getMedicalRecords} from '../application/dto/patient.js';
 import {createPatients} from '../application/dto/patient.js';
+import { addPatient } from '../application/dto/patient.js';
 import {editPatientDetails} from '../application/dto/patient.js';
 // import {createPatient} from '../application/dto/patient.js';
 // import { 
@@ -26,6 +27,7 @@ const patientRouter = express.Router();
 
 
 patientRouter.post('/create', createPatients); //creating patients
+patientRouter.post('/add', addPatient); //adding patients
 // patientRouter.post('/createPatient', createPatient);
 //patientRouter.post('/addPatient', addPatient);  //adding a patient
 // patientRouter.get('/search/byFirstName', searchPatients); //search patients by their first name

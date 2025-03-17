@@ -35,7 +35,8 @@ export const createPatients = async (req, res) => {
             address,
             weight,
             height,
-            relation
+            relation,
+            userId
         } = req.body;
        
         // Validate required fields
@@ -73,6 +74,7 @@ export const createPatients = async (req, res) => {
         // Create a new Family document with the familyId already set
         const newFamily = new Family({
             familyId: formattedFamilyId,
+            userId: userId || email.toLowerCase(), // Use email as userId if not provided
             members: [] // Empty initially
         });
         
@@ -85,7 +87,7 @@ export const createPatients = async (req, res) => {
             lastName,
             dateOfBirth,
             gender,
-            // doctors: [],
+            doctors: [],
             contactNumber,
             email: email.toLowerCase(),
             address: {
@@ -96,8 +98,7 @@ export const createPatients = async (req, res) => {
             weight,
             height,
             relation,
-            familyId: formattedFamilyId,
-            patientId
+            familyId: formattedFamilyId
         });
        
         // Save patient
@@ -672,6 +673,107 @@ export const createPatients = async (req, res) => {
 // };
 
 //getting the patient list
+export const addPatient = async (req, res) => {
+    try {
+        const {
+            firstName,
+            lastName,
+            dateOfBirth,
+            gender,
+            patientId,
+            contactNumber,
+            email,
+            address,
+            weight,
+            height,
+            relation,
+            familyId
+        } = req.body;
+       
+        // Validate required fields
+        if (!firstName || !lastName || !dateOfBirth || !gender || !patientId || !contactNumber || !email || !weight || !height || !relation || !familyId) {
+            return res.status(400).json({ message: "All required fields must be provided." });
+        }
+       
+        // Validate address fields
+        if (!address || !address.line1 || !address.city) {
+            return res.status(400).json({ message: "Address line 1 and city are required." });
+        }
+       
+        // Validate gender
+        const validGenders = ['Male', 'Female', 'Other'];
+        if (!validGenders.includes(gender)) {
+            return res.status(400).json({ message: "Invalid gender value." });
+        }
+       
+        // Check if email already exists
+        const existingPatient = await Patient.findOne({ email: email.toLowerCase() });
+        if (existingPatient) {
+            return res.status(400).json({ message: "A patient with this email already exists." });
+        }
+       
+        // Validate relation
+        const validRelations = ['Father', 'Mother', 'Son', 'Daughter', 'Husband', 'Wife', 'Sibling', 'Other'];
+        if (!validRelations.includes(relation)) {
+            return res.status(400).json({ message: "Invalid relation value." });
+        }
+        
+        // Check if family exists with the provided familyId
+        const existingFamily = await Family.findOne({ familyId });
+        if (!existingFamily) {
+            return res.status(404).json({ message: "Family not found." });
+        }
+        
+        // Create new patient
+        const newPatient = new Patient({
+            firstName,
+            lastName,
+            dateOfBirth,
+            gender,
+            contactNumber,
+            email: email.toLowerCase(),
+            address: {
+                line1: address.line1,
+                line2: address.line2 || '',
+                city: address.city
+            },
+            weight,
+            height,
+            relation,
+            familyId,
+            patientId
+        });
+       
+        // Save patient
+        const savedPatient = await newPatient.save();
+        
+        // Update family members array with the new patient
+        await Family.findByIdAndUpdate(
+            existingFamily._id,
+            {
+                $push: {
+                    members: {
+                        patient: savedPatient._id,
+                        relation: relation
+                    }
+                }
+            }
+        );
+        
+        // Return success response
+        return res.status(201).json({
+            message: "Patient added successfully to existing family",
+            patient: savedPatient
+        });
+    } catch (error) {
+        console.error('Error adding patient:', error);
+        return res.status(500).json({
+            message: 'Internal server error',
+            error: error.message
+        });
+    }
+};
+
 export const getPatientList = async(req, res) => {
     try {
         // Use 'let' instead of 'const' so we can reassign values
