@@ -18,10 +18,10 @@ const patientsSchema = new mongoose.Schema({
         enum: ['Male', 'Female', 'Other'],
         required: true
     },
-    doctors: {
-        type: [String],
-        required: true
-    },
+    // doctors: {
+    //     type: [String],
+    //     required: true
+    // },
     contactNumber: {
         type: String,
         required: true
@@ -45,14 +45,6 @@ const patientsSchema = new mongoose.Schema({
             required: true
         }
     },
-    // medicalHistory: {
-    //     type: [String],
-    //     default: []
-    // },
-    // familyId: {
-    //     type: String,
-    //     default: null
-    // }
     weight: {
         type: Number,
         required: true

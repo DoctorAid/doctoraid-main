@@ -66,11 +66,12 @@ export const createPatients = async (req, res) => {
         
         // Create new patient with the family reference
         const newPatient = new Patient({
+            patientId: patientId,
             firstName,
             lastName,
             dateOfBirth,
             gender,
-            doctors: [],
+            // doctors: [],
             contactNumber,
             email: email.toLowerCase(),
             address: {
@@ -81,7 +82,7 @@ export const createPatients = async (req, res) => {
             weight,
             height,
             relation,
-            familyId: formattedFamilyId
+            familyId: formattedFamilyId,
         });
        
         // Save patient

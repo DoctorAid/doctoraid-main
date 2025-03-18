@@ -9,7 +9,7 @@ const familySchema = new mongoose.Schema({
     clerkId: {
         type: String,
         required: true,
-        unique: true
+        // unique: true
     },
     members: [{
         patient: {
@@ -20,6 +20,13 @@ const familySchema = new mongoose.Schema({
         relation: {
             type: String,
             enum: ['Father', 'Mother', 'Son', 'Daughter', 'Husband', 'Wife', 'Sibling', 'Other'],
+            required: true
+        }
+    }],
+    doctors: [{
+        doctor: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Doctor',
             required: true
         }
     }],
