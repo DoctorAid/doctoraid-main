@@ -1,7 +1,5 @@
 import express from 'express';
-
-//import {searchPatients} from '../application/dto/patient.js';
-import {getMedicalRecords} from '../application/dto/patient.js';
+import {getRecordsByFamilyId} from '../application/dto/patient.js';
 import {createPatients} from '../application/dto/patient.js';
 import { addPatient } from '../application/dto/patient.js';
 import { updatePatient } from '../application/dto/patient.js';
@@ -17,9 +15,6 @@ patientRouter.put('/update/:id', updatePatient); //updating patients
 patientRouter.get('/nearby-doctors/:id', getNearbyDoctors); //getting nearby doctors
 patientRouter.post('/doctors/booking', bookSlot); //booking a slot
 patientRouter.get('/doctors/search', searchDoctors); //searching doctors
-// patientRouter.get('/getPatients', getPatientList);   //get the patient list
-// patientRouter.get('/sort/byFirstName', sortPatientList);    //sorting the patient list in ascending/ decending order using first name
-// patientRouter.get('/getPatientProfile/byPatientId', getPatientProfile);  //retrieving patient profile by the patient id
-// patientRouter.get('/getMedicalRecords/byPatientId', getMedicalRecords); //getting patient medical records by thier Id
+patientRouter.get('/family/records/:id', getRecordsByFamilyId); //getting patient medical records by thier family Id  
 
 export default patientRouter;

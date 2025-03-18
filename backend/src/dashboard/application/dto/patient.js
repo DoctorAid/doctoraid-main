@@ -486,65 +486,35 @@ export const searchDoctors = async (req, res) => {
     }
 };
 
-//getting patient profile using patient Id
-// export const getPatientProfile = async (req, res) => {
-//     try {
-//         const { patientId } = req.params;
-
-//         if(!mongoose.Types.ObjectId.isValid(patientId)) {
-//             return res.status(400).json({ message: "Invalid patient Id. Please provide a valid Id"});
-//         }
-//         const patientData = await Patient.findById(patientId)
-//             .populate('medicalHistory')
-//             .populate('doctors')
-//             .lean();
-
-//         if(!patientData) {
-//             return res.status(404).json({ message: 'Patient not found'});
-//         }
-
-//         return res.status(200).json(patientData);
-//     }catch (error) {
-//         console.error('Error fetching patient profile: ', error);
-//         res.status(500).json({ message: 'Internal server error', error: error.message });
-//     }
-// };
-
-//getting medical records by patient id
-export const getMedicalRecords = async (req,res) => {
+export const getRecordsByFamilyId = async (req, res) => {
     try {
-        const {patientId} = req.params;
-        let {page = 1, limit = 10 } = req.query;
-
-        if( !mongoose.Types.ObjectId.isValid(patientId)) {
-            return res.status(400).json({ message: "Invalid patient ID. Please provide a valid Id"});
-        }
-
-        //converting to  numbers
-        page = Number(page);
-        limit = Number(limit);
-
-        if(isNaN(page) || isNaN(limit) || page <1 || limit <1){
-            return res.status(400).json({message: "Invalid page or limit values. Page and limit must be positive numbers"});
-        }
-
-        const medicalRecords = await Record.find({ patient: patientId })
-            .populate('doctorId', 'firstName lastName specialization')    //populating doctor details
-            .skip((page - 1) * limit)
-            .limit(limit)
-            .lean();
+        const { familyId } = req.params;
         
-        const totalRecords = await Record.countDocuments({ patient: patientId});
-
-        if(!medicalRecords.length) {
-            return res.status(404).json({ message: "No medical records found for this patient."});
+        // Validate if familyId exists and is a valid ObjectId
+        if (!familyId || !mongoose.Types.ObjectId.isValid(familyId)) {
+            return res.status(400).json({ message: "Valid family ID is required." });
         }
-
-        return res.status(200).json({ totalRecords, medicalRecords });
+        
+        // Find all records that belong to the specified family
+        const records = await Record.find({ familyId: familyId })
+            .sort({ createdAt: -1 }); // Sort by creation date, newest first
+        
+        if (records.length === 0) {
+            return res.status(200).json({
+                message: "No records found for this family.",
+                records: []
+            });
+        }
+        
+        return res.status(200).json({
+            message: `Found ${records.length} records for this family.`,
+            records: records
+        });
     } catch (error) {
-        console.error("Error fetching medical records: ", error);
-        res.status(500).json({ message: "Internal server error ", error: error.message});
+        console.error('Error retrieving family records:', error);
+        return res.status(500).json({
+            message: 'Internal server error',
+            error: error.message
+        });
     }
 };
-
-//editing patient details
