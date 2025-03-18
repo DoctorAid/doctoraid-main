@@ -41,7 +41,7 @@ const SubscribedDoctors = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Subscribed Doctors</Text>
+      <Text style={styles.heading}>Nearest Doctors</Text>
       <FlatList
         data={doctors}
         renderItem={({ item }) => <DoctorCard doctor={item} />}
@@ -64,6 +64,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#2c4f6b',
     marginBottom: 16,
+    paddingLeft: 16,
   },
   listContainer: {
     paddingRight: 16,

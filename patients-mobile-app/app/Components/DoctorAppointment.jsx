@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   View, 
   Text, 
@@ -11,22 +11,12 @@ import {
   Alert 
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import DateSelector from '../Components/DoctorAppoinmentDate';
-import TimeSelector from '../Components/DoctorAppointmentTime';
-import UserSwitch from '../Components/UserSwitch';
-import AppointmentNote from '../Components/AppointmentNote';
+import DateSelector from './DoctorAppoinmentDate';
+import TimeSelector from './DoctorAppointmentTime';
+import UserSwitch from './UserSwitch';
+import AppointmentNote from './AppointmentNote';
 
-export default function AppointmentScreen() {
-  const navigation = useNavigation();
-  const route = useRoute();
-  const doctor = { 
-    id: '1', 
-    name: 'Dr. Lakee Jayamanne', 
-    location: 'Kandy', 
-    subscribed: true 
-  };
-  
+export default function AppointmentScreen({ doctor, onBack }) {
   const [isSubscribed, setIsSubscribed] = useState(doctor.subscribed);
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -69,7 +59,7 @@ export default function AppointmentScreen() {
   };
 
   const handleGoBack = () => {
-    navigation.goBack();
+    onBack();
   };
   
   const handleDateSelect = (date) => {
@@ -137,7 +127,7 @@ export default function AppointmentScreen() {
     Alert.alert(
       "Appointment Booked",
       `Your appointment with ${doctor.name} has been scheduled for ${selectedDate} at ${selectedTime}.`,
-      [{ text: "OK", onPress: () => navigation.goBack() }]
+      [{ text: "OK", onPress: () => onBack() }]
     );
   };
 
@@ -208,16 +198,16 @@ export default function AppointmentScreen() {
             
             <View style={styles.dateSection}>
               <Text style={styles.sectionLabel}>Select Date</Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View horizontal showsHorizontalScrollIndicator={false}>
                 <DateSelector onDateSelect={handleDateSelect} />
-              </ScrollView>
+              </View>
             </View>
 
             <View style={styles.timeSection}>
               <Text style={styles.sectionLabel}>Select Time</Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <TimeSelector onTimeSelect={handleTimeSelect} /> 
-                           </ScrollView>
+              </ScrollView>
             </View>
             
             {validationError ? (
@@ -430,6 +420,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#334155',
     marginBottom: 12,
+  },
+  errorText: {
+    color: '#EF4444',
+    marginBottom: 12,
+    fontSize: 14,
+    fontWeight: '500',
+    textAlign: 'center',
   },
   bookButton: {
     backgroundColor: '#295567',

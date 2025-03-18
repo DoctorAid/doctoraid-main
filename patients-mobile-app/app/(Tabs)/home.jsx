@@ -14,6 +14,7 @@ import DoctorCardType2 from "../Components/DoctorCardType2";
 import OngoingCardType1 from "../Components/OngoingCardType1";
 import Homebrowse from '../Assets/images/homebrowse.svg';
 import DoctorCardType4 from "../Components/DoctorCardType4";
+
 export default function Tab() {
   const [currentStep, setCurrentStep] = useState("step1"); // "step1" -> "step3"
   const fadeAnim = useRef(new Animated.Value(1)).current;
@@ -40,7 +41,7 @@ export default function Tab() {
       <ScrollView contentContainerStyle={styles.container}>
         <WelcomeMessage />
         
-        <Animated.View style={{ opacity: fadeAnim }}>
+        <Animated.View style={{ opacity: fadeAnim, marginBottom: 15 }}>
           {currentStep === "step1" && <DoctorCardType1 onPress={handlePinSubmit} />}
           {currentStep === "step3" && <OngoingCardType1 />}
         </Animated.View>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, FlatList, SafeAreaView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, FlatList, SafeAreaView,ScrollView} from 'react-native';
 
 const DateSelector = ({ onDateSelect }) => {
   const [selectedDate, setSelectedDate] = useState('20');
@@ -78,6 +78,7 @@ const DateSelector = ({ onDateSelect }) => {
                     ]}
                     onPress={() => handleMonthSelect(item)}
                   >
+                    
                     <Text 
                       style={[
                         styles.monthItemText,
@@ -95,7 +96,9 @@ const DateSelector = ({ onDateSelect }) => {
       </Modal>
 
       {/* Date Selector */}
-      <View style={styles.container}>
+      <Text style={styles.modalTitle}>Select a Date</Text>
+
+      <ScrollView horizontal showsHorizontalScrollIndicator={true} style={styles.container}>
         {dates.map(({ id, date, day }) => (
           <TouchableOpacity
             key={id}
@@ -123,7 +126,7 @@ const DateSelector = ({ onDateSelect }) => {
             </Text>
           </TouchableOpacity>
         ))}
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -135,13 +138,16 @@ const styles = StyleSheet.create({
   },
   container: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 6,
     paddingHorizontal: 16,
+    
+
   },
   dateBox: {
     width: 60,
     height: 70,
     backgroundColor: '#E5EEF7',
+    marginHorizontal: 6,
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',

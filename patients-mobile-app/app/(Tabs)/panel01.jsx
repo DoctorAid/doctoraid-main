@@ -4,11 +4,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import DoctorList from '../Components/DoctorList_DoctorPage';
+import DoctorAppointment from '../Components/DoctorAppointment'; // Add this import
 import DoctorSearch from '../Assets/images/doctsearch.svg';
 
 // Sample doctor data
 const doctors = [
-  { id: '1', name: 'Dr. Lakee Jayamanne', location: 'Kandy', subscribed: true },
+  { id: '1', name: 'Dr. uuuuu Jayamanne', location: 'Kandy', subscribed: true },
   { id: '2', name: 'Dr. Jagath Lokuhewa', location: 'Nugegoda', subscribed: false },
 ];
 
@@ -17,12 +18,13 @@ export default function Tab() {
   const [showResults, setShowResults] = useState(false);
   const animatedValue = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation();
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
   
   // Filter doctors based on search input
   const filteredDoctors = doctors.filter(doctor => 
     doctor.name.toLowerCase().includes(searchText.toLowerCase())
   );
-  
+
   const handleSearchChange = (text) => {
     setSearchText(text);
     const shouldShowResults = text.length > 0;
@@ -38,7 +40,7 @@ export default function Tab() {
 
   // Handle doctor selection
   const handleDoctorSelect = (doctor) => {
-    navigation.navigate('AppointmentScreen', { doctor });
+    setSelectedDoctor(doctor); // Set selected doctor instead of navigating
   };
 
   const contentTranslateY = animatedValue.interpolate({
@@ -50,52 +52,61 @@ export default function Tab() {
     inputRange: [0, 1],
     outputRange: [1, 0],
   });
+  
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <Animated.View 
-        style={[
-          styles.container,
-          { transform: [{ translateY: contentTranslateY }] }
-        ]}
-      >
-        <View style={styles.headerContainer}>
-          <Text style={styles.header}>Search</Text>
-          <Text style={styles.subheader}>your Doctor</Text>
-        </View>
-        
-        <View style={styles.searchContainer}>
-          <View style={styles.searchWrapper}>
-            <Ionicons name="search" size={20} color="#858585" style={styles.searchIcon} />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Look who's available"
-              value={searchText}
-              onChangeText={handleSearchChange}
-              onFocus={() => setShowResults(searchText.length > 0)}
-            />
+      {!selectedDoctor ? (
+        // Show search UI and doctor list if no doctor is selected
+        <Animated.View 
+          style={[
+            styles.container,
+            { transform: [{ translateY: contentTranslateY }] }
+          ]}
+        >
+          <View style={styles.headerContainer}>
+            <Text style={styles.header}>Search</Text>
+            <Text style={styles.subheader}>your Doctor</Text>
           </View>
           
-          {showResults && (
-            <View style={styles.resultsContainer}>
-              {filteredDoctors.length > 0 ? (
-                <DoctorList 
-                  doctors={filteredDoctors} 
-                  onDoctorSelect={handleDoctorSelect} 
-                />
-              ) : (
-                <View style={styles.emptyResultsContainer}>
-                  <Ionicons name="medical-outline" size={24} color="#295567" />
-                  <Text style={styles.emptyResultsText}>No doctors found matching "{searchText}"</Text>
-                </View>
-              )}
+          <View style={styles.searchContainer}>
+            <View style={styles.searchWrapper}>
+              <Ionicons name="search" size={20} color="#858585" style={styles.searchIcon} />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Look who's available"
+                value={searchText}
+                onChangeText={handleSearchChange}
+                onFocus={() => setShowResults(searchText.length > 0)}
+              />
             </View>
-          )}
-        </View>
-      </Animated.View>
-      <Animated.View style={[styles.svgContainer, { opacity: svgOpacity }]}>
-          <DoctorSearch width={500} height={500} />
+            
+            {showResults && (
+              <View style={styles.resultsContainer}>
+                {filteredDoctors.length > 0 ? (
+                  <DoctorList 
+                    doctors={filteredDoctors} 
+                    onDoctorSelect={handleDoctorSelect} 
+                  />
+                ) : (
+                  <View style={styles.emptyResultsContainer}>
+                    <Ionicons name="medical-outline" size={24} color="#295567" />
+                    <Text style={styles.emptyResultsText}>No doctors found matching "{searchText}"</Text>
+                  </View>
+                )}
+              </View>
+            )}
+          </View>
+    
+          
+          <Animated.View style={[styles.svgContainer, { opacity: svgOpacity }]}>
+            <DoctorSearch width={500} height={500} />
+          </Animated.View>
         </Animated.View>
+      ) : (
+        // Show doctor appointment screen if a doctor is selected
+        <DoctorAppointment doctor={selectedDoctor} onBack={() => setSelectedDoctor(null)} />
+      )}
     </SafeAreaView>
   );
 }
