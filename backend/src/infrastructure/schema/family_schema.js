@@ -1,11 +1,15 @@
 import mongoose from 'mongoose';
 
 const familySchema = new mongoose.Schema({
-    
-    userId: {
-        type: String, // Changed to String to store Clerk userId directly
+    familyId: {
+        type: String,
         required: true,
-        unique: true // Each user can only have one family
+        // unique: true
+    },
+    clerkId: {
+        type: String,
+        required: true,
+        unique: true
     },
     members: [{
         patient: {

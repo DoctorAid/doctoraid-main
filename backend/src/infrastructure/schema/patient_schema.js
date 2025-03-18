@@ -19,8 +19,8 @@ const patientsSchema = new mongoose.Schema({
         required: true
     },
     doctors: {
-        type: [mongoose.Schema.Types.ObjectId],
-        required: false
+        type: [String],
+        required: true
     },
     contactNumber: {
         type: String,
@@ -77,5 +77,5 @@ const patientsSchema = new mongoose.Schema({
     }
 });
 
-const Patient = mongoose.model('Patient', patientsSchema, 'Patient');
+const Patient = mongoose.model('patients', patientsSchema, 'patients');
 export default Patient;
