@@ -1,10 +1,21 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { 
+  View, 
+  Text, 
+  TextInput, 
+  StyleSheet, 
+  TouchableOpacity,
+  Keyboard,
+  Platform
+} from 'react-native';
 
 const AppointmentNote = ({ onNoteChange, initialNote = '' }) => {
   const [note, setNote] = useState(initialNote);
   const [isFocused, setIsFocused] = useState(false);
   const [showCharCount, setShowCharCount] = useState(false);
+  
+  // Create a ref for the TextInput
+  const inputRef = React.useRef(null);
   
   const MAX_CHARS = 250;
   
@@ -23,6 +34,7 @@ const AppointmentNote = ({ onNoteChange, initialNote = '' }) => {
   };
   
   const handleFocus = () => {
+    console.log('TextInput focused');
     setIsFocused(true);
     if (note.length > 0) {
       setShowCharCount(true);
@@ -30,39 +42,68 @@ const AppointmentNote = ({ onNoteChange, initialNote = '' }) => {
   };
   
   const handleBlur = () => {
+    console.log('TextInput blurred');
     setIsFocused(false);
     if (note.length === 0) {
       setShowCharCount(false);
     }
   };
   
+  // Force keyboard to show on component mount
+  useEffect(() => {
+    // Small delay to ensure component is fully rendered
+    const timer = setTimeout(() => {
+      if (inputRef.current) {
+        console.log('Attempting to focus input on mount');
+      }
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
+  // Function to manually focus the input
+  const focusInput = () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+      console.log('Manual focus attempt');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Description</Text>
-      <View style={[
-        styles.inputContainer,
-        isFocused && styles.inputContainerFocused
-      ]}>
+      <TouchableOpacity 
+        activeOpacity={0.9} 
+        onPress={focusInput}
+        style={[
+          styles.inputContainer,
+          isFocused && styles.inputContainerFocused
+        ]}
+      >
         <TextInput
+          ref={inputRef}
           style={styles.input}
-          placeholder="Add Note"
-          placeholderTextColor="#A0AEC0"
-          multiline={true}
-          numberOfLines={4}
+          multiline
           value={note}
           onChangeText={handleNoteChange}
           onFocus={handleFocus}
           onBlur={handleBlur}
+          placeholder="Add notes about this appointment..."
+          maxLength={MAX_CHARS}
+          keyboardType="default"
+          autoCapitalize="sentences"
+          autoCorrect={true}
+          blurOnSubmit={false}
         />
-        {showCharCount && (
-          <Text style={[
-            styles.charCount,
-            note.length > MAX_CHARS * 0.8 && styles.charCountWarning
-          ]}>
-            {note.length}/{MAX_CHARS}
-          </Text>
-        )}
-      </View>
+      </TouchableOpacity>
+      {showCharCount && (
+        <Text style={[
+          styles.charCount,
+          note.length > MAX_CHARS * 0.8 && styles.charCountWarning
+        ]}>
+          {note.length}/{MAX_CHARS}
+        </Text>
+      )}
     </View>
   );
 };
@@ -99,6 +140,7 @@ const styles = StyleSheet.create({
     color: '#334155',
     textAlignVertical: 'top',
     minHeight: 80,
+    padding: 0, // Remove default padding on Android
   },
   charCount: {
     fontSize: 12,

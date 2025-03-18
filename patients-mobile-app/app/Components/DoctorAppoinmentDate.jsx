@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 16,
-    textAlign: 'center',
+    textAlign: 'left',
   },
   monthItem: {
     paddingVertical: 12,
