@@ -417,77 +417,98 @@ export const bookSlot = async (req, res) => {
     }
 };
 
-export const sortPatientList = async (req, res) => {
+export const searchDoctors = async (req, res) => {
     try {
-        let { page = 1, limit = 10, doctorId, sortMethod = "asc" } = req.query;
-
-        //converting page and limit to numbers
-        page = Number(page);
-        limit = Number(limit);
-
-        if (isNaN(page) || isNaN(limit) || page<1 || limit <1) {
-            return res.status(400).json({ message: "Invalid page or limit values. Page and limit must be positive numbers" });
-
+        // Get search parameters from query string
+        const { 
+            name, 
+            specialization, 
+            city 
+        } = req.query;
+        
+        // Build query object
+        const query = {};
+        
+        // Search by doctor name (first or last)
+        if (name) {
+            const nameRegex = new RegExp(name, 'i');
+            query.$or = [
+                { firstName: nameRegex },
+                { lastName: nameRegex }
+            ];
         }
-
-        //validate doctor Id
-        if (doctorId && !mongoose.Types.ObjectId.isValid(doctorId)) {
-            return res.status(400).json({ message: "Invalid doctorId. Please provide a valid Id"});
+        
+        // Search by specialization
+        if (specialization) {
+            query.specialization = new RegExp(specialization, 'i');
         }
-
-        //logging the sort method
-        console.log("Sort method: ", sortMethod);
-
-        //validating the sorting method
-        const order = sortMethod === "desc" ? -1 : 1;
-
-        //query to filter by doctors Id if provided
-        const query = doctorId ? { doctors: doctorId } : {};
-
-        //debug the query
-        console.log("Query: ", query);
-
-        //getting the patients with sorting and pagination
-        const patients = await Patient.find(query).lean()
-            .sort({ firstName: order })  //sort by first name
-            .skip((page - 1) * limit)
-            .limit(limit);
-
-        //logging patients to check the output
-        console.log("Patients: ", patients);
-
-        const totalPatients = await Patient.countDocuments(query);
-
-        return res.status(200).json({ totalPatients, patients});
+        
+        // Search by city (either in address.city or ppLocation)
+        if (city) {
+            const cityRegex = new RegExp(city, 'i');
+            query.$or = query.$or || [];
+            query.$or.push(
+                { 'address.city': cityRegex },
+                { ppLocation: cityRegex }
+            );
+        }
+        
+        // Find doctors matching the query
+        const doctors = await Doctor.find(query)
+            .select('doctorId firstName lastName specialization hospital address ppLocation contactNumber email certification schedule description');
+        
+        return res.status(200).json({
+            message: `Found ${doctors.length} doctors matching your search criteria`,
+            doctors: doctors.map(doctor => ({
+                id: doctor._id,
+                doctorId: doctor.doctorId,
+                name: `Dr. ${doctor.firstName} ${doctor.lastName}`,
+                specialization: doctor.specialization,
+                hospital: doctor.hospital,
+                location: doctor.ppLocation,
+                address: doctor.address,
+                contactNumber: doctor.contactNumber,
+                email: doctor.email,
+                certification: doctor.certification,
+                schedule: {
+                    weekdays: doctor.schedule?.weekdays || 'Not specified',
+                    weekends: doctor.schedule?.weekends || 'Not specified'
+                },
+                description: doctor.description
+            }))
+        });
     } catch (error) {
-        console.error("Error fetching sorted patient list: ", error);
-        res.status(500).json({ message: "Internal server error", error: error.message });
+        console.error('Error searching doctors:', error);
+        return res.status(500).json({
+            message: 'Internal server error',
+            error: error.message
+        });
     }
 };
 
 //getting patient profile using patient Id
-export const getPatientProfile = async (req, res) => {
-    try {
-        const { patientId } = req.params;
+// export const getPatientProfile = async (req, res) => {
+//     try {
+//         const { patientId } = req.params;
 
-        if(!mongoose.Types.ObjectId.isValid(patientId)) {
-            return res.status(400).json({ message: "Invalid patient Id. Please provide a valid Id"});
-        }
-        const patientData = await Patient.findById(patientId)
-            .populate('medicalHistory')
-            .populate('doctors')
-            .lean();
+//         if(!mongoose.Types.ObjectId.isValid(patientId)) {
+//             return res.status(400).json({ message: "Invalid patient Id. Please provide a valid Id"});
+//         }
+//         const patientData = await Patient.findById(patientId)
+//             .populate('medicalHistory')
+//             .populate('doctors')
+//             .lean();
 
-        if(!patientData) {
-            return res.status(404).json({ message: 'Patient not found'});
-        }
+//         if(!patientData) {
+//             return res.status(404).json({ message: 'Patient not found'});
+//         }
 
-        return res.status(200).json(patientData);
-    }catch (error) {
-        console.error('Error fetching patient profile: ', error);
-        res.status(500).json({ message: 'Internal server error', error: error.message });
-    }
-};
+//         return res.status(200).json(patientData);
+//     }catch (error) {
+//         console.error('Error fetching patient profile: ', error);
+//         res.status(500).json({ message: 'Internal server error', error: error.message });
+//     }
+// };
 
 //getting medical records by patient id
 export const getMedicalRecords = async (req,res) => {
