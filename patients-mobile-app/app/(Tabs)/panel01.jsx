@@ -33,7 +33,7 @@ export default function Tab() {
     // Animate content position
     Animated.timing(animatedValue, {
       toValue: shouldShowResults ? 1 : 0,
-      duration: 500,
+      duration: 600,
       useNativeDriver: false,
     }).start();
   };
@@ -187,6 +187,6 @@ const styles = StyleSheet.create({
   svgContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: -150,
+    marginBottom: -350,
   },
 });
