@@ -6,6 +6,7 @@ import { updatePatient } from '../application/dto/patient.js';
 import { getNearbyDoctors } from '../application/dto/patient.js';
 import { bookSlot } from '../application/dto/patient.js';
 import { searchDoctors } from '../application/dto/patient.js';
+import {subscribeDoctor, unsubscribeDoctor, getSubscribedDoctors} from '../application/dto/patient.js';
 
 const patientRouter = express.Router();
 
@@ -16,5 +17,8 @@ patientRouter.get('/nearby-doctors/:id', getNearbyDoctors); //getting nearby doc
 patientRouter.put('/doctors/:slotId/book', bookSlot); //booking a slot
 patientRouter.get('/doctors/search', searchDoctors); //searching doctors
 patientRouter.get('/family/records/:id', getRecordsByFamilyId); //getting patient medical records by thier family Id  
+patientRouter.post('/doctors/subscribe', subscribeDoctor); //subscribing to a doctor
+patientRouter.post('/doctors/unsubscribe', unsubscribeDoctor); //unsubscribing to a doctor   
+patientRouter.get('/doctors/subscribed/:familyId', getSubscribedDoctors); //getting subscribed doctors
 
 export default patientRouter;

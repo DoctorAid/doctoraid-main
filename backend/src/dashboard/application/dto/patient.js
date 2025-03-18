@@ -12,7 +12,6 @@ export const createPatients = async (req, res) => {
             lastName,
             dateOfBirth,
             gender,
-            patientId,
             contactNumber,
             email,
             address,
@@ -23,7 +22,7 @@ export const createPatients = async (req, res) => {
         } = req.body;
        
         // Validate required fields
-        if (!firstName || !lastName || !dateOfBirth || !gender || !patientId || !contactNumber || !email || !weight || !height || !relation) {
+        if (!firstName || !lastName || !dateOfBirth || !gender || !contactNumber || !email || !weight || !height || !relation) {
             return res.status(400).json({ message: "All required fields must be provided." });
         }
        
@@ -66,7 +65,6 @@ export const createPatients = async (req, res) => {
         
         // Create new patient with the family reference
         const newPatient = new Patient({
-            patientId: patientId,
             firstName,
             lastName,
             dateOfBirth,
@@ -126,7 +124,6 @@ export const addPatient = async (req, res) => {
             lastName,
             dateOfBirth,
             gender,
-            patientId,
             contactNumber,
             email,
             address,
@@ -137,7 +134,7 @@ export const addPatient = async (req, res) => {
         } = req.body;
        
         // Validate required fields
-        if (!firstName || !lastName || !dateOfBirth || !gender || !patientId || !contactNumber || !email || !weight || !height || !relation || !familyId) {
+        if (!firstName || !lastName || !dateOfBirth || !gender || !contactNumber || !email || !weight || !height || !relation || !familyId) {
             return res.status(400).json({ message: "All required fields must be provided." });
         }
        
@@ -186,8 +183,7 @@ export const addPatient = async (req, res) => {
             weight,
             height,
             relation,
-            familyId,
-            patientId
+            familyId
         });
        
         // Save patient
@@ -548,6 +544,237 @@ export const getRecordsByFamilyId = async (req, res) => {
     } catch (error) {
         console.error('Error retrieving family records:', error);
         return res.status(500).json({
+            message: 'Internal server error',
+            error: error.message
+        });
+    }
+};
+
+export const subscribeDoctor = async (req, res) => {
+    try {
+        const { familyId, doctorId } = req.body;
+        
+        // Validate required fields
+        if (!familyId || !doctorId) {
+            return res.status(400).json({ 
+                success: false,
+                message: "Family ID and Doctor ID are required." 
+            });
+        }
+        
+        // Validate MongoDB ObjectId for familyId
+        if (!mongoose.Types.ObjectId.isValid(familyId)) {
+            return res.status(400).json({ 
+                success: false,
+                message: "Invalid Family ID format. Must be a valid MongoDB ObjectID." 
+            });
+        }
+        
+        // Validate MongoDB ObjectId for doctorId
+        if (!mongoose.Types.ObjectId.isValid(doctorId)) {
+            return res.status(400).json({ 
+                success: false,
+                message: "Invalid Doctor ID format. Must be a valid MongoDB ObjectID." 
+            });
+        }
+        
+        // Find the family by ObjectId
+        const family = await Family.findById(familyId);
+        if (!family) {
+            return res.status(404).json({ 
+                success: false,
+                message: "Family not found." 
+            });
+        }
+        
+        // Check if the doctor exists
+        const doctor = await Doctor.findById(doctorId);
+        if (!doctor) {
+            return res.status(404).json({ 
+                success: false,
+                message: "Doctor not found." 
+            });
+        }
+        
+        // Check if the doctor is already in the family's doctors array
+        const isAlreadySubscribed = family.doctors.some(
+            doc => doc.doctor.toString() === doctorId
+        );
+        
+        if (isAlreadySubscribed) {
+            return res.status(400).json({ 
+                success: false,
+                message: "This family is already subscribed to this doctor." 
+            });
+        }
+        
+        // Add the doctor to the family's doctors array
+        family.doctors.push({ doctor: doctorId });
+        
+        // Save the updated family document
+        await family.save();
+        
+        return res.status(200).json({
+            success: true,
+            message: "Successfully subscribed to the doctor",
+            data: {
+                familyId: family._id,
+                doctor: {
+                    id: doctor._id,
+                    doctorId: doctor.doctorId,
+                    name: `Dr. ${doctor.firstName} ${doctor.lastName}`,
+                    specialization: doctor.specialization,
+                    hospital: doctor.hospital,
+                    ppLocation: doctor.ppLocation
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error subscribing to doctor:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+            error: error.message
+        });
+    }
+};
+
+export const unsubscribeDoctor = async (req, res) => {
+    try {
+        const { familyId, doctorId } = req.body;
+        
+        // Validate required fields
+        if (!familyId || !doctorId) {
+            return res.status(400).json({ 
+                success: false,
+                message: "Family ID and Doctor ID are required." 
+            });
+        }
+        
+        // Validate MongoDB ObjectId for familyId
+        if (!mongoose.Types.ObjectId.isValid(familyId)) {
+            return res.status(400).json({ 
+                success: false,
+                message: "Invalid Family ID format. Must be a valid MongoDB ObjectID." 
+            });
+        }
+        
+        // Validate MongoDB ObjectId for doctorId
+        if (!mongoose.Types.ObjectId.isValid(doctorId)) {
+            return res.status(400).json({ 
+                success: false,
+                message: "Invalid Doctor ID format. Must be a valid MongoDB ObjectID." 
+            });
+        }
+        
+        // Find the family by ObjectId
+        const family = await Family.findById(familyId);
+        if (!family) {
+            return res.status(404).json({ 
+                success: false,
+                message: "Family not found." 
+            });
+        }
+        
+        // Check if the doctor exists in the subscription list
+        const doctorIndex = family.doctors.findIndex(
+            doc => doc.doctor.toString() === doctorId
+        );
+        
+        if (doctorIndex === -1) {
+            return res.status(400).json({ 
+                success: false,
+                message: "This family is not subscribed to this doctor." 
+            });
+        }
+        
+        // Remove the doctor from the family's doctors array
+        family.doctors.splice(doctorIndex, 1);
+        
+        // Save the updated family document
+        await family.save();
+        
+        return res.status(200).json({
+            success: true,
+            message: "Successfully unsubscribed from the doctor",
+            data: {
+                familyId: family._id
+            }
+        });
+    } catch (error) {
+        console.error('Error unsubscribing from doctor:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+            error: error.message
+        });
+    }
+};
+
+export const getSubscribedDoctors = async (req, res) => {
+    try {
+        const { familyId } = req.params;
+        
+        // Validate familyId
+        if (!familyId) {
+            return res.status(400).json({ 
+                success: false,
+                message: "Family ID is required." 
+            });
+        }
+        
+        // Validate MongoDB ObjectId for familyId
+        if (!mongoose.Types.ObjectId.isValid(familyId)) {
+            return res.status(400).json({ 
+                success: false,
+                message: "Invalid Family ID format. Must be a valid MongoDB ObjectID." 
+            });
+        }
+        
+        // Find the family by ObjectId
+        const family = await Family.findById(familyId)
+            .populate({
+                path: 'doctors.doctor',
+                select: 'doctorId firstName lastName specialization hospital ppLocation contactNumber email certification description schedule'
+            });
+            
+        if (!family) {
+            return res.status(404).json({ 
+                success: false,
+                message: "Family not found." 
+            });
+        }
+        
+        // Format the doctors data for the response
+        const subscribedDoctors = family.doctors.map(item => {
+            const doctor = item.doctor;
+            return {
+                id: doctor._id,
+                doctorId: doctor.doctorId,
+                name: `Dr. ${doctor.firstName} ${doctor.lastName}`,
+                specialization: doctor.specialization,
+                hospital: doctor.hospital,
+                location: doctor.ppLocation,
+                contactNumber: doctor.contactNumber,
+                email: doctor.email,
+                certification: doctor.certification,
+                description: doctor.description,
+                schedule: doctor.schedule
+            };
+        });
+        
+        return res.status(200).json({
+            success: true,
+            message: `Found ${subscribedDoctors.length} subscribed doctors`,
+            data: {
+                familyId: family._id,
+                subscribedDoctors
+            }
+        });
+    } catch (error) {
+        console.error('Error getting subscribed doctors:', error);
+        return res.status(500).json({
+            success: false,
             message: 'Internal server error',
             error: error.message
         });
