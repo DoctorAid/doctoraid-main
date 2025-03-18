@@ -13,7 +13,7 @@ patientRouter.post('/create', createPatients); //creating patients
 patientRouter.post('/add', addPatient); //adding patients
 patientRouter.put('/update/:id', updatePatient); //updating patients
 patientRouter.get('/nearby-doctors/:id', getNearbyDoctors); //getting nearby doctors
-patientRouter.post('/doctors/booking', bookSlot); //booking a slot
+patientRouter.put('/doctors/:slotId/book', bookSlot); //booking a slot
 patientRouter.get('/doctors/search', searchDoctors); //searching doctors
 patientRouter.get('/family/records/:id', getRecordsByFamilyId); //getting patient medical records by thier family Id  
 

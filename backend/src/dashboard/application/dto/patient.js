@@ -3,7 +3,7 @@ import Patient from "../../../infrastructure/schema/patient_schema.js";
 import Record from "../../../infrastructure/schema/records_schema.js";
 import Doctor from "../../../infrastructure/schema/doctor_schema.js";
 import Family from "../../../infrastructure/schema/family_schema.js";
-
+import Slot from "../../../infrastructure/schema/slots_schema.js";
 
 export const createPatients = async (req, res) => {
     try {
@@ -344,41 +344,60 @@ export const getNearbyDoctors = async (req, res) => {
 
 export const bookSlot = async (req, res) => {
     try {
-        const { slotId, patientId, familyId, note } = req.body;
+        const { slotId } = req.params;  // Get slotId from URL params
+        const { patientId, familyId, note } = req.body;
        
         // Validate required fields
-        if (!slotId || !patientId || !familyId) {
-            return res.status(400).json({ message: "Slot ID, Patient ID, and Family ID are required." });
+        if (!patientId || !familyId) {
+            return res.status(400).json({ 
+                success: false,
+                message: "Patient ID and Family ID are required." 
+            });
         }
        
         // Validate MongoDB ObjectIds for all IDs
         if (!mongoose.Types.ObjectId.isValid(slotId) ||
             !mongoose.Types.ObjectId.isValid(patientId) ||
             !mongoose.Types.ObjectId.isValid(familyId)) {
-            return res.status(400).json({ message: "Invalid ID format. All IDs must be valid MongoDB ObjectIDs." });
+            return res.status(400).json({ 
+                success: false,
+                message: "Invalid ID format. All IDs must be valid MongoDB ObjectIDs." 
+            });
         }
        
         // Find the slot
         const slot = await Slot.findById(slotId);
         if (!slot) {
-            return res.status(404).json({ message: "Slot not found." });
+            return res.status(404).json({ 
+                success: false,
+                message: "Slot not found." 
+            });
         }
        
         // Check if slot is available
         if (slot.status !== 'available') {
-            return res.status(400).json({ message: "This slot is already booked." });
+            return res.status(400).json({ 
+                success: false,
+                message: "This slot is already booked." 
+            });
         }
        
         // Find patient to get their name
         const patient = await Patient.findById(patientId);
         if (!patient) {
-            return res.status(404).json({ message: "Patient not found." });
+            return res.status(404).json({ 
+                success: false,
+                message: "Patient not found." 
+            });
         }
        
         // Verify the family exists
         const family = await Family.findById(familyId);
         if (!family) {
-            return res.status(404).json({ message: "Family not found." });
+            return res.status(404).json({ 
+                success: false,
+                message: "Family not found." 
+            });
         }
        
         // Update the slot with booking information
@@ -388,7 +407,6 @@ export const bookSlot = async (req, res) => {
             familyId: familyId,
             patientNote: note || '',
             patientName: `${patient.firstName} ${patient.lastName}`
-            // Keeping activated as is, not modifying it
         };
         
         // Use findByIdAndUpdate to ensure all fields are updated
@@ -397,25 +415,29 @@ export const bookSlot = async (req, res) => {
             updateData,
             { new: true, runValidators: true }
         );
-       
+        
         if (!updatedSlot) {
-            return res.status(500).json({ message: "Failed to update slot." });
+            return res.status(500).json({ 
+                success: false,
+                message: "Failed to update slot." 
+            });
         }
         
         // Retrieve session details for the response
         const session = await mongoose.model('Session').findById(slot.Session);
-       
+        
         return res.status(200).json({
+            success: true,
             message: "Appointment booked successfully",
-            appointment: {
-                id: updatedSlot._id,
+            data: {
+                appointmentId: updatedSlot._id,
                 date: session ? session.date : null,
                 startTime: updatedSlot.startTime,
                 endTime: updatedSlot.endTime,
                 duration: updatedSlot.duration,
                 patientName: updatedSlot.patientName,
-                familyId: updatedSlot.familyId,
                 patientId: updatedSlot.patientId,
+                familyId: updatedSlot.familyId,
                 note: updatedSlot.patientNote,
                 doctorId: session ? session.doctorId : null
             }
@@ -423,6 +445,7 @@ export const bookSlot = async (req, res) => {
     } catch (error) {
         console.error('Error booking slot:', error);
         return res.status(500).json({
+            success: false,
             message: 'Internal server error',
             error: error.message
         });
