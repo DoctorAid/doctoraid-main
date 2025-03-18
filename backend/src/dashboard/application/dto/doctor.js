@@ -7,7 +7,6 @@ import Patient from "../../../infrastructure/schema/patient_schema.js";
 export const createDoctor = async (req, res) => {
     try {
         
-        
         const { doctorId, firstName, lastName, email, contactNumber,location, description, schedule, specialization, hospital, address, certification } = req.body;
 
         if (!firstName || !lastName || !email || !contactNumber || !description ) {
@@ -40,7 +39,11 @@ export const createDoctor = async (req, res) => {
 };
 export const getDoctorDetails = async (req, res) => {
     try {
-        const doctors = await Doctor.find({}, 'firstName lastName email contactNumber description schedule');
+        const id = req.params.id;
+        
+        // For debugging
+        console.log("Received doctor ID:", id);
+        const doctors = await Doctor.findById(id)
         return res.status(200).json(doctors);
     } catch (error) {
         console.error('Error fetching doctor details:', error);
@@ -71,12 +74,13 @@ export const deleteDoctorDetails = async (req, res) => {
 
 export const getSessionsByDoctor = async (req, res) => {
     try {
-        const { doctorId } = req.query;
+        const { id: doctorId } = req.params;
+        console.log(doctorId);
         if (!doctorId) {
             return res.status(400).json({ message: 'Doctor ID is required' });
         }
 
-        const sessions = await Session.find({ doctor: doctorId });
+        const sessions = await Session.find({ doctorId: doctorId });
         if (!sessions || sessions.length === 0) {
             return res.status(404).json({ message: 'No sessions found for this doctor' });
         }
@@ -90,9 +94,14 @@ export const getSessionsByDoctor = async (req, res) => {
 
 export const getPatientsByDoctor = async (req, res) => {
     try {
-        const { doctorId } = req.query;
+        const { id:doctorId } = req.params;
         if (!doctorId) {
             return res.status(400).json({ message: 'Doctor ID is required' });
+        }
+
+        const patients = await Patient.find({ doctors: doctorId });
+        if (!patients || patients.length === 0) {
+            return res.status(404).json({ message: 'No patients found for this doctor' });
         }
 
         const sessions = await Session.find({ doctor: doctorId });

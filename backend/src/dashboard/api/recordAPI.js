@@ -3,7 +3,7 @@ import { createRecord, getRecordsByPatientandDoctor, getRecordsByPatient, getRec
 
 const recordRouter = express.Router();
 
-recordRouter.post('/create', createRecord); // Create a new record when doctor clicks Save
+recordRouter.post('/create/:doctorId', createRecord); // Create a new record when doctor clicks Save
 recordRouter.get('/getByPatientId', getRecordsByPatient); // Get records by patient ID      //done
 recordRouter.get('/getByPatientId&DoctorId', getRecordsByPatientandDoctor); // Get records by patient ID & doctor ID        //done
 recordRouter.get('/getByRecordId', getRecordById); // Get a specific record by record ID        //done
