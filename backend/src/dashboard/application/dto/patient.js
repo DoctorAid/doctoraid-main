@@ -345,55 +345,66 @@ export const getNearbyDoctors = async (req, res) => {
 export const bookSlot = async (req, res) => {
     try {
         const { slotId, patientId, familyId, note } = req.body;
-        
+       
         // Validate required fields
         if (!slotId || !patientId || !familyId) {
             return res.status(400).json({ message: "Slot ID, Patient ID, and Family ID are required." });
         }
-        
+       
         // Validate MongoDB ObjectIds for all IDs
-        if (!mongoose.Types.ObjectId.isValid(slotId) || 
+        if (!mongoose.Types.ObjectId.isValid(slotId) ||
             !mongoose.Types.ObjectId.isValid(patientId) ||
             !mongoose.Types.ObjectId.isValid(familyId)) {
             return res.status(400).json({ message: "Invalid ID format. All IDs must be valid MongoDB ObjectIDs." });
         }
-        
+       
         // Find the slot
         const slot = await Slot.findById(slotId);
         if (!slot) {
             return res.status(404).json({ message: "Slot not found." });
         }
-        
+       
         // Check if slot is available
         if (slot.status !== 'available') {
             return res.status(400).json({ message: "This slot is already booked." });
         }
-        
+       
         // Find patient to get their name
         const patient = await Patient.findById(patientId);
         if (!patient) {
             return res.status(404).json({ message: "Patient not found." });
         }
-        
+       
         // Verify the family exists
         const family = await Family.findById(familyId);
         if (!family) {
             return res.status(404).json({ message: "Family not found." });
         }
-        
+       
         // Update the slot with booking information
-        slot.status = 'booked';
-        slot.patientId = patientId;
-        slot.familyId = familyId;
-        slot.patientNote = note || '';
-        slot.patientName = `${patient.firstName} ${patient.lastName}`;
+        const updateData = {
+            status: 'booked',
+            patientId: patientId,
+            familyId: familyId,
+            patientNote: note || '',
+            patientName: `${patient.firstName} ${patient.lastName}`
+            // Keeping activated as is, not modifying it
+        };
         
-        // Save the updated slot
-        const updatedSlot = await slot.save();
+        // Use findByIdAndUpdate to ensure all fields are updated
+        const updatedSlot = await Slot.findByIdAndUpdate(
+            slotId,
+            updateData,
+            { new: true, runValidators: true }
+        );
+       
+        if (!updatedSlot) {
+            return res.status(500).json({ message: "Failed to update slot." });
+        }
         
         // Retrieve session details for the response
         const session = await mongoose.model('Session').findById(slot.Session);
-        
+       
         return res.status(200).json({
             message: "Appointment booked successfully",
             appointment: {
@@ -404,6 +415,7 @@ export const bookSlot = async (req, res) => {
                 duration: updatedSlot.duration,
                 patientName: updatedSlot.patientName,
                 familyId: updatedSlot.familyId,
+                patientId: updatedSlot.patientId,
                 note: updatedSlot.patientNote,
                 doctorId: session ? session.doctorId : null
             }
@@ -416,7 +428,6 @@ export const bookSlot = async (req, res) => {
         });
     }
 };
-
 export const searchDoctors = async (req, res) => {
     try {
         // Get search parameters from query string
