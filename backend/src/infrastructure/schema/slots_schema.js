@@ -29,7 +29,8 @@ const slotsSchema = new mongoose.Schema({
         default: null
     },
     familyId: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Family',
         default: null
     },
     patientId: {

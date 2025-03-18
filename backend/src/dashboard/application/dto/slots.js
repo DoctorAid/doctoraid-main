@@ -54,7 +54,7 @@ export const createSlots = async (req, res) => {
 
         //creates a new session for the slots
         const session_time = startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const new_session = new Session({doctorId:new mongoose.Types.ObjectId(doctor._id),date:date,time:session_time, pin:pin});   // creating a new session
+        const new_session = new Session({doctorId:new mongoose.Types.ObjectId(doctor._id),date:date,time:session_time, pin:pin});   // creating a new session
         const saved_session = await new_session.save(); // saving the session in db
         console.log("new session created successfully");
 
