@@ -10,7 +10,11 @@ const recordsSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Doctor',
         required: true
-      },
+    },
+      familyId: {
+        type: String, 
+        required: true
+    },
     date: {
         type: Date,
         required: true

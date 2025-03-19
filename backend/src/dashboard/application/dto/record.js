@@ -3,40 +3,55 @@ import mongoose from "mongoose";
 import Record from "../../../infrastructure/schema/records_schema.js";
 import Patient from "../../../infrastructure/schema/patient_schema.js";
 import Doctor from "../../../infrastructure/schema/doctor_schema.js";
+import Family from "../../../infrastructure/schema/family_schema.js";
 
 export const createRecord = async (req, res) => {
     try {
-        const { prescription, patientId, doctorId, observation, notes, date } = req.body;
-        
+        const { prescription, patientId, observation, notes, date } = req.body;
+        const { doctorId } = req.params; // Get doctorId from route params
+
+        // Validate required fields
         if (!prescription || !patientId || !doctorId || !observation || !date) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
+
+        // Convert string IDs to MongoDB ObjectIds
+        const patientObjectId = new mongoose.Types.ObjectId(patientId);
+        const doctorObjectId = new mongoose.Types.ObjectId(doctorId);
         
         // Verify the patient exists
-        const patientExists = await Patient.findById(patientId);
+        const patientExists = await Patient.findById(patientObjectId);
         if (!patientExists) {
             return res.status(404).json({ message: 'Patient not found' });
         }
         
         // Verify the doctor exists
-        const doctorExists = await Doctor.findById(doctorId);
+        const doctorExists = await Doctor.findById(doctorObjectId);
         if (!doctorExists) {
             return res.status(404).json({ message: 'Doctor not found' });
         }
+
+        // Get the familyId from the patient
+        const familyId = patientExists.familyId;
         
+        // Create new record
         const newRecord = new Record({
-            patientId,
-            doctorId,
+            patientId: patientObjectId,
+            doctorId: doctorObjectId,
+            familyId, // Add familyId to the record
             prescription,
             observation,
-            notes,
-            date
+            notes: notes || null,
+            date: new Date(date)
         });
         
         const savedRecord = await newRecord.save();
         return res.status(201).json(savedRecord);
     } catch (error) {
         console.error('Error creating record:', error);
+        if (error instanceof mongoose.Error.CastError) {
+            return res.status(400).json({ message: 'Invalid ID format' });
+        }
         res.status(500).json({ message: 'Internal server error' });
     }
 };
