@@ -8,6 +8,7 @@ import { bookSlot } from '../application/dto/patient.js';
 import { searchDoctors } from '../application/dto/patient.js';
 import {subscribeDoctor, unsubscribeDoctor, getSubscribedDoctors} from '../application/dto/patient.js';
 import { enterPin } from '../application/dto/mobile.js';
+import { getAllBookings } from '../application/dto/patient.js';
 
 const patientRouter = express.Router();
 
@@ -22,5 +23,6 @@ patientRouter.get('/family/records/:id', getRecordsByFamilyId); //getting patien
 patientRouter.post('/doctors/subscribe', subscribeDoctor); //subscribing to a doctor
 patientRouter.post('/doctors/unsubscribe', unsubscribeDoctor); //unsubscribing to a doctor   
 patientRouter.get('/doctors/subscribed/:familyId', getSubscribedDoctors); //getting subscribed doctors
+patientRouter.get('/bookings/:familyId', getAllBookings); //getting all bookings
 
 export default patientRouter;

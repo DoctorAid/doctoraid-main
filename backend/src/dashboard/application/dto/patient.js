@@ -815,3 +815,133 @@ export const enterPin = async (req, res) => {
         res.status(500).json({ message: 'Error entering PIN', error: error.message });
     }
 };
+
+export const getAllBookings = async (req, res) => {
+    try {
+        const { familyId } = req.params;
+        
+        // Validate familyId
+        if (!familyId) {
+            return res.status(400).json({ 
+                success: false,
+                message: "Family ID is required." 
+            });
+        }
+        
+        // Validate MongoDB ObjectId for familyId
+        if (!mongoose.Types.ObjectId.isValid(familyId)) {
+            return res.status(400).json({ 
+                success: false,
+                message: "Invalid Family ID format. Must be a valid MongoDB ObjectID." 
+            });
+        }
+        
+        // Find all slots booked by this family using MongoDB ObjectId
+        const bookings = await Slot.find({ 
+            familyId: familyId, // MongoDB will automatically handle the ObjectId comparison
+            status: 'booked'
+        }).populate({
+            path: 'Session',
+            select: 'date doctorId',
+            populate: {
+                path: 'doctorId',
+                model: 'Doctor',
+                select: 'firstName lastName specialization hospital ppLocation email contactNumber'
+            }
+        }).populate({
+            path: 'patientId',
+            select: 'firstName lastName dateOfBirth contactNumber email'
+        }).sort({ 'Session.date': 1, startTime: 1 }); // Sort by date and time
+        
+        if (bookings.length === 0) {
+            return res.status(200).json({
+                success: true,
+                message: "No bookings found for this family.",
+                data: {
+                    familyId: familyId,
+                    bookings: []
+                }
+            });
+        }
+        
+        // Format the response data
+        const formattedBookings = bookings.map(booking => {
+            const session = booking.Session;
+            const doctor = session?.doctorId;
+            const patient = booking.patientId;
+            
+            return {
+                bookingId: booking._id,
+                sessionId: session?._id || null,
+                date: session?.date || null,
+                time: {
+                    start: booking.startTime,
+                    end: booking.endTime,
+                    duration: booking.duration
+                },
+                doctor: doctor ? {
+                    id: doctor._id,
+                    name: `Dr. ${doctor.firstName} ${doctor.lastName}`,
+                    specialization: doctor.specialization,
+                    hospital: doctor.hospital,
+                    location: doctor.ppLocation,
+                    contactNumber: doctor.contactNumber,
+                    email: doctor.email
+                } : null,
+                patient: patient ? {
+                    id: patient._id,
+                    name: `${patient.firstName} ${patient.lastName}`,
+                    dateOfBirth: patient.dateOfBirth,
+                    contactNumber: patient.contactNumber,
+                    email: patient.email
+                } : {
+                    name: booking.patientName
+                },
+                patientNote: booking.patientNote,
+                status: booking.status,
+                recordCreated: booking.recordId ? true : false,
+                activated: booking.activated
+            };
+        });
+        
+        // Group bookings by upcoming and past based on current date
+        const currentDate = new Date();
+        const upcomingBookings = [];
+        const pastBookings = [];
+        
+        formattedBookings.forEach(booking => {
+            if (!booking.date) return;
+            
+            const bookingDate = new Date(booking.date);
+            if (bookingDate >= currentDate) {
+                upcomingBookings.push(booking);
+            } else {
+                pastBookings.push(booking);
+            }
+        });
+        
+        // Sort upcoming bookings by date (soonest first)
+        upcomingBookings.sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        // Sort past bookings by date (most recent first)
+        pastBookings.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        return res.status(200).json({
+            success: true,
+            message: `Found ${bookings.length} bookings for this family.`,
+            data: {
+                familyId: familyId,
+                totalBookings: bookings.length,
+                upcomingBookings: upcomingBookings,
+                pastBookings: pastBookings
+            }
+        });
+    } catch (error) {
+        console.error('Error retrieving family bookings:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+            error: error.message
+        });
+    }
+};
