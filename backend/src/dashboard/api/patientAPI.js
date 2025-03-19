@@ -1,14 +1,19 @@
 import express from 'express';
-import {getRecordsByFamilyId} from '../application/dto/patient.js';
-import {createPatients} from '../application/dto/patient.js';
-import { addPatient } from '../application/dto/patient.js';
-import { updatePatient } from '../application/dto/patient.js';
-import { getNearbyDoctors } from '../application/dto/patient.js';
-import { bookSlot } from '../application/dto/patient.js';
-import { searchDoctors } from '../application/dto/patient.js';
-import {subscribeDoctor, unsubscribeDoctor, getSubscribedDoctors} from '../application/dto/patient.js';
-import { enterPin } from '../application/dto/mobile.js';
-import { getAllBookings } from '../application/dto/patient.js';
+
+import {
+    getRecordsByFamilyId,
+    createPatients, 
+    addPatient,
+    updatePatient,
+    getNearbyDoctors,
+    bookSlot,
+    searchDoctors,
+    subscribeDoctor,
+    unsubscribeDoctor, 
+    getSubscribedDoctors,
+    getAllBookings,
+    enterPin
+} from '../application/dto/patient.js';
 
 const patientRouter = express.Router();
 
