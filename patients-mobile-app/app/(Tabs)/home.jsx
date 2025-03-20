@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   sectionTitle: {
+    fontFamily:"Raleway",
     paddingHorizontal: 30,
     fontSize: 20,
     fontWeight: "bold",

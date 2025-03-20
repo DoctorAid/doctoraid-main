@@ -6,13 +6,13 @@ const TimeSlotSelector = ({ session, onTimeSelect }) => {
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
   const [timeSlots, setTimeSlots] = useState([]);
 
-  // Generate time slots based on the selected session
+  //  time slots based on the selected session
   useEffect(() => {
     if (session) {
       // Clear selected time slot when session changes
       setSelectedTimeSlot(null);
       
-      // Generate time slots for the selected session
+      //  time slots for the selected session
       // This is a simple example that creates 10-minute intervals
       const generatedSlots = generateTimeSlots(session.startTime, session.endTime);
       setTimeSlots(generatedSlots);

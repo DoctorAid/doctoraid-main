@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   },
   welcome: {
     fontSize: 36,
-    fontFamily: "Raleway-Regular",
+    fontFamily: "Raleway",
     fontWeight: "bold",
     color: "#265A69",
   },
