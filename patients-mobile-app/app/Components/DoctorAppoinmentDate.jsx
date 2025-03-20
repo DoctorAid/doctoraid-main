@@ -215,10 +215,9 @@ const styles = StyleSheet.create({
     maxHeight: 400,
   },
   modalTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 16,
-    textAlign: 'left',
+    paddingHorizontal: 16,
+    fontSize: 16,
+    fontWeight: '600',    textAlign: 'left',
   },
   monthItem: {
     paddingVertical: 12,
