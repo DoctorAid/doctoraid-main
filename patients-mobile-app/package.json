@@ -50,7 +50,8 @@
     "react-native-webview": "13.12.5",
     "react-slick": "^0.30.3",
     "slick-carousel": "^1.8.1",
-    "tailwind-react-native-classnames": "^3.0.1"
+    "tailwind-react-native-classnames": "^3.0.1",
+    "@react-native-community/datetimepicker": "8.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
