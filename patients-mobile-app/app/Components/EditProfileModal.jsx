@@ -11,7 +11,9 @@ import {
     ScrollView,
     KeyboardAvoidingView,
     Platform,
-    FlatList
+    FlatList,
+    ActivityIndicator,
+    Alert
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import FormField from './FormField';
@@ -63,6 +65,7 @@ const EditProfileModal = ({ isVisible, onClose, section, profile, onSave }) => {
     const [slideAnim] = useState(new Animated.Value(300));
     const [fadeAnim] = useState(new Animated.Value(0));
     const [showRelationDropdown, setShowRelationDropdown] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Reset form data when modal opens with new section
     useEffect(() => {
@@ -129,9 +132,66 @@ const EditProfileModal = ({ isVisible, onClose, section, profile, onSave }) => {
         }));
     };
 
-    const handleSave = () => {
-        onSave(section, formData);
-        onClose();
+    // Submit profile updates to backend
+    const submitProfileToBackend = async (profileData) => {
+        setIsSubmitting(true);
+        
+        try {
+            // Log the data that would be sent to the backend
+            console.log(`Submitting updated ${section} profile data to backend:`, {
+                profileId: profile.id,
+                section: section,
+                data: profileData
+            });
+            
+            // In future, you would add your API call here:
+            // const response = await fetch('your-api-endpoint/profiles/' + profile.id, {
+            //     method: 'PATCH', // or PUT depending on your API
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //         'Authorization': 'Bearer ' + yourAuthToken,
+            //     },
+            //     body: JSON.stringify({
+            //         section: section,
+            //         data: profileData
+            //     }),
+            // });
+            // const data = await response.json();
+            
+            // Simulate API delay
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Return success for now
+            return { success: true };
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            return { success: false, error: error.message };
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleSave = async () => {
+        // Validate required fields
+        if (section === 'general' && !formData.name) {
+            Alert.alert('Error', 'Name is a required field.');
+            return;
+        }
+        
+        // Submit to backend
+        const result = await submitProfileToBackend(formData);
+        
+        if (result.success) {
+            // Update local state after successful submission
+            onSave(section, formData);
+            onClose();
+            
+            // Optional: Show success message
+            // Alert.alert('Success', 'Profile updated successfully!');
+        } else {
+            // Show error message
+            Alert.alert('Error', 'Failed to update profile. Please try again.');
+        }
     };
 
     const dismissKeyboard = () => {
@@ -250,11 +310,23 @@ const EditProfileModal = ({ isVisible, onClose, section, profile, onSave }) => {
                         </ScrollView>
                         
                         <View style={styles.buttonContainer}>
-                            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+                            <TouchableOpacity 
+                                style={styles.cancelButton} 
+                                onPress={onClose}
+                                disabled={isSubmitting}
+                            >
                                 <Text style={styles.cancelButtonText}>Cancel</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-                                <Text style={styles.saveButtonText}>Save</Text>
+                            <TouchableOpacity 
+                                style={[styles.saveButton, isSubmitting && styles.saveButtonDisabled]} 
+                                onPress={handleSave}
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting ? (
+                                    <ActivityIndicator size="small" color="#FFFFFF" />
+                                ) : (
+                                    <Text style={styles.saveButtonText}>Save</Text>
+                                )}
                             </TouchableOpacity>
                         </View>
                     </Animated.View>
@@ -344,6 +416,13 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.3,
         shadowRadius: 5,
         elevation: 3,
+        minWidth: 100,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    saveButtonDisabled: {
+        backgroundColor: '#A0AEC0',
+        shadowOpacity: 0.1,
     },
     saveButtonText: {
         fontSize: 16,

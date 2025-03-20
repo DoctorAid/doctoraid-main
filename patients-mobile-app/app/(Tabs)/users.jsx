@@ -49,6 +49,7 @@ const UserProfile = () => {
     const [maxProfilesPopupVisible, setMaxProfilesPopupVisible] = useState(false);
     const [imagePickerVisible, setImagePickerVisible] = useState(false);
     const [currentProfileForImage, setCurrentProfileForImage] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     
     // New profile state
     const [newProfile, setNewProfile] = useState({
@@ -88,7 +89,39 @@ const UserProfile = () => {
         setSelectedProfile(profile);
     };
 
-    const addProfile = () => {
+    // Submit profile data to backend
+    const submitProfileToBackend = async (profileData) => {
+        // Set submitting state to true to show loading indicator if needed
+        setIsSubmitting(true);
+        
+        try {
+            // Log the data that would be sent to the backend
+            console.log('Submitting new patient profile to backend:', profileData);
+            
+            // In future, you would add your API call here:
+            // const response = await fetch('your-api-endpoint', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify(profileData),
+            // });
+            // const data = await response.json();
+            
+            // Simulate API delay
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Return success for now
+            return { success: true };
+        } catch (error) {
+            console.error('Error submitting profile:', error);
+            return { success: false, error };
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const addProfile = async () => {
         // Validate required fields
         if (!newProfile.name || !newProfile.relation) {
             Alert.alert('Error', 'Name and relation are required fields.');
@@ -106,11 +139,23 @@ const UserProfile = () => {
             id: newId,
         };
 
-        const updatedProfiles = [...profiles, profileToAdd];
-        setProfiles(updatedProfiles);
-        setSelectedProfile(profileToAdd);
-        resetNewProfileForm();
-        setAddModalVisible(false);
+        // Submit to backend
+        const result = await submitProfileToBackend(profileToAdd);
+        
+        if (result.success) {
+            // Update local state after successful submission
+            const updatedProfiles = [...profiles, profileToAdd];
+            setProfiles(updatedProfiles);
+            setSelectedProfile(profileToAdd);
+            resetNewProfileForm();
+            setAddModalVisible(false);
+            
+            // Show success message
+            Alert.alert('Success', 'Patient profile added successfully!');
+        } else {
+            // Show error message
+            Alert.alert('Error', 'Failed to add patient profile. Please try again.');
+        }
     };
 
     const removeProfile = (profileId) => {
@@ -341,6 +386,7 @@ const UserProfile = () => {
                 onRemoveAllergy={removeAllergy}
                 onSave={addProfile}
                 onImagePickerOpen={() => openImagePicker(true)}
+                isSubmitting={isSubmitting}
             />
 
             <ImagePickerModal 
