@@ -762,3 +762,158 @@
 //     });
 //   });
 
+import { getNearbyDoctors } from '../dashboard/application/dto/doctors.js';
+import Patient from '../infrastructure/schema/patient_schema.js';
+import Doctor from '../infrastructure/schema/doctor_schema.js';
+import mongoose from 'mongoose';
+
+// Mock the required modules
+jest.mock('../infrastructure/schema/patient_schema.js');
+jest.mock('../infrastructure/schema/doctor_schema.js');
+jest.mock('mongoose', () => ({
+  Types: {
+    ObjectId: {
+      isValid: jest.fn()
+    }
+  }
+}));
+
+describe('Doctor API - Get Nearby Doctors', () => {
+  let req, res;
+
+  beforeEach(() => {
+    // Reset mocks
+    jest.clearAllMocks();
+
+    // Mock request and response
+    req = {
+      params: {
+        id: '507f1f77bcf86cd799439011'
+      }
+    };
+
+    res = {
+      status: jest.fn(() => res),
+      json: jest.fn((x) => x)
+    };
+
+    // Set default for ObjectId.isValid
+    mongoose.Types.ObjectId.isValid.mockReturnValue(true);
+  });
+
+  it('should get nearby doctors successfully', async () => {
+    // Mock patient data
+    const patientData = {
+      _id: '507f1f77bcf86cd799439011',
+      firstName: 'John',
+      
+      lastName: 'Doe',
+      address: {
+        city: 'New York'
+      }
+    };
+
+    // Mock doctor data
+    const doctorsData = [
+      {
+        _id: '507f1f77bcf86cd799439022',
+        firstName: 'Jane',
+        lastName: 'Smith',
+        specialization: 'Cardiology',
+        hospital: 'NY General Hospital',
+        address: {
+          city: 'New York'
+        },
+        contactNumber: '1234567890',
+        email: 'jane.smith@example.com'
+      },
+      {
+        _id: '507f1f77bcf86cd799439033',
+        firstName: 'Mike',
+        lastName: 'Johnson',
+        specialization: 'Pediatrics',
+        hospital: 'Children\'s Hospital',
+        ppLocation: 'New York Downtown',
+        contactNumber: '9876543210',
+        email: 'mike.johnson@example.com'
+      }
+    ];
+
+    // Mock the Patient.findById
+    Patient.findById = jest.fn().mockResolvedValue(patientData);
+
+    // Mock the Doctor.find and select
+    Doctor.find = jest.fn().mockReturnValue({
+      select: jest.fn().mockResolvedValue(doctorsData)
+    });
+
+    // Call the function
+    await getNearbyDoctors(req, res);
+
+    // Check if Patient.findById was called with the correct id
+    expect(Patient.findById).toHaveBeenCalledWith(req.params.id);
+
+    // Check if Doctor.find was called with the correct query
+    expect(Doctor.find).toHaveBeenCalledWith({
+      $or: [
+        { "address.city": { $regex: expect.any(RegExp) }},
+        { "ppLocation": { $regex: expect.any(RegExp) }}
+      ]
+    });
+
+    // Check final response
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      message: `Found ${doctorsData.length} doctors near ${patientData.address.city}`,
+      patientCity: patientData.address.city,
+      doctors: doctorsData
+    });
+  });
+
+  it('should return 400 if patient ID is invalid', async () => {
+    // Mock invalid ObjectId
+    mongoose.Types.ObjectId.isValid.mockReturnValue(false);
+    
+    // Call the function
+    await getNearbyDoctors(req, res);
+    
+    // Check response
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Valid patient ID is required."
+    });
+  });
+
+  it('should return 404 if patient is not found', async () => {
+    // Mock Patient.findById to return null
+    Patient.findById = jest.fn().mockResolvedValue(null);
+    
+    // Call the function
+    await getNearbyDoctors(req, res);
+    
+    // Check response
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Patient not found."
+    });
+  });
+
+  it('should return 500 if there is a server error', async () => {
+    // Mock Patient.findById to throw an error
+    Patient.findById = jest.fn().mockRejectedValue(new Error('Database error'));
+    
+    // Mock console.error to prevent test output pollution
+    console.error = jest.fn();
+    
+    // Call the function
+    await getNearbyDoctors(req, res);
+    
+    // Check response
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({
+      message: 'Internal server error',
+      error: 'Database error'
+    });
+  });
+});
+
