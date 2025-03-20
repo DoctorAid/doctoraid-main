@@ -4,6 +4,7 @@ import Record from "../../../infrastructure/schema/records_schema.js";
 import Doctor from "../../../infrastructure/schema/doctor_schema.js";
 import Family from "../../../infrastructure/schema/family_schema.js";
 import Slot from "../../../infrastructure/schema/slots_schema.js";
+import Session from "../../../infrastructure/schema/sessions_schema.js";
 
 export const createPatients = async (req, res) => {
     try {
