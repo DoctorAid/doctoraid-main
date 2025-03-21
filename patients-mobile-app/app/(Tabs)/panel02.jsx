@@ -1,17 +1,57 @@
-import { View, Text, StyleSheet } from 'react-native';
+import React from 'react';
+import { View, FlatList, Text, StyleSheet, SafeAreaView } from 'react-native';
+import RecordCard, { records } from '../Components/RecordCard';
+import EmptyRecordsSVG from '../Assets/images/recordguy.svg';
 
-export default function Tab() {
+
+const Records = () => {
   return (
+    <SafeAreaView style={styles.safeArea}>
     <View style={styles.container}>
-      <Text>Panle 02</Text>
+      <Text style={styles.title}>Records</Text>
+      <FlatList
+        data={records}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => <RecordCard record={item} />}
+        // ListEmptyComponent={ // Display SVG if no records exist
+        //   <View style={styles.emptyContainer}>
+        //     <Text style={styles.emptyText}>No records found</Text>
+        //   </View>
+        // }
+        ListFooterComponent={ // Add SVG at the bottom of the list
+          <View style={styles.svgContainer}>
+            <EmptyRecordsSVG width={250} height={250} />
+          </View>
+        }
+      />
     </View>
+  </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#F9F4EF",
+  },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    paddingTop: 20,
+    paddingRight: 40,
+    paddingLeft: 40,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "#295567",
+    marginBottom: 30,
+    
+  },
+  svgContainer: {
+    alignItems: "center",
+    marginTop: 10,
+    marginBottom: -30,
   },
 });
+
+export default Records;
