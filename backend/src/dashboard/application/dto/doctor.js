@@ -251,46 +251,23 @@ export const getTotalPatientCountByDoctor = async (req, res) => {
     }
 };
 
-export const getFamilyPatientsByDoctor = async (req, res) => {
+export const getAllPatients = async (req, res) => {
     try {
-        const { familyId, doctorId } = req.params;
+        const { doctorId } = req.params;
         
         // Validate required parameters
-        if (!familyId || !doctorId) {
+        if (!doctorId) {
             return res.status(400).json({ 
                 success: false,
-                message: "Family ID and Doctor ID are required." 
+                message: "Doctor ID is required." 
             });
         }
         
-        // Validate MongoDB ObjectIds
+        // Validate MongoDB ObjectId
         if (!mongoose.Types.ObjectId.isValid(doctorId)) {
             return res.status(400).json({ 
                 success: false,
                 message: "Invalid Doctor ID format. Must be a valid MongoDB ObjectID." 
-            });
-        }
-        
-        // First, check if the family is subscribed to this doctor
-        const family = await Family.findOne({ 
-            familyId: familyId,
-            doctors: { 
-                $elemMatch: { 
-                    doctor: mongoose.Types.ObjectId(doctorId) 
-                } 
-            }
-        }).populate({
-            path: 'members.patient',
-            select: 'firstName lastName dateOfBirth gender contactNumber email address weight height relation'
-        }).populate({
-            path: 'doctors.doctor',
-            select: 'firstName lastName specialization hospital ppLocation'
-        });
-        
-        if (!family) {
-            return res.status(404).json({ 
-                success: false,
-                message: "Family not found or not subscribed to this doctor." 
             });
         }
         
@@ -303,31 +280,69 @@ export const getFamilyPatientsByDoctor = async (req, res) => {
             });
         }
         
-        // Format the patients data
-        const patients = family.members.map(member => {
-            const patient = member.patient;
+        // Find all families that have subscribed to this doctor
+        const subscribedFamilies = await Family.find({
+            "doctors.doctor": mongoose.Types.ObjectId(doctorId)
+        }).populate({
+            path: 'members.patient',
+            select: 'firstName lastName dateOfBirth gender contactNumber email address weight height relation'
+        });
+        
+        if (subscribedFamilies.length === 0) {
+            return res.status(200).json({
+                success: true,
+                message: "No families are currently subscribed to this doctor.",
+                data: {
+                    doctor: {
+                        id: doctor._id,
+                        name: `Dr. ${doctor.firstName} ${doctor.lastName}`,
+                        specialization: doctor.specialization
+                    },
+                    families: [],
+                    totalPatients: 0
+                }
+            });
+        }
+        
+        // Process and format each family and their patients
+        const formattedFamilies = subscribedFamilies.map(family => {
+            // Format patients data
+            const patients = family.members.map(member => {
+                const patient = member.patient;
+                return {
+                    id: patient._id,
+                    firstName: patient.firstName,
+                    lastName: patient.lastName,
+                    fullName: `${patient.firstName} ${patient.lastName}`,
+                    dateOfBirth: patient.dateOfBirth,
+                    gender: patient.gender,
+                    contactNumber: patient.contactNumber,
+                    email: patient.email,
+                    address: patient.address,
+                    weight: patient.weight,
+                    height: patient.height,
+                    relation: member.relation
+                };
+            });
+            
             return {
-                id: patient._id,
-                firstName: patient.firstName,
-                lastName: patient.lastName,
-                fullName: `${patient.firstName} ${patient.lastName}`,
-                dateOfBirth: patient.dateOfBirth,
-                gender: patient.gender,
-                contactNumber: patient.contactNumber,
-                email: patient.email,
-                address: patient.address,
-                weight: patient.weight,
-                height: patient.height,
-                relation: member.relation
+                familyId: family.familyId,
+                familyObjectId: family._id,
+                clerkId: family.clerkId,
+                patients: patients
             };
         });
         
+        // Count total patients across all families
+        const totalPatients = formattedFamilies.reduce(
+            (count, family) => count + family.patients.length, 
+            0
+        );
+        
         return res.status(200).json({
             success: true,
-            message: `Found ${patients.length} patients in this family that are subscribed to this doctor.`,
+            message: `Found ${formattedFamilies.length} families with a total of ${totalPatients} patients subscribed to this doctor.`,
             data: {
-                familyId: family.familyId,
-                familyObjectId: family._id,
                 doctor: {
                     id: doctor._id,
                     name: `Dr. ${doctor.firstName} ${doctor.lastName}`,
@@ -335,11 +350,12 @@ export const getFamilyPatientsByDoctor = async (req, res) => {
                     hospital: doctor.hospital,
                     location: doctor.ppLocation
                 },
-                patients: patients
+                families: formattedFamilies,
+                totalPatients: totalPatients
             }
         });
     } catch (error) {
-        console.error('Error retrieving family patients by doctor:', error);
+        console.error('Error retrieving patients for doctor:', error);
         return res.status(500).json({
             success: false,
             message: 'Internal server error',
