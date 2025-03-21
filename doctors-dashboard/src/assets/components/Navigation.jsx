@@ -13,7 +13,7 @@ function Navigation() {
   const navigate = useNavigate();
   const {user} = useUser();
   const { isSignedIn, isLoaded } = useAuth(); 
-  console.log("Navigation loaded")
+  
 
 
   useEffect(() => {

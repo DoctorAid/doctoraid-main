@@ -175,6 +175,8 @@ const PatientsTable = () => {
 
   const [selectedPatient, setSelectedPatient] = useState(patients[0]);
   const [selectedRecord, setSelectedRecord] = useState(records[0]);
+  const [patientsData, setPatientsData] = useState([]);
+  const [recordsData, setRecordsData] = useState([]);
 
   const handleNext = () => {
     if (currentPage < totalPages) {
@@ -188,6 +190,50 @@ const PatientsTable = () => {
     }
   };
 
+  const fetchPatients = async () => {
+      try {
+        const slotsData = await getSlotsbySessionId('67d8f3b6df847e7d9cbc2626');
+        console.log("Slots data fetched:", slotsData);
+        const slotsCount = slotsData.length;
+        console.log("Slots count:", slotsCount); 
+        setCurrentSlots(slotsData);
+        
+      } catch (error) {
+        console.error('Error fetching slots:', error);
+      } finally {
+      
+      }
+    };
+  const fetchRecords = async () => {
+    try {
+      const recordsData = await getSlotsbySessionId('67d8f3b6df847e7d9cbc2626');
+      console.log("Records data fetched:", slotsData);
+      const slotsCount = slotsData.length;
+      
+      
+    } catch (error) {
+      console.error('Error fetching slots:', error);
+    } finally {
+    
+    }
+  };
+
+  // const example = {
+  //   {
+  //     "_id": "ObjectId('67d55e81d0687747057ec12f')",
+  //     "patientId": "ObjectId('67d55e165a5ed215b2747d99')",
+  //     "doctorId": "ObjectId('67c9d7f2fc30079cc9e24193')",
+  //     "date": "2025-03-17T14:00:00.000+00:00",
+  //     "prescription": [
+  //       "Ibuprofen 100mg"
+  //     ],
+  //     "observation": "Patient shows improvement",
+  //     "notes": "Continue medication for 3 days",
+  //     "createdAt": "2025-03-15T11:03:30.004+00:00",
+  //     "updatedAt": "2025-03-16T16:47:11.274+00:00"
+  //   }
+    
+  // }
   
 
   useEffect(() => {

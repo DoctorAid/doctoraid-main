@@ -280,7 +280,7 @@ useEffect(() => {
 
               <div className='flex flex-col'>
                 <div className='text-4xl font-bold'>ID</div>
-                <div className="text-center text-[#6394b5] text-5xl font-bold font-['Instrument Sans']">#{!loading?currentSession._id.slice(-6):"0"}</div>
+                <div className="text-center text-[#6394b5] text-5xl font-bold font-['Instrument Sans']">#{"0"}</div>
               </div>
               <CircleArrowLeft className="w-8 h-8 text-[#295567] cursor-pointer" onClick={previousSession} />
               <CircleArrowRight className="w-8 h-8 text-[#295567] cursor-pointer" onClick={nextSession} />

@@ -3,10 +3,13 @@ import Session from "../../../infrastructure/schema/sessions_schema.js";
 import Slot from "../../../infrastructure/schema/slots_schema.js";
 import Patient from "../../../infrastructure/schema/patient_schema.js";
 
-export const getSessions = async (req, res) => {
+export const getSessionsByDocId = async (req, res) => {
     try{
-        const sessions = await Session.find();
+        console.log(req.params);
+        const {doctorId} = req.params;
+        const sessions = await Session.find(doctorId);
         res.status(200).json(sessions);
+
     }catch(error){
         res.status(404).json({message: 'cant retrieve sessions'});
     }

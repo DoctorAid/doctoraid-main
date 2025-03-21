@@ -77,7 +77,7 @@ export const deleteDoctor = async (doctorId) => {
  */
 export const getSessionsByDoctor = async (doctorId) => {
   console.log("getSessionsByDoctor API called for ID:", doctorId);
-  const response = await fetch(`${API_BASE_URL}/sessions?doctorId=${doctorId}`, {
+  const response = await fetch(`${API_BASE_URL}/sessions/${doctorId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

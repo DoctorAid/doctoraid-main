@@ -1,5 +1,6 @@
 export const getSessionsByDocId = async (id) => {
     //const token = await window.Clerk?.session?.getToken();
+    console.log("getSessionsByDocId API called");
   
     const res = await fetch(`http://localhost:5000/api/sessions/get/${id}`, {
       method: "GET",
@@ -10,7 +11,6 @@ export const getSessionsByDocId = async (id) => {
     });
     const sessions = await res.json();
     return sessions;
-    console.log("sessions:", sessions)
   };
 
 export const getAllSessions = async () => {

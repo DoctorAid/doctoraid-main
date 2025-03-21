@@ -1,6 +1,36 @@
 import React from 'react';
+import { useEffect ,useState} from "react";
+import { getSessionsByDoctor } from '../api/doctorsAPI';
 
-const MedicinesPage = () => {
+const MedicinesPage = ({setSession}) => {
+
+
+  const [sessionsData, setSessionsData] = useState([]);
+  const[latestSession, setLatestSession] = useState([]);
+
+  const fetchSessions = async () => {
+    try {
+      const data = await getSessionsByDoctor('67d8aff139afa54b845fc507');
+      console.log("Sessions data fetched:", data);
+      setSessionsData(data);
+    } catch (error) {
+      console.error('Error fetching sessions:', error);
+    }
+  };
+    
+  useEffect(() => {
+    fetchSessions();
+  }, []);
+
+
+  useEffect(() => {
+    if (sessionsData.length > 0) {
+      setLatestSession(sessionsData[0]);
+      console.log("Latest session:", sessionsData[0]);
+    }
+  }, [sessionsData]); 
+
+
   // Sample sessions data array
   const sessions = [
     {
@@ -23,8 +53,7 @@ const MedicinesPage = () => {
     }
   ];
 
-  // Filter sessions by type
-  const latestSession = sessions.find(session => session.type === 'latest');
+  
   const upcomingSessions = sessions.filter(session => session.type === 'upcoming');
 
   return (
@@ -49,16 +78,20 @@ const MedicinesPage = () => {
           {/* Latest Session Section */}
           <h2 className="text-xl font-bold text-slate-700 mb-4">Latest Session</h2>
           
-          {latestSession && (
+          {latestSession && latestSession._id ? (
             <div className="bg-blue-50 rounded-xl p-4 mb-8 flex justify-between items-center">
               <div>
-                <p className="text-gray-700 font-medium">ID: {latestSession.id}</p>
-                <p className="text-gray-500 text-sm">{latestSession.date} | {latestSession.time}</p>
+                <p className="text-gray-700 font-medium">ID: #{latestSession._id.slice(-6)||""}</p>
+                <p className="text-gray-500 text-sm">{latestSession.date.split('T')[0] ||""} {latestSession.time}</p>
               </div>
-              <button className="bg-green-200 hover:bg-green-300 text-green-800 font-medium px-8 py-2 rounded-full transition">
+              <button className="bg-green-200 hover:bg-green-300 text-green-800 font-medium px-8 py-2 rounded-full transition"
+               onClick={() => 
+                setSession({ _id: "someId" })}>
                 Start
               </button>
             </div>
+          ):(
+            <p>No latest session available</p>
           )}
           
           {/* Upcoming Sessions Section */}
@@ -74,8 +107,10 @@ const MedicinesPage = () => {
           </div>
           
           {/* Create New Session Button */}
-          <button className="w-full bg-blue-400 hover:bg-blue-500 text-white font-medium py-3 rounded-lg transition flex items-center justify-center">
+          <button className="w-full bg-blue-400 hover:bg-blue-500 text-white font-medium py-3 rounded-lg transition flex items-center justify-center"
+           >
             <span className="mr-1">+</span> Create the New Session
+            
           </button>
         </div>
       </div>

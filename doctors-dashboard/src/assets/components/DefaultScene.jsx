@@ -1,6 +1,31 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import{useState} from 'react';
+import { getSessionsByDocId } from '../api/sessionsAPI';
+import { getSessions } from '../../../../backend/src/dashboard/application/dto/sessions';
 
 const DefaultScene = () => {
+
+  const [sessionsData, setSessionsData] = useState([]);
+
+   const fetchSessions = async () => {
+      try {
+        const sessionsData = await getSessionsByDocId('67d8aff139afa54b845fc507');
+        console.log("Sessions data fetched:", slotsData);
+        // const slotsCount = slotsData.length;
+        // console.log("Slots count:", slotsCount); 
+        setCurrentSlots(slotsData);
+        
+      } catch (error) {
+        console.error('Error fetching sessions:', error);
+      } finally {
+      
+      }
+    };
+
+  useEffect(() => {
+    fetchSessions();
+  }), [];
+  
   // Sample sessions data array
   const sessions = [
     {
@@ -24,8 +49,8 @@ const DefaultScene = () => {
   ];
 
   // Filter sessions by type
-  const latestSession = sessions.find(session => session.type === 'latest');
-  const upcomingSessions = sessions.filter(session => session.type === 'upcoming');
+  const latestSession = sessions[0];
+  // const upcomingSessions = sessions.filter(session => session.type === 'upcoming');
 
   return (
     <div className="flex bg-gray-50 min-h-screen">

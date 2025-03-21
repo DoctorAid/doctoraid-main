@@ -11,6 +11,9 @@ import PatientDetailsCardType1 from '../components/PatientDetailsCardType1';
 import { io } from "socket.io-client";
 // import { createRecord, getRecordsByPatient, getRecordsByPatientAndDoctor } from '../api/recordsAPI.js';
 import { createRecord } from '../api/recordsAPI';
+import { getSlotsbySessionId } from '../api/slotsAPI';
+import MedicinesPage from './MedicinesPage';
+
 function App() {
   // State variables
   const [loading, setLoading] = useState(false);
@@ -21,21 +24,80 @@ function App() {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [doctorId, setDoctorId] = useState("12345"); // This would typically come from auth
   const [limit, setLimit] = useState(10);
+  const [currentSlots, setCurrentSlots] = useState([]);
+  const [bookedSlots, setBookedSlots] = useState([]);
+  const [selectedSession, setSelectedSession] = useState({});
 
   // Current user information
   const { user } = useUser();
+  const _id = "67d8f3b6df847e7d9cbc2626";
 
-  const socket = io("http://localhost:5000", { transports: ["websocket"] });
+  const socket = io("http://localhost:5000", {    //Socket initialization
+    transports: ["websocket"],
+    reconnectionAttempts: 5, // Try 5 times before stopping
+    reconnectionDelay: 3000, // Wait 3s between attempts
+  });
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("Connected to server with ID:", socket.id);
+      socket.emit("process_request", _id);
+    });
 
-socket.on("connect", () => {
-  console.log("Connected to server with ID:", socket.id);
-  // Send request only after connection is established
-  socket.emit("process_request", "hello server");
-});
+    socket.on("process_response", (response) => {
+      console.log("Response from server:", response);
+      setCurrentSlots(response);
+    });
 
-socket.on("process_response", (response) => {
-  console.log("Response from server:", response);
-});
+    socket.on("connect_error", (err) => {
+      console.error("Socket connection error:", err);
+    });
+
+    socket.on("disconnect", () => {
+      console.warn("Disconnected from server. Will attempt reconnect...");
+    });
+
+    return () => {
+      socket.off("connect");
+      socket.off("process_response");
+      socket.off("connect_error");
+      socket.off("disconnect");
+    };
+  }, []);
+
+  function bookedSlots0() {
+    return currentSlots.filter(slot => slot.status === 'booked');
+  }
+
+
+  
+     
+
+ 
+  const fetchSlots = async () => {
+    try {
+      const slotsData = await getSlotsbySessionId('67d8f3b6df847e7d9cbc2626');
+      console.log("Slots data fetched:", slotsData);
+      const slotsCount = slotsData.length;
+      console.log("Slots count:", slotsCount); 
+      setCurrentSlots(slotsData);
+      
+    } catch (error) {
+      console.error('Error fetching slots:', error);
+    } finally {
+    
+    }
+  };
+
+  useEffect(() => {
+    setBookedSlots(bookedSlots0());
+    console.log("Booked Slots:", bookedSlots0());
+    console.log("Booked Slots Length:", bookedSlots.length);
+  }, [currentSlots]);
+
+  
+
+  
+  const [currentSlotsCount, setCurrentSlotsCount] = useState([]);
 
   // Handle new record creation
   const handleCreateRecord = async (recordData) => {
@@ -150,13 +212,19 @@ socket.on("process_response", (response) => {
   return (
     <div className='flex flex-col h-[100%] gap-5 bg-[#FAFAF9] w-full px-2 py-2 items-start justify-start text-black animate-[pop_0.3s_ease-out]'>
       <DashboardNavigation />
+      {!(selectedSession && selectedSession._id) ?(
+        <div className="flex flex-row gap-2">
+          <MedicinesPage setSession={setSelectedSession}/>
+        </div>
+
+      ) : (
 
       <div className="grid grid-flow-col  justify-center align-middle  gap-4 w-full ">
           <div className=" flex flex-col gap-2 space-y-4 w-[50vh]">
             
             {/* Small Section 1 */}
             <div className=" pr-2 pl-2 h-30">
-              <SessionInfo/>
+              <SessionInfo SessionId={_id.slice(-6)} totalSlots={currentSlots.length} bookedSlots={bookedSlots.length}/>
             </div>
 
             {/* Small Section 2 */}
@@ -172,7 +240,7 @@ socket.on("process_response", (response) => {
               <div className="font-[500] text-[1.5rem] pl-5 text-gray-800">
                 Session’s Patient List
               </div>
-              <PatientCardType2/>
+              <PatientCardType2 bookedSlots={bookedSlots}/>
             </div>
 
           </div>
@@ -182,7 +250,7 @@ socket.on("process_response", (response) => {
             <PatientDetailsCardType1 />
           </div>
 
-      </div>
+      </div>)}
 
     </div> 
    
