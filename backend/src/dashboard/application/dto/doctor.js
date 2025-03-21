@@ -1,8 +1,10 @@
+import mongoose from "mongoose";
 import Doctor from "../../../infrastructure/schema/doctor_schema.js";
 import Session from "../../../infrastructure/schema/sessions_schema.js";
 import Slot from "../../../infrastructure/schema/slots_schema.js";
 import Patient from "../../../infrastructure/schema/patient_schema.js";
-
+import Family from "../../../infrastructure/schema/family_schema.js";
+import Record from "../../../infrastructure/schema/records_schema.js";
 
 export const createDoctor = async (req, res) => {
     try {
@@ -249,3 +251,99 @@ export const getTotalPatientCountByDoctor = async (req, res) => {
     }
 };
 
+export const getFamilyPatientsByDoctor = async (req, res) => {
+    try {
+        const { familyId, doctorId } = req.params;
+        
+        // Validate required parameters
+        if (!familyId || !doctorId) {
+            return res.status(400).json({ 
+                success: false,
+                message: "Family ID and Doctor ID are required." 
+            });
+        }
+        
+        // Validate MongoDB ObjectIds
+        if (!mongoose.Types.ObjectId.isValid(doctorId)) {
+            return res.status(400).json({ 
+                success: false,
+                message: "Invalid Doctor ID format. Must be a valid MongoDB ObjectID." 
+            });
+        }
+        
+        // First, check if the family is subscribed to this doctor
+        const family = await Family.findOne({ 
+            familyId: familyId,
+            doctors: { 
+                $elemMatch: { 
+                    doctor: mongoose.Types.ObjectId(doctorId) 
+                } 
+            }
+        }).populate({
+            path: 'members.patient',
+            select: 'firstName lastName dateOfBirth gender contactNumber email address weight height relation'
+        }).populate({
+            path: 'doctors.doctor',
+            select: 'firstName lastName specialization hospital ppLocation'
+        });
+        
+        if (!family) {
+            return res.status(404).json({ 
+                success: false,
+                message: "Family not found or not subscribed to this doctor." 
+            });
+        }
+        
+        // Check if doctor exists
+        const doctor = await Doctor.findById(doctorId);
+        if (!doctor) {
+            return res.status(404).json({ 
+                success: false,
+                message: "Doctor not found." 
+            });
+        }
+        
+        // Format the patients data
+        const patients = family.members.map(member => {
+            const patient = member.patient;
+            return {
+                id: patient._id,
+                firstName: patient.firstName,
+                lastName: patient.lastName,
+                fullName: `${patient.firstName} ${patient.lastName}`,
+                dateOfBirth: patient.dateOfBirth,
+                gender: patient.gender,
+                contactNumber: patient.contactNumber,
+                email: patient.email,
+                address: patient.address,
+                weight: patient.weight,
+                height: patient.height,
+                relation: member.relation
+            };
+        });
+        
+        return res.status(200).json({
+            success: true,
+            message: `Found ${patients.length} patients in this family that are subscribed to this doctor.`,
+            data: {
+                familyId: family.familyId,
+                familyObjectId: family._id,
+                doctor: {
+                    id: doctor._id,
+                    name: `Dr. ${doctor.firstName} ${doctor.lastName}`,
+                    specialization: doctor.specialization,
+                    hospital: doctor.hospital,
+                    location: doctor.ppLocation
+                },
+                patients: patients
+            }
+        });
+    } catch (error) {
+        console.error('Error retrieving family patients by doctor:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+            error: error.message
+        });
+    }
+};

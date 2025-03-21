@@ -1,5 +1,15 @@
 import express from 'express';
-import {getDoctorDetails,createDoctor, deleteDoctorDetails  ,getSessionsByDoctor,getPatientsByDoctor,addDoctorToPatient, getActiveAppointmentsByDoctor, getTotalPatientCountByDoctor } from '../application/dto/doctor.js';
+
+import {
+    getDoctorDetails,createDoctor, 
+    deleteDoctorDetails  ,
+    getSessionsByDoctor,
+    getPatientsByDoctor,
+    addDoctorToPatient, 
+    getActiveAppointmentsByDoctor, 
+    getTotalPatientCountByDoctor, 
+    getFamilyPatientsByDoctor 
+} from '../application/dto/doctor.js';
 
 const doctorRouter = express.Router();
 
@@ -11,5 +21,5 @@ doctorRouter.get('/patients/:id', getPatientsByDoctor); //get the patients based
 doctorRouter.put('/addPatient/:id', addDoctorToPatient); //add a patient to the doctor
 doctorRouter.get('/activeAppointments/:id', getActiveAppointmentsByDoctor); //get the active appointments based on doctorId
 doctorRouter.get('/totalPatients/:id', getTotalPatientCountByDoctor); //get the total patient count based on doctorId
-
+doctorRouter.get('/all/patients/:id', getFamilyPatientsByDoctor); //get the family patients based on doctorId
 export default doctorRouter;
