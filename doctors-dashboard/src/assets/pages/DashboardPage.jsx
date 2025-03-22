@@ -220,9 +220,9 @@ function DashboardPage() {
   useEffect(() => {
     if (waitingList.length > 0 && currentPatientIndex >= 0 && currentPatientIndex < waitingList.length) {
       const currentPatient = waitingList[currentPatientIndex];
-      if (currentPatient && currentPatient.patientId) {
-        fetchPatientDetails(currentPatient.patientId);
-        fetchPatientRecords(currentPatient.patientId);
+      if (currentPatient && currentPatient._id) {
+        fetchPatientDetails(currentPatient._id);
+        fetchPatientRecords(currentPatient._id);
       }
     }
   }, [waitingList, currentPatientIndex]);
@@ -233,7 +233,7 @@ function DashboardPage() {
       name: "Denzel White", 
       date: "2024-02-01", 
       time: "09:00 AM",
-      patientId: "200 - 01",
+      _id: "200 - 01",
       age: 28,
       sex: "Male",
       bloodType: "O+",
@@ -264,7 +264,7 @@ function DashboardPage() {
       name: "Stacy Mitchell", 
       date: "2024-02-01", 
       time: "09:15 AM",
-      patientId: "220 - 02",
+      _id: "220 - 02",
       age: 34,
       sex: "Female",
       bloodType: "A+",
@@ -302,7 +302,7 @@ function DashboardPage() {
         ...formData,
         doctorId: doctorId,
         date: new Date().toISOString().split('T')[0],
-        patientId: currentPatient.patientId
+        patientId: currentPatient._id
       };
 
       // Use the API function to create the record
@@ -317,8 +317,8 @@ function DashboardPage() {
       handleNextPatient();
 
       // Refresh patient records
-      if (currentPatient.patientId) {
-        fetchPatientRecords(currentPatient.patientId);
+      if (currentPatient._id) {
+        fetchPatientRecords(currentPatient._id);
       }
 
       return data;
@@ -411,14 +411,14 @@ function DashboardPage() {
                       ? 'bg-[#295567] text-white' 
                       : 'bg-[#295567]/20 text-[#295567]'
                   } rounded-full text-base font-medium transition-colors duration-200`}>
-                    {patient.name ? patient.name.charAt(0) : (patient.firstName ? patient.firstName.charAt(0) : '?')}
+                    {patient.name ? patient.name.charAt(0) : '?'}
                   </div>
                   <div className="ml-3">
                     <h3 className="text-gray-800 font-medium">
-                      {patient.name || (patient.firstName && patient.lastName ? `${patient.firstName} ${patient.lastName}` : 'Unknown')}
+                      {patient.name || 'Unknown'}
                     </h3>
                     <p className="text-gray-500 text-sm">
-                      {patient.date} <span className="mx-1">•</span> {patient.time || patient.contactNumber}
+                      {patient.appointmentTime || 'No time'}
                     </p>
                   </div>
                 </div>
@@ -450,22 +450,20 @@ function DashboardPage() {
                       <div className="h-14 w-14 flex items-center justify-center bg-[#295567]/10 text-[#295567] text-lg font-bold rounded-full border border-[#295567]/20">
                         {currentPatient.name
                           ? currentPatient.name.split(" ").map((part) => part[0]).join("").toUpperCase()
-                          : (currentPatient.firstName
-                              ? currentPatient.firstName.charAt(0).toUpperCase() + (currentPatient.lastName ? currentPatient.lastName.charAt(0).toUpperCase() : '')
-                              : '?')}
+                          : '?'}
                       </div>
                       <div className="ml-4">
                         <p className="text-lg font-bold">
-                          {currentPatient.name || (currentPatient.firstName && currentPatient.lastName ? `${currentPatient.firstName} ${currentPatient.lastName}` : 'Unknown')}
+                          {currentPatient.name || 'Unknown'}
                         </p>
-                        <p className="text-gray-500">Patient ID - {currentPatient.patientId || currentPatient._id}</p>
+                        <p className="text-gray-500">Patient ID - {currentPatient._id?.slice(-6) || '?'}</p>
                       </div>
                     </div>
 
                     <div className="mt-6 text-gray-700 space-y-2">
-                      <p><span className="font-medium text-gray-600">Sex:</span> {currentPatient.sex || 'Not specified'}</p>
+                      <p><span className="font-medium text-gray-600">Sex:</span> {currentPatient.gender || currentPatient.sex || 'Not specified'}</p>
                       <p><span className="font-medium text-gray-600">Age:</span> {currentPatient.age || 'Not specified'}</p>
-                      <p><span className="font-medium text-gray-600">Blood:</span> {currentPatient.bloodType || 'Not specified'}</p>
+                      <p><span className="font-medium text-gray-600">Blood:</span> {currentPatient.bloodGroup || currentPatient.bloodType || 'Not specified'}</p>
                       <p><span className="font-medium text-gray-600">Contact:</span> {currentPatient.contactNumber || 'Not specified'}</p>
                       <div>
                         <p className="font-medium text-gray-600">Allergies:</p>

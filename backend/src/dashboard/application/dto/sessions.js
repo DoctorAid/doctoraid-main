@@ -173,7 +173,6 @@ export const getPatientList = async (req, res) => {
         });
     }
 };
-
 export const getWaitingList = async (req, res) => {
     try {
         const { sessionId } = req.params;
@@ -220,17 +219,28 @@ export const getWaitingList = async (req, res) => {
         
         // For each slot, find the patient and add relevant data
         for (const slot of waitingSlots) {
-            const patient = await Patient.findById(slot.patientId)
-                .select('_id name email contactNumber');
-            
-            if (patient) {
-                waitingPatients.push({
-                    _id: patient._id,
-                    name: patient.name, // Using the name field from updated schema
-                    email: patient.email,
-                    contactNumber: patient.contactNumber,
-                    appointmentTime: slot.startTime // Adding the appointment time
-                });
+            try {
+                const patient = await Patient.findById(slot.patientId)
+                    .select('_id name contactNumber');
+                
+                if (patient) {
+                    // Safely create initial - only if name exists and is a string
+                    let initial = '?';
+                    if (patient.name && typeof patient.name === 'string' && patient.name.length > 0) {
+                        initial = patient.name.charAt(0).toUpperCase();
+                    }
+                    
+                    waitingPatients.push({
+                        _id: patient._id,
+                        name: patient.name || 'Unknown',
+                        contactNumber: patient.contactNumber || '',
+                        appointmentTime: slot.startTime || ''
+                    });
+                }
+            } catch (patientError) {
+                console.error(`Error processing patient for slot ${slot._id}:`, patientError);
+                // Continue to the next slot even if there's an error with one patient
+                continue;
             }
         }
         
