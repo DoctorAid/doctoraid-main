@@ -13,8 +13,9 @@ export default {
         },
       },
       animation: {
-        pop: "pop 0.3s ease-out",
-      },
+'fadeOut': 'fadeOut 1s ease-out forwards',
+    'pageTransition': 'pageTransition 0.4s ease-out forwards',
+    'pulse': 'pulse 2s infinite',      },
     },
   },
   plugins: [],
