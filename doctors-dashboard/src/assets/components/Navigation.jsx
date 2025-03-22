@@ -55,7 +55,6 @@ function Navigation() {
         <div className='flex-1'>
           <NavigationTabs />
         </div>
-a
         {/* Logout Button */}
         <div className='px-6 mt-4 animate-[fadeIn_1s_ease-in-out]'>
           <button 
