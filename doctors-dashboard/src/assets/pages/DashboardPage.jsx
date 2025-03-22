@@ -396,33 +396,39 @@ function DashboardPage() {
               Waiting List
             </div>
             <div className="max-h-[250px] overflow-y-auto w-full space-y-3 p-4">
-              {patientsData.map((patient, index) => (
-                <div 
-                  key={index} 
-                  className={`flex items-center ${
-                    index === currentPatientIndex 
-                      ? 'bg-[#295567]/10 border border-[#295567]/30' 
-                      : 'bg-gray-50 hover:bg-gray-100'
-                  } rounded-xl p-3 w-full cursor-pointer transition-colors duration-200`}
-                  onClick={() => setCurrentPatientIndex(index)}
-                >
-                  <div className={`flex items-center justify-center w-10 h-10 ${
-                    index === currentPatientIndex 
-                      ? 'bg-[#295567] text-white' 
-                      : 'bg-[#295567]/20 text-[#295567]'
-                  } rounded-full text-base font-medium transition-colors duration-200`}>
-                    {patient.name ? patient.name.charAt(0) : '?'}
+              {patientsData.map((patient, index) => {
+                // Extract first letter of name for avatar
+                const initial = patient.name && typeof patient.name === 'string' ? 
+                  patient.name.charAt(0).toUpperCase() : '?';
+                  
+                return (
+                  <div 
+                    key={patient._id || index} 
+                    className={`flex items-center ${
+                      index === currentPatientIndex 
+                        ? 'bg-[#295567]/10 border border-[#295567]/30' 
+                        : 'bg-gray-50 hover:bg-gray-100'
+                    } rounded-xl p-3 w-full cursor-pointer transition-colors duration-200`}
+                    onClick={() => setCurrentPatientIndex(index)}
+                  >
+                    <div className={`flex items-center justify-center w-10 h-10 ${
+                      index === currentPatientIndex 
+                        ? 'bg-[#295567] text-white' 
+                        : 'bg-gray-50 text-[#295567]'
+                    } rounded-full text-base font-medium transition-colors duration-200`}>
+                      {initial}
+                    </div>
+                    <div className="ml-3">
+                      <h3 className="text-gray-800 font-medium">
+                        {patient.name || 'Unknown'}
+                      </h3>
+                      <p className="text-gray-500 text-sm">
+                        {patient.appointmentTime || 'No time'}
+                      </p>
+                    </div>
                   </div>
-                  <div className="ml-3">
-                    <h3 className="text-gray-800 font-medium">
-                      {patient.name || 'Unknown'}
-                    </h3>
-                    <p className="text-gray-500 text-sm">
-                      {patient.appointmentTime || 'No time'}
-                    </p>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
               {patientsData.length === 0 && (
                 <div className="text-center text-gray-500 py-4">
                   No patients in waiting list
@@ -448,27 +454,27 @@ function DashboardPage() {
                     <div className="flex items-center mt-4">
                       {/* Patient Avatar */}
                       <div className="h-14 w-14 flex items-center justify-center bg-[#295567]/10 text-[#295567] text-lg font-bold rounded-full border border-[#295567]/20">
-                        {currentPatient.name
-                          ? currentPatient.name.split(" ").map((part) => part[0]).join("").toUpperCase()
+                        {currentPatient && currentPatient.name
+                          ? currentPatient.name.charAt(0).toUpperCase()
                           : '?'}
                       </div>
                       <div className="ml-4">
                         <p className="text-lg font-bold">
-                          {currentPatient.name || 'Unknown'}
+                          {currentPatient?.name || 'Unknown'}
                         </p>
-                        <p className="text-gray-500">Patient ID - {currentPatient._id?.slice(-6) || '?'}</p>
+                        <p className="text-gray-500">Patient ID - {currentPatient?._id?.slice(-6) || '?'}</p>
                       </div>
                     </div>
 
                     <div className="mt-6 text-gray-700 space-y-2">
-                      <p><span className="font-medium text-gray-600">Sex:</span> {currentPatient.gender || currentPatient.sex || 'Not specified'}</p>
-                      <p><span className="font-medium text-gray-600">Age:</span> {currentPatient.age || 'Not specified'}</p>
-                      <p><span className="font-medium text-gray-600">Blood:</span> {currentPatient.bloodGroup || currentPatient.bloodType || 'Not specified'}</p>
-                      <p><span className="font-medium text-gray-600">Contact:</span> {currentPatient.contactNumber || 'Not specified'}</p>
+                      <p><span className="font-medium text-gray-600">Sex:</span> {currentPatient?.gender || 'Not specified'}</p>
+                      <p><span className="font-medium text-gray-600">Age:</span> {currentPatient?.age || 'Not specified'}</p>
+                      <p><span className="font-medium text-gray-600">Blood:</span> {currentPatient?.bloodGroup || 'Not specified'}</p>
+                      <p><span className="font-medium text-gray-600">Contact:</span> {currentPatient?.contactNumber || 'Not specified'}</p>
                       <div>
                         <p className="font-medium text-gray-600">Allergies:</p>
                         <div className="flex flex-wrap gap-2 mt-2">
-                          {currentPatient.allergies && currentPatient.allergies.length > 0 ? (
+                          {currentPatient?.allergies && currentPatient.allergies.length > 0 ? (
                             currentPatient.allergies.map((allergy, index) => (
                               <span key={index} className="text-xs bg-red-50 text-red-600 px-2 py-0.5 rounded-full border border-red-100">
                                 {allergy}
@@ -486,7 +492,7 @@ function DashboardPage() {
                     <div className="mt-6 pt-4 border-t border-gray-100">
                       <h3 className="font-medium text-gray-800 mb-2">Added Complaints</h3>
                       <p className="text-gray-600 text-sm bg-[#FAFAF9] p-3 rounded-xl">
-                        {currentPatient.addedComplaints || 'No complaints recorded'}
+                        {currentPatient?.patientNote || 'No complaints recorded'}
                       </p>
                     </div>
                   </div>
