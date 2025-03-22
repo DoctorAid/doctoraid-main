@@ -4,11 +4,11 @@ import TimeSlot from '../components/TimeSlot';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { createSlots } from '../api/slotsAPI.js';
-import { Clock, Calendar, Timer,CircleArrowRight,CircleArrowLeft } from 'lucide-react';
-import { getAllSessions} from '../api/sessionsAPI.js';
+import { Clock, Calendar, Timer, CircleArrowRight, CircleArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
+import { getAllSessions } from '../api/sessionsAPI.js';
 import { getSessionsByDocId } from '../api/sessionsAPI.js';
 import { getSlotsbySessionId } from '../api/slotsAPI.js';
-import {useUser} from '@clerk/clerk-react'
+import { useUser } from '@clerk/clerk-react'
 
 function SchedulePage() {
   const [SelectedSlot, setSelectedSlot] = useState({});
@@ -25,6 +25,7 @@ function SchedulePage() {
   const [bookedSlotsCount, setBookedSlotsCount] = useState(0);
   const [daynumber, setDayNumber] = useState(0);
   const [dayname, setDayName] = useState(0);
+  const [monthname, setMonthName] = useState('');
   
   const [selectedDate, setSelectedDate] = useState(null);
   const [bookedDates, setBookedDates] = useState([]);
@@ -42,180 +43,151 @@ function SchedulePage() {
   }, [loading]);
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  
-  setMessage('');
+    e.preventDefault();
+    
+    setMessage('');
 
-  if (!selectedDate || !startingTime || !endTime || !selectedTime) {
-    setMessage('Please fill in all fields');
-    return;
-  }
-  const pin = Math.floor(1000 + Math.random() * 9999);
-  
-  const formData = {
-    doctorid: clerkId,
-    date: new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000))
-       .toISOString().split('T')[0],
-    startTime: startingTime.toTimeString().slice(0, 5),
-    endTime: endTime.toTimeString().slice(0, 5),
-    duration: selectedTime,
-    event: text,
-    pin: pin
-  };
-
-  console.log(formData);
-
-  try {
+    if (!selectedDate || !startingTime || !endTime || !selectedTime) {
+      setMessage('Please fill in all fields');
+      return;
+    }
+    const pin = Math.floor(1000 + Math.random() * 9999);
+    
+    const formData = {
+      doctorid: clerkId,
+      date: new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000))
+        .toISOString().split('T')[0],
+      startTime: startingTime.toTimeString().slice(0, 5),
+      endTime: endTime.toTimeString().slice(0, 5),
+      duration: selectedTime,
+      event: text,
+      pin: pin
+    };
 
     console.log(formData);
-    const data = await createSlots(formData);
-    console.log('Slots created:', data);
-    setMessage('Slots created successfully!');
-    setSelectedDate(null);
-    setStartingTime(null);
-    setEndTime(null);
-    setSelectedTime(null);
-    setText("");
 
-  } catch (error) {
-    setMessage(error.message);
-  } finally {
-    
-  }
-};
-
-useEffect(() => {
-  const fetchSessions = async () => {
     try {
-      setLoading(true);
-      const sessionData = await getSessionsByDocId(clerkId);
-      console.log("Session data fetched:", sessionData);
-      setSessions(sessionData);
-      
-      // Extract dates and create an event map with arrays of events
-      if (sessionData && sessionData.length >= 0) {
-        const dateList = sessionData.map(item => new Date(item.date));
-        console.log("Date List:", dateList);
-        const eventMap = sessionData.reduce((acc, item) => {
-          const dateKey = new Date(item.date).toDateString();
-          if (!acc[dateKey]) {
-            acc[dateKey] = [];
-          }
-          if (item.event) {
-            acc[dateKey].push(item.event);
-          }
-          return acc;
-        }, {});
-
-        setBookedDates(dateList);
-        setEvents(eventMap);
-        setCurrentSession(sessionData[0]);
-      }
+      console.log(formData);
+      const data = await createSlots(formData);
+      console.log('Slots created:', data);
+      setMessage('Slots created successfully!');
+      setSelectedDate(null);
+      setStartingTime(null);
+      setEndTime(null);
+      setSelectedTime(null);
+      setText("");
     } catch (error) {
-      console.error('Error fetching sessions:', error);
-    } finally {
-      setLoading(false);
+      setMessage(error.message);
     }
   };
 
-  fetchSessions();
-}, [])
+  useEffect(() => {
+    const fetchSessions = async () => {
+      try {
+        setLoading(true);
+        const sessionData = await getSessionsByDocId(clerkId);
+        console.log("Session data fetched:", sessionData);
+        setSessions(sessionData);
+        
+        if (sessionData && sessionData.length >= 0) {
+          const dateList = sessionData.map(item => new Date(item.date));
+          console.log("Date List:", dateList);
+          const eventMap = sessionData.reduce((acc, item) => {
+            const dateKey = new Date(item.date).toDateString();
+            if (!acc[dateKey]) {
+              acc[dateKey] = [];
+            }
+            if (item.event) {
+              acc[dateKey].push(item.event);
+            }
+            return acc;
+          }, {});
 
+          setBookedDates(dateList);
+          setEvents(eventMap);
+          setCurrentSession(sessionData[0]);
+        }
+      } catch (error) {
+        console.error('Error fetching sessions:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-function nextSession() {
-  if (!currentSession || sessions.length === 0) return;
-  const currentIndex = sessions.findIndex(session => session._id === currentSession._id);
-  const nextIndex = (currentIndex + 1) % sessions.length; // Loop back to the first session if at the end
-  setCurrentSession(sessions[nextIndex]);
-  setSelectedSlot({});
-}
+    fetchSessions();
+  }, [])
 
-function previousSession() {
-  if (!currentSession || sessions.length === 0) return;
-  const currentIndex = sessions.findIndex(session => session._id === currentSession._id);
-  const prevIndex = (currentIndex - 1 + sessions.length) % sessions.length; // Loop to last if at first
-  setCurrentSession(sessions[prevIndex]);
-  setSelectedSlot({});
-}
-
-function setSlots() {
-
-  if (!currentSession) {
-    console.log("Current session is undefined");
-    return; // Exit early if currentSession is not set yet
+  function nextSession() {
+    if (!currentSession || sessions.length === 0) return;
+    const currentIndex = sessions.findIndex(session => session._id === currentSession._id);
+    const nextIndex = (currentIndex + 1) % sessions.length;
+    setCurrentSession(sessions[nextIndex]);
+    setSelectedSlot({});
   }
-  
-  // const currentSlots = slots.filter((slot) => slot.sessionId === session._id);
-  const bookedCount = currentSlots.filter((slot) => slot.status === "booked").length;
-  const availableCount = currentSlots.filter((slot) => slot.status === "available").length;
 
-  const dateObj = new Date(currentSession.date); 
-  const dayNumber = dateObj.getDate(); // Get the day of the month
-  const dayName = dateObj.toLocaleDateString("en-US", { weekday: "short" });
-
-  setDayNumber(dayNumber);
-  setDayName(dayName);
-  setAvailableSlotsCount(availableCount);
-  setBookedSlotsCount(bookedCount);
-  setCurrentSlots(currentSlots);
-
-  console.log("Current Session:", sessions);
-  console.log("Current Slots:", currentSlots);
-  console.log("Booked Slots:", bookedCount);
-  console.log("Available Slots:", availableCount);
-  console.log(`Date Number: ${dayNumber}, Day Name: ${dayName}`); 
-}
-
-const fetchSlots = async () => {
-  try {
-    const slotsData = await getSlotsbySessionId(currentSession._id);
-    console.log("Slots data fetched:", slotsData);
-    setCurrentSlots(slotsData);
-  } catch (error) {
-    console.error('Error fetching slots:', error);
+  function previousSession() {
+    if (!currentSession || sessions.length === 0) return;
+    const currentIndex = sessions.findIndex(session => session._id === currentSession._id);
+    const prevIndex = (currentIndex - 1 + sessions.length) % sessions.length;
+    setCurrentSession(sessions[prevIndex]);
+    setSelectedSlot({});
   }
-};
 
+  function setSlots() {
+    if (!currentSession) {
+      console.log("Current session is undefined");
+      return;
+    }
+    
+    const bookedCount = currentSlots.filter((slot) => slot.status === "booked").length;
+    const availableCount = currentSlots.filter((slot) => slot.status === "available").length;
 
-useEffect(() => {
-  if (currentSession) {  // Only run if currentSession is defined
-    fetchSlots();
-    // setSlots will be called after fetchSlots completes in the fetchSlots function
+    const dateObj = new Date(currentSession.date); 
+    const dayNumber = dateObj.getDate();
+    const dayName = dateObj.toLocaleDateString("en-US", { weekday: "long" });
+    const monthName = dateObj.toLocaleDateString("en-US", { month: "short" });
+
+    setDayNumber(dayNumber);
+    setDayName(dayName);
+    setMonthName(monthName);
+    setAvailableSlotsCount(availableCount);
+    setBookedSlotsCount(bookedCount);
+    setCurrentSlots(currentSlots);
+
+    console.log("Current Session:", sessions);
+    console.log("Current Slots:", currentSlots);
+    console.log("Booked Slots:", bookedCount);
+    console.log("Available Slots:", availableCount);
+    console.log(`Date Number: ${dayNumber}, Day Name: ${dayName}, Month: ${monthName}`); 
   }
-}, [currentSession]);
 
-useEffect(() => {
-  if (currentSlots.length > 0 && currentSession) {
-    setSlots();
-  }
-}, [currentSlots, currentSession]);
+  const fetchSlots = async () => {
+    try {
+      const slotsData = await getSlotsbySessionId(currentSession._id);
+      console.log("Slots data fetched:", slotsData);
+      setCurrentSlots(slotsData);
+    } catch (error) {
+      console.error('Error fetching slots:', error);
+    }
+  };
 
-// function slotsInfo(){
- 
-  
-//   console.log("Current Session:", currentSession);
-  
-//   // Get day number and day name only if currentSession has a date
-//   let dayNumber = 0;
-//   let dayName = '';
-//   if (currentSession.date) {
-//     const dateObj = new Date(currentSession.date);
-//     dayNumber = dateObj.getDate();
-//     dayName = dateObj.toLocaleDateString("en-US", { weekday: "short" });
-//   }
-  
-//   const bookedSlotsCount = currentSlots.filter((slot) => slot.status === "Booked" && slot.sessionId === currentSession._id);
-//   const availableSlots = currentSlots.filter((slot) => slot.status === "Available" && slot.sessionId === currentSession._id);
-//   setAvailableSlotsCount(availableSlots.length);
-//   setBookedSlotsCount(bookedSlotsCount.length);
-  
-// }
+  useEffect(() => {
+    if (currentSession) {
+      fetchSlots();
+    }
+  }, [currentSession]);
+
+  useEffect(() => {
+    if (currentSlots.length > 0 && currentSession) {
+      setSlots();
+    }
+  }, [currentSlots, currentSession]);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
   
     const dateKey = date.toDateString();
-    const eventsForDate = events[dateKey] || [];  // Get events or empty array if none
+    const eventsForDate = events[dateKey] || [];
   
     setSelectedEvent(eventsForDate);
   };
@@ -227,252 +199,402 @@ useEffect(() => {
   
   console.log("Current Session:", currentSession);
   if(loading){
-    //loading Screen
-    return (<div className="flex text-9xl w-full items-center justify-center h-screen">Loading...</div>)
+    return (
+      <div className="flex justify-center items-center h-full w-full bg-white">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#295567]"></div>
+      </div>
+    )
   }
   
   return (
-    <div className='flex gap-5 bg-[#FAFAF9] w-full  px-2 py-2 items-start justify-start text-black animate-[pop_0.3s_ease-out]'>
-      <div className='flex justify-around gap-2 w-full h-[100%]  items-center px-1 py-1'>
-
-        {/* left side */}
-        <div className=' flex flex-col sm:flex-wrap justify-between w-full h-full'>
-
-          {/* header */}
-          <div className=' sm:flex-wrap w-full h-[15%]'>
-
-            {/* header 01  */}
-            <div className="text-black sm:text-xl text-3xl font-bold font-['Raleway'] leading-normal">Current Session</div>
-            {/* header 02  */}
-            <div className='flex sm:flex-wrap justify-between '>
-           
-
-              {/* header date */}
-              <div className="flex items-center bg-[#295567] rounded-[10px]">
-                <div className="h-20 w-20 text-center"><span class="text-[#fefaf6] text-3xl font-bold font-['Raleway'] ">
-                  {daynumber}<br /></span>
-                  <span class="text-[#fefaf6] text-3xl font-normal font-['Raleway'] ">{dayname}</span>
-                </div>
-              </div>
-
-              <div className='flex flex-col items-center  justify-end'>
-                <div><span class="text-[#152945] text-2xl font-bold font-['Raleway']">Totol Slots</span>
-                  <span class="text-black text-2xl font-medium font-['Raleway'] "> - </span>
-                  <span class="text-black text-2xl font-normal font-['Raleway'] ">{availableSlotsCount+bookedSlotsCount}</span>
-                </div>
-                <div className="flex px-8 items-center justify-center h-10 bg-[#cdffcd] rounded-[10px]">
-                  <div><span class="text-[#295567] text-2xl lg:text-xl font-bold font-['Raleway'] ">Booked - </span>
-                    <span class="text-[#295567] text-2xl lg:text-xlfont-normal font-['Raleway'] ">{bookedSlotsCount}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className='flex items-end'>
-                <div className="rounded-[8px] h-8 w-48 flex items-center justify-center border p-1 border-[#295567]">
-                  <div><span class="text-[#295567] font-semibold w-5 text-2xl lg:text-xl font-bold font-['Raleway'] leading-normal">Available - </span>
-                    <span class="text-[#295567] text-2xl font-normal font-['Raleway'] leading-normal">{availableSlotsCount}<br /></span></div>
-                </div>
-              </div>
-
-              <div className='flex flex-col'>
-                <div className='text-4xl font-bold'>ID</div>
-                <div className="text-center text-[#6394b5] text-5xl font-bold font-['Instrument Sans']"> #{!loading && currentSession?._id ? currentSession._id.slice(-6) : "0"}</div>
-              </div>
-              <CircleArrowLeft className="w-8 h-8 text-[#295567] cursor-pointer" onClick={previousSession} />
-              <CircleArrowRight className="w-8 h-8 text-[#295567] cursor-pointer" onClick={nextSession} />
-
-            </div>
-
-          </div>
-
-          <div className='bg-[#f2eaf1] w-full h-[50%] grid-cols-4 grid gap-1 overflow-auto'>
-            {!currentSlots.length ? "No Slots Available" : currentSlots.map((el) => {
-              return (
-                <TimeSlot
-                  selectedSlotId={SelectedSlot?._id}
-                  timeSlot={el}
-                  onClick={() => HandleTabClick(el)}
-                />
-
-              );
-            })}
-          </div>
-
-          {/* Patient's detail section */}
-          <div className='bg-[#edebeb] w-full h-[30%] p-4 overflow-auto'>
-            <div className='bg-white p-4 rounded-md shadow-md flex flex-col space-y-4'>
-              <h3 className='text-lg font-semibold '>Booked by:</h3>
-              <div className='flex items-center space-x-3'>
-                <div className='w-10 h-10 rounded-full bg-blue-400 flex items-center justify-center text-white font-medium'>
-                  S
-                </div>
-                <div>
-                  <p className='font-semibold text-gray-800'>{SelectedSlot.patientName}</p>
-                  <p className='text-sm text-gray-500'>{SelectedSlot.startTime}-{SelectedSlot.endTime}</p>
-                </div>
-              </div>
-              <div>
-                <p className='text-gray-700 font-medium'>Patient Note:</p>
-                <p className='text-gray-500 italic truncate'>{SelectedSlot.patientNote}</p>
-              </div>
-              <div className='space-y-1'>
-                <p className='text-gray-700'>
-                  <span className='font-semibold'>Family ID:{SelectedSlot.familyId}</span>
-                </p>
-                <p className='text-gray-700'>
-                  <span className='font-semibold'>Patient ID:{SelectedSlot.patientId}</span>
-                </p>
-              </div>
-            </div>
-          </div>
-
-
-        </div>
-
-        {/* right side */}
-        <div className=" w-[80%] bg-gray-50 p-6">
-
-            <form onSubmit={handleSubmit} className="max-w-4xl mx-auto p-6">
-              <div className=" bg-white rounded-xl p-3">
-                <h1 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
-                  <Clock className="w-6 h-6 text-[#295567] " />
-                  Schedule Appointment
-                </h1>
-
-                {/* Date and Events Section */}
-                <div className="grid md:grid-cols-2 gap-1 mb-8">
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="flex items-center  mb-4">
-                      <Calendar className="w-5 h-5  text-[#295567] " />
-                      <label className="font-medium text-gray-700"> Select Date</label>
-                    </div>
-                    <DatePicker
-                      selected={selectedDate}
-                      onChange={handleDateChange}
-                      highlightDates={bookedDates}
-                      inline
-                      className="w-full"
-                      
-                    />
-                    {selectedDate && (
-                      <p className="text-blue-600 font-medium mt-2">
-                        Selected: {selectedDate.toLocaleDateString()}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    {/* Events Display */}
-                    {selectedEvent && selectedDate && (
-                      <div className="bg-blue-50 p-4 rounded-lg">
-                        <h3 className="font-medium text-gray-700 mb-2">Events for {selectedDate.toLocaleDateString()}</h3>
-                        <div className="max-h-32 overflow-y-auto">
-                          {selectedEvent.length > 0 ? (
-                            <ul className="space-y-2">
-                              {selectedEvent.map((event, index) => (
-                                <li key={index} className="text-gray-600">{event}</li>
-                              ))}
-                            </ul>
-                          ) : (
-                            <p className="text-gray-500">No events scheduled</p>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-              </div>
-
-        {/* Time Selection Section */}
-        <div className=" gap-4 flex flex-col border-t pt-6">
-
-          {/*Title and Logo */}
-          <div className="flex items-center gap-2 mb-4">
-            <Timer className="w-5 h-5 text-[#295567]" />
-            <h3 className="font-medium text-gray-700">Time Selection</h3>
+    <div className="flex h-full w-full bg-[#FAFAF9] overflow-hidden font-['Raleway'] animate-pageTransition">
+      {/* Left side - Session info and slots */}
+      <div className="w-3/5 h-full border-r border-gray-200 bg-white rounded-tl-3xl shadow-md flex flex-col">
+        {/* Header with session info */}
+        <div className="p-6 border-b border-gray-200 bg-white rounded-tl-3xl">
+          <div className="flex justify-between items-center">
+            <h2 className="font-bold text-xl text-gray-800">Current Session</h2>
+            <span className="text-sm font-medium text-gray-500 bg-white px-3 py-1 rounded-full shadow-sm border border-gray-100">
+              ID: #{!loading && currentSession?._id ? currentSession._id.slice(-6) : "0"}
+            </span>
           </div>
           
-          {/* Start time , end time and duration picker */}
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="flex items-center justify-between mt-4">
+            {/* Date and session stats */}
+            <div className="flex items-center gap-6">
+              {/* Enhanced Date display */}
+              <div className="flex flex-col items-center justify-center bg-[#295567] text-white rounded-xl w-24 h-24 shadow-md transition-transform duration-300 hover:scale-105">
+                <span className="text-xs uppercase tracking-wide mt-1">{monthname}</span>
+                <span className="text-3xl font-bold">{daynumber}</span>
+                <span className="text-sm font-medium mb-1">{dayname}</span>
+              </div>
+              
+              {/* Stats with bigger text */}
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2 bg-[#295567]/10 px-4 py-2 rounded-lg">
+                  <Clock className="w-5 h-5 text-[#295567]" />
+                  <span className="text-base font-semibold text-[#295567]">
+                    Total Slots: {availableSlotsCount+bookedSlotsCount}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <span className="px-3 py-2 bg-green-100 text-green-800 rounded-lg text-sm font-medium flex items-center justify-center">
+                    <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                    Booked: {bookedSlotsCount}
+                  </span>
+                  <span className="px-3 py-2 bg-blue-100 text-blue-800 rounded-lg text-sm font-medium flex items-center justify-center">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                    Available: {availableSlotsCount}
+                  </span>
+                </div>
+              </div>
+            </div>
             
-           <div>  {/*  Start time picker */}
-              <label className="block text-sm text-gray-600 mb-1">Start Time</label>
-              <DatePicker
-                selected={startingTime}
-                onChange={(time) => setStartingTime(time)}
-                showTimeSelect
-                showTimeSelectOnly
-                timeIntervals={30}
-                timeCaption="Time"
-                dateFormat="HH:mm"
-                className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholderText="Select time"
-              />
+            {/* Session navigation */}
+            <div className="flex space-x-3">
+              <button onClick={previousSession} className="p-2 hover:bg-gray-100 rounded-full transition text-[#295567] border border-gray-200">
+                <CircleArrowLeft size={20} />
+              </button>
+              <button onClick={nextSession} className="p-2 hover:bg-gray-100 rounded-full transition text-[#295567] border border-gray-200">
+                <CircleArrowRight size={20} />
+              </button>
             </div>
-
-            <div> {/*  End time picker */}
-              <label className="block text-sm text-gray-600 mb-1">End Time</label>
-              <DatePicker
-                selected={endTime}
-                onChange={(time) => setEndTime(time)}
-                showTimeSelect
-                showTimeSelectOnly
-                timeIntervals={30}
-                timeCaption="Time"
-                dateFormat="HH:mm"
-                className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholderText="Select time"
-              />
-            </div>
-
-            <div> {/*  Duration picker */}
-              <label className="block text-sm text-gray-600 mb-1">Duration</label>
-              <select
-                value={selectedTime || ''}
-                onChange={(e) => setSelectedTime(e.target.value)}
-                className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              >
-                {Array.from({ length: 6 }, (_, i) => (i + 1) * 5).map((minutes) => (
-                  <option key={minutes} value={minutes}>
-                    {minutes} minutes
-                  </option>
-                ))}
-              </select>
-            </div>
-
           </div>
-
-          <div> {/* Session label */}
-              <input
+        </div>
+        
+        {/* Slots grid */}
+        <div className="h-[40%] overflow-auto bg-white">
+          <div className="sticky top-0 bg-white z-10 p-4 border-b flex justify-between items-center">
+            <h2 className="text-sm font-semibold text-gray-700 flex items-center">
+              <Clock className="w-4 h-4 mr-2 text-[#295567]" />
+              Available Time Slots
+            </h2>
+          </div>
+          
+          {!currentSlots.length ? (
+            <div className="flex flex-col items-center justify-center h-full text-gray-400 p-6">
+              <Clock className="w-12 h-12 mb-2 opacity-30" />
+              <p className="text-gray-500 animate-pulse">No Slots Available</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 p-3">
+              {currentSlots.map((el, index) => (
+                <div 
+                  key={el._id}
+                  className={`relative overflow-hidden rounded-lg border cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-md ${
+                    SelectedSlot?._id === el._id 
+                      ? "border-[#295567] shadow-md bg-[#295567]/5" 
+                      : "border-gray-200 hover:border-[#295567]/50 bg-white"
+                  }`}
+                  onClick={() => HandleTabClick(el)}
+                  style={{
+                    animationName: 'fadeInUp',
+                    animationDuration: '0.4s',
+                    animationDelay: `${index * 0.03}s`,
+                    animationFillMode: 'both'
+                  }}
+                >
+                  {/* Status indicator - made it thicker */}
+                  <div className={`absolute top-0 left-0 w-full h-2 ${
+                    el.status === "booked" 
+                      ? "bg-red-400" 
+                      : "bg-green-400"
+                  }`}></div>
+                  
+                  {/* Time display - adjusted to fit better */}
+                  <div className="px-2 py-2 text-center">
+                    <p className="text-xs font-semibold text-gray-800 truncate">
+                      {el.startTime} - {el.endTime}
+                    </p>
+                    <p className={`text-xs mt-1 ${
+                      el.status === "booked" 
+                        ? "text-red-600 font-medium" 
+                        : "text-green-600 font-medium"
+                    }`}>
+                      {el.status === "booked" ? "Booked" : "Available"}
+                    </p>
+                  </div>
+                  
+                  {/* Selection indicator */}
+                  {SelectedSlot?._id === el._id && (
+                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-[#295567] rounded-tl-lg flex items-center justify-center animate-pulse">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        
+        {/* Patient details section */}
+        <div className="border-t bg-white p-4 flex-grow overflow-auto">
+          <div className="flex justify-between items-center mb-3">
+            <h2 className="text-sm font-semibold text-gray-700">Patient Details</h2>
+            {SelectedSlot && SelectedSlot._id && (
+              <span className="px-2 py-0.5 bg-[#295567]/10 rounded-lg text-xs font-medium text-[#295567]">
+                Slot #{SelectedSlot._id?.slice(-4) || 'N/A'}
+              </span>
+            )}
+          </div>
+          
+          {SelectedSlot && SelectedSlot._id ? (
+            <div className="bg-[#FAFAF9] p-4 rounded-xl border border-gray-100 shadow-sm">
+              <div className="flex items-center mb-4">
+                <div className="h-12 w-12 flex-shrink-0 rounded-full flex items-center justify-center text-md font-medium bg-[#295567] text-white mr-3">
+                  {SelectedSlot.patientName ? SelectedSlot.patientName.charAt(0) : 'S'}
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-900">{SelectedSlot.patientName || 'Not assigned'}</p>
+                  <p className="text-xs text-gray-500">{SelectedSlot.startTime} - {SelectedSlot.endTime}</p>
+                </div>
+              </div>
+              
+              <div className="mb-4">
+                <div className="mb-1 text-xs font-medium text-gray-500">Patient Note:</div>
+                <div className="p-3 bg-white rounded-lg border border-gray-100 text-sm">
+                  {SelectedSlot.patientNote || 'No notes available'}
+                </div>
+              </div>
+              
+              <div className="pt-3 border-t border-gray-200 grid grid-cols-2 gap-3">
+                <div className="p-2 bg-white rounded-lg border border-gray-100">
+                  <div className="text-xs text-gray-500 mb-1">Family ID</div>
+                  <div className="text-sm font-medium">{SelectedSlot.familyId || 'N/A'}</div>
+                </div>
+                <div className="p-2 bg-white rounded-lg border border-gray-100">
+                  <div className="text-xs text-gray-500 mb-1">Patient ID</div>
+                  <div className="text-sm font-medium">{SelectedSlot.patientId || 'N/A'}</div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-[#FAFAF9] rounded-xl p-4 border border-gray-100 text-center shadow-sm flex flex-col items-center justify-center h-48">
+              <div className="text-[#295567]/30 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </div>
+              <p className="text-gray-500 text-sm">Select a slot to view patient details</p>
+            </div>
+          )}
+        </div>
+      </div>
+      
+      {/* Right side - Scheduling form */}
+      <div className="w-2/5 h-full bg-[#FAFAF9]">
+        <form onSubmit={handleSubmit} className="h-full overflow-hidden flex flex-col">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-[#295567] to-[#295567]/80 px-4 py-5 border-b border-[#295567]/40 shadow-md rounded-tr-3xl">
+            <h1 className="text-lg font-bold text-white flex items-center">
+              <Clock className="w-5 h-5 mr-2" />
+              Schedule Appointment
+            </h1>
+          </div>
+          
+          {/* Form content */}
+          <div className="p-4 flex-grow overflow-auto space-y-4">
+            {/* Date picker and events section */}
+            <div className="grid md:grid-cols-2 gap-4">
+              {/* Date picker section */}
+              <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-100">
+                <div className="flex items-center mb-2">
+                  <Calendar className="w-4 h-4 text-[#295567] mr-2" />
+                  <label className="font-medium text-sm">Select Date</label>
+                </div>
+                <div className="flex justify-center">
+                  <DatePicker
+                    selected={selectedDate}
+                    onChange={handleDateChange}
+                    highlightDates={bookedDates}
+                    inline
+                    className="w-full"
+                    calendarClassName="text-xs"
+                    dayClassName={date => 
+                      date.getDate() === (selectedDate && selectedDate.getDate()) && 
+                      date.getMonth() === (selectedDate && selectedDate.getMonth())
+                        ? "bg-[#295567] text-white rounded-full"
+                        : undefined
+                    }
+                  />
+                </div>
+                {selectedDate && (
+                  <p className="text-[#295567] font-medium mt-1 text-xs text-center">
+                    Selected: {selectedDate.toLocaleDateString()}
+                  </p>
+                )}
+              </div>
+              
+              {/* Events display */}
+              <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-100 flex flex-col">
+                <div className="flex items-center mb-2">
+                  <Calendar className="w-4 h-4 text-[#295567] mr-2" />
+                  <span className="font-medium text-sm">Events</span>
+                </div>
+                
+                {selectedEvent && selectedDate ? (
+                  <div className="bg-[#FAFAF9] p-3 rounded-xl flex-grow border border-gray-100">
+                    <h3 className="font-medium mb-2 text-sm">
+                      For {selectedDate.toLocaleDateString()}
+                    </h3>
+                    <div className="max-h-40 overflow-y-auto">
+                      {selectedEvent.length > 0 ? (
+                        <ul className="space-y-1">
+                          {selectedEvent.map((event, index) => (
+                            <li key={index} className="p-2 bg-white rounded-lg text-sm border border-gray-100">
+                              {event}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="text-gray-500 p-2 text-sm">No events scheduled</p>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center h-full bg-[#FAFAF9] rounded-xl flex-grow border border-gray-100">
+                    <p className="text-gray-500 text-sm">Select a date to view events</p>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            {/* Time selection section */}
+            <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-100">
+              <div className="flex items-center mb-3">
+                <Timer className="w-4 h-4 text-[#295567] mr-2" />
+                <h3 className="font-medium text-sm">Time Selection</h3>
+              </div>
+              
+              <div className="grid md:grid-cols-3 gap-3 mb-3">
+                {/* Start time */}
+                <div>
+                  <label className="block text-xs mb-1 text-gray-500">Start Time</label>
+                  <DatePicker
+                    selected={startingTime}
+                    onChange={(time) => setStartingTime(time)}
+                    showTimeSelect
+                    showTimeSelectOnly
+                    timeIntervals={30}
+                    timeCaption="Time"
+                    dateFormat="HH:mm"
+                    className="w-full p-2 text-sm border border-gray-200 rounded-lg focus:ring focus:ring-[#295567]/20 focus:border-[#295567]"
+                    placeholderText="Select time"
+                  />
+                </div>
+                
+                {/* End time */}
+                <div>
+                  <label className="block text-xs mb-1 text-gray-500">End Time</label>
+                  <DatePicker
+                    selected={endTime}
+                    onChange={(time) => setEndTime(time)}
+                    showTimeSelect
+                    showTimeSelectOnly
+                    timeIntervals={30}
+                    timeCaption="Time"
+                    dateFormat="HH:mm"
+                    className="w-full p-2 text-sm border border-gray-200 rounded-lg focus:ring focus:ring-[#295567]/20 focus:border-[#295567]"
+                    placeholderText="Select time"
+                  />
+                </div>
+                
+                {/* Duration */}
+                <div>
+                  <label className="block text-xs mb-1 text-gray-500">Duration</label>
+                  <select
+                    value={selectedTime || ''}
+                    onChange={(e) => setSelectedTime(e.target.value)}
+                    className="w-full p-2 text-sm border border-gray-200 rounded-lg focus:ring focus:ring-[#295567]/20 focus:border-[#295567]"
+                  >
+                    {Array.from({ length: 6 }, (_, i) => (i + 1) * 5).map((minutes) => (
+                      <option key={minutes} value={minutes}>
+                        {minutes} minutes
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              
+              {/* Session name */}
+              <div>
+                <label className="block text-xs mb-1 text-gray-500">Session Name</label>
+                <input
                   type="text"
-                  id="textInput"
-                  className="w-full border-[#000000] rounded-lg p-2 "
+                  className="w-full p-2 text-sm border border-gray-200 rounded-lg focus:ring focus:ring-[#295567]/20 focus:border-[#295567]"
                   value={text}
                   onChange={(e) => setText(e.target.value)}
                   placeholder="Type your session name here"
                 />
+              </div>
+            </div>
           </div>
-
-        </div>
-
-        
-
-        <div className="mt-6">
-          <button  className="w-full bg-[#295567] text-white py-3 px-4 rounded-lg hover:bg-[#6394b5] transition-colors duration-200 font-medium"
-            type="submit" 
-          >
-            Schedule Appointment
-          </button>
-          <p>{message}</p>
-        </div>
-        
+          
+          {/* Footer with submit button */}
+          <div className="p-4 border-t border-gray-200 bg-white">
+            <button 
+              className="w-full bg-[#295567] text-white py-2 px-4 rounded-lg hover:bg-[#295567]/90 transition-colors duration-200 font-medium"
+              type="submit"
+            >
+              Schedule Appointment
+            </button>
+            
+            {/* Message display */}
+            {message && (
+              <div className={`mt-2 p-2 rounded text-sm ${message.includes('successfully') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                {message}
+              </div>
+            )}
+          </div>
+        </form>
       </div>
-      </form>
-    </div>
-      </div>
-
+      
+      {/* Add animations */}
+      <style jsx>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        
+        @keyframes fadeInUp {
+          from { 
+            opacity: 0; 
+            transform: translateY(10px);
+          }
+          to { 
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes slideInLeft {
+          from { transform: translateX(-20px); opacity: 0; }
+          to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideInRight {
+          from { transform: translateX(20px); opacity: 0; }
+          to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes pageTransition {
+          0% { opacity: 0; transform: translateY(10px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+          100% { transform: scale(1); }
+        }
+      `}</style>
     </div>
   )
 }
-
 
 export default SchedulePage

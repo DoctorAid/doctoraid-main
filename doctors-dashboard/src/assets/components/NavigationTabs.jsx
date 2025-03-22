@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Layout, Calendar, Users, Settings, Pill } from 'lucide-react';
+import { Layout, Calendar, Users, Settings, Pill, ChevronRight } from 'lucide-react';
 
 function NavigationTabs() {
   const location = useLocation();
@@ -11,21 +11,21 @@ function NavigationTabs() {
   );
 
   const menuItems = [
-    { name: 'Dashboard', icon: <Layout size={16} /> },
-    { name: 'Schedule', icon: <Calendar size={16} /> },
-    { name: 'Patients', icon: <Users size={16} /> },
-    { name: 'Medicines', icon: <Pill size={16} /> },
-    { name: 'Settings', icon: <Settings size={16} /> }
+    { name: 'Dashboard', icon: <Layout size={18} /> },
+    { name: 'Schedule', icon: <Calendar size={18} /> },
+    { name: 'Patients', icon: <Users size={18} /> },
+    { name: 'Medicines', icon: <Pill size={18} /> },
+    { name: 'Settings', icon: <Settings size={18} /> }
   ];
 
   return (
-    <div className='flex flex-col gap-2 px-4'>
+    <div className='flex flex-col gap-1.5'>
       {menuItems.map((item, index) => (
         <Link
           key={item.name}
-          className={`flex h-11 items-center text-start pl-5 cursor-pointer transition-all duration-300 rounded-l-xl ${
+          className={`flex h-12 items-center justify-between px-4 cursor-pointer transition-all duration-300 rounded-xl ${
             activeItem === item.name 
-              ? ' bg-[#FAFAF9] text-[#295567] font-medium shadow-sm' 
+              ? 'bg-[#FAFAF9] text-[#295567] font-medium shadow-sm' 
               : 'text-white hover:bg-white/10'
           } hover:translate-x-1`}
           onClick={() => setActiveItem(item.name)}
@@ -38,12 +38,17 @@ function NavigationTabs() {
             animationDelay: `${index * 0.08}s`
           }}
         >
-          <span className={`mr-3 ${activeItem === item.name ? 'text-[#295567]' : 'text-white/90'}`}>
-            {item.icon}
-          </span>
-          <p className={activeItem === item.name ? 'font-medium' : 'font-normal'}>
-            {item.name}
-          </p>
+          <div className="flex items-center">
+            <span className={`mr-3 ${activeItem === item.name ? 'text-[#295567]' : 'text-white/90'}`}>
+              {item.icon}
+            </span>
+            <p className={`${activeItem === item.name ? 'font-medium' : 'font-normal'}`}>
+              {item.name}
+            </p>
+          </div>
+          {activeItem === item.name && (
+            <ChevronRight size={16} className="text-[#295567] opacity-70" />
+          )}
         </Link>
       ))}
     </div>
