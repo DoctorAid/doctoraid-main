@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { Edit } from 'lucide-react';
 
 function SettingsPage() {
   const [userInfo, setUserInfo] = useState({
@@ -75,39 +76,26 @@ function SettingsPage() {
   };
 
   return (
-    <div className="flex bg-[#FAFAF9] w-full min-h-screen text-black">
+    <div className="flex bg-slate-100  w-full h-full text-gray-800 font-['Raleway',sans-serif] animate-pageTransition overflow-auto">
       <div className="w-full max-w-6xl p-6 mx-auto">
         {/* User Information Section */}
-        <div className="bg-white rounded-lg shadow mb-6">
-          <div className="flex justify-between items-center p-6">
-            <h2 className="text-2xl font-bold">User Information</h2>
+        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 mb-6 overflow-hidden">
+          <div className="flex justify-between items-center p-6 border-b border-gray-100 bg-gradient-to-r from-[#295567]/5 to-white">
+            <h2 className="text-xl font-bold text-gray-800">User Information</h2>
             <button
               type="button"
               onClick={() => toggleEditing("userInfo")}
-              className="text-blue-600"
+              className="text-[#295567] hover:bg-[#295567]/10 p-2 rounded-full transition-all duration-300"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                />
-              </svg>
+              <Edit size={18} />
             </button>
           </div>
 
-          <div className="px-6 pb-6">
+          <div className="px-6 py-6">
             <div className="flex flex-col md:flex-row gap-8">
               {/* Profile Image */}
               <div className="md:w-1/3 flex flex-col items-center">
-                <div className="relative w-40 h-40 mb-4 overflow-hidden">
+                <div className="relative w-40 h-40 mb-4 overflow-hidden rounded-full border-4 border-[#295567]/10">
                   {previewImage ? (
                     <img
                       src={previewImage}
@@ -125,7 +113,7 @@ function SettingsPage() {
                 <button
                   type="button"
                   onClick={triggerFileInput}
-                  className="flex items-center text-gray-700 font-medium"
+                  className="flex items-center text-[#295567] font-medium hover:bg-[#295567]/10 px-3 py-1 rounded-full transition-all duration-300"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -161,35 +149,49 @@ function SettingsPage() {
               {/* User Information Fields */}
               <div className="md:w-2/3">
                 <div className="mb-4">
-                  <label htmlFor="name" className="block text-gray-700 mb-2">
+                  <label htmlFor="name" className="block text-gray-600 mb-2 text-sm">
                     Name
                   </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={userInfo.name}
-                    onChange={handleInputChange}
-                    disabled={!isEditing.userInfo}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  <div className={`relative ${isEditing.userInfo ? 'bg-white' : 'bg-[#FAFAF9]'} rounded-xl transition-colors duration-300`}>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={userInfo.name}
+                      onChange={handleInputChange}
+                      disabled={!isEditing.userInfo}
+                      className={`w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#295567] transition-all duration-300 ${isEditing.userInfo ? 'border-[#295567]/50' : ''}`}
+                    />
+                    {isEditing.userInfo && (
+                      <div className="absolute top-0 right-0 bg-[#295567] text-white text-xs px-2 py-1 rounded-bl-xl rounded-tr-xl">
+                        Editing
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div>
                   <label
                     htmlFor="description"
-                    className="block text-gray-700 mb-2"
+                    className="block text-gray-600 mb-2 text-sm"
                   >
                     Description
                   </label>
-                  <textarea
-                    id="description"
-                    name="description"
-                    value={userInfo.description}
-                    onChange={handleInputChange}
-                    disabled={!isEditing.userInfo}
-                    rows="6"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  <div className={`relative ${isEditing.userInfo ? 'bg-white' : 'bg-[#FAFAF9]'} rounded-xl transition-colors duration-300`}>
+                    <textarea
+                      id="description"
+                      name="description"
+                      value={userInfo.description}
+                      onChange={handleInputChange}
+                      disabled={!isEditing.userInfo}
+                      rows="6"
+                      className={`w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#295567] transition-all duration-300 ${isEditing.userInfo ? 'border-[#295567]/50' : ''}`}
+                    />
+                    {isEditing.userInfo && (
+                      <div className="absolute top-0 right-0 bg-[#295567] text-white text-xs px-2 py-1 rounded-bl-xl rounded-tr-xl">
+                        Editing
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -199,65 +201,67 @@ function SettingsPage() {
         <div className="flex flex-col md:flex-row gap-6">
           {/* Contact Section */}
           <div className="md:w-1/2">
-            <div className="bg-white rounded-lg shadow p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold">Contact</h2>
+            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 h-full overflow-hidden">
+              <div className="flex justify-between items-center p-6 border-b border-gray-100 bg-gradient-to-r from-[#295567]/5 to-white">
+                <h2 className="text-xl font-bold text-gray-800">Contact</h2>
                 <button
                   type="button"
                   onClick={() => toggleEditing("contact")}
-                  className="text-blue-600"
+                  className="text-[#295567] hover:bg-[#295567]/10 p-2 rounded-full transition-all duration-300"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                    />
-                  </svg>
+                  <Edit size={18} />
                 </button>
               </div>
 
-              <div className="space-y-4">
+              <div className="p-6 space-y-4">
                 <div>
                   <label
                     htmlFor="telephone"
-                    className="block text-gray-700 mb-2"
+                    className="block text-gray-600 mb-2 text-sm"
                   >
                     Telephone
                   </label>
-                  <input
-                    type="text"
-                    id="telephone"
-                    name="telephone"
-                    value={userInfo.telephone}
-                    onChange={handleInputChange}
-                    disabled={!isEditing.contact}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  <div className={`relative ${isEditing.contact ? 'bg-white' : 'bg-[#FAFAF9]'} rounded-xl transition-colors duration-300`}>
+                    <input
+                      type="text"
+                      id="telephone"
+                      name="telephone"
+                      value={userInfo.telephone}
+                      onChange={handleInputChange}
+                      disabled={!isEditing.contact}
+                      className={`w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#295567] transition-all duration-300 ${isEditing.contact ? 'border-[#295567]/50' : ''}`}
+                    />
+                    {isEditing.contact && (
+                      <div className="absolute top-0 right-0 bg-[#295567] text-white text-xs px-2 py-1 rounded-bl-xl rounded-tr-xl">
+                        Editing
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div>
                   <label
                     htmlFor="location"
-                    className="block text-gray-700 mb-2"
+                    className="block text-gray-600 mb-2 text-sm"
                   >
                     Location
                   </label>
-                  <textarea
-                    id="location"
-                    name="location"
-                    value={userInfo.location}
-                    onChange={handleInputChange}
-                    disabled={!isEditing.contact}
-                    rows="5"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  <div className={`relative ${isEditing.contact ? 'bg-white' : 'bg-[#FAFAF9]'} rounded-xl transition-colors duration-300`}>
+                    <input
+                      type="text"
+                      id="location"
+                      name="location"
+                      value={userInfo.location}
+                      onChange={handleInputChange}
+                      disabled={!isEditing.contact}
+                      placeholder="Enter your location"
+                      className={`w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#295567] transition-all duration-300 ${isEditing.contact ? 'border-[#295567]/50' : ''}`}
+                    />
+                    {isEditing.contact && (
+                      <div className="absolute top-0 right-0 bg-[#295567] text-white text-xs px-2 py-1 rounded-bl-xl rounded-tr-xl">
+                        Editing
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -265,69 +269,61 @@ function SettingsPage() {
 
           {/* Business Hours Section */}
           <div className="md:w-1/2">
-            <div className="bg-white rounded-lg shadow p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold">Business Hours</h2>
+            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 h-full overflow-hidden">
+              <div className="flex justify-between items-center p-6 border-b border-gray-100 bg-gradient-to-r from-[#295567]/5 to-white">
+                <h2 className="text-xl font-bold text-gray-800">Business Hours</h2>
                 <button
                   type="button"
                   onClick={() => toggleEditing("businessHours")}
-                  className="text-blue-600"
+                  className="text-[#295567] hover:bg-[#295567]/10 p-2 rounded-full transition-all duration-300"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                    />
-                  </svg>
+                  <Edit size={18} />
                 </button>
               </div>
 
-              <div className="space-y-6">
+              <div className="p-6 space-y-6">
                 {/** Weekend Hours */}
                 <div>
                   <label
                     htmlFor="weekendHours"
-                    className="block text-gray-700 mb-2"
+                    className="block text-gray-600 mb-2 text-sm"
                   >
                     Weekends
                   </label>
                   {isEditing.businessHours ? (
-                    <div className="flex items-center space-x-2">
-                      <div className="w-1/2">
-                        <label className="text-xs text-gray-500 mb-1 block">
-                          Open
-                        </label>
+                    <div className="relative">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-1/2">
+                          <label className="text-xs text-gray-500 mb-1 block">
+                            Open
+                          </label>
 
-                        <input
-                          type="time"
-                          id="weekendOpenTime"
-                          name="weekendOpenTime"
-                          value={userInfo.weekendOpenTime}
-                          onChange={handleInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+                          <input
+                            type="time"
+                            id="weekendOpenTime"
+                            name="weekendOpenTime"
+                            value={userInfo.weekendOpenTime}
+                            onChange={handleInputChange}
+                            className="w-full px-4 py-2 border border-[#295567]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#295567] transition-all duration-300"
+                          />
+                        </div>
+                        <div className="w-1/2">
+                          <label className="text-xs text-gray-500 mb-1 block">
+                            Close
+                          </label>
+
+                          <input
+                            type="time"
+                            id="weekendCloseTime"
+                            name="weekendCloseTime"
+                            value={userInfo.weekendCloseTime}
+                            onChange={handleInputChange}
+                            className="w-full px-4 py-2 border border-[#295567]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#295567] transition-all duration-300"
+                          />
+                        </div>
                       </div>
-                      <div className="w-1/2">
-                        <label className="text-xs text-gray-500 mb-1 block">
-                          Close
-                        </label>
-
-                        <input
-                          type="time"
-                          id="weekendCloseTime"
-                          name="weekendCloseTime"
-                          value={userInfo.weekendCloseTime}
-                          onChange={handleInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+                      <div className="absolute top-0 right-0 bg-[#295567] text-white text-xs px-2 py-1 rounded-bl-xl rounded-tr-xl">
+                        Editing
                       </div>
                     </div>
                   ) : (
@@ -338,7 +334,7 @@ function SettingsPage() {
                         userInfo.weekendCloseTime
                       )}
                       disabled
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50"
+                      className="w-full px-4 py-2 border border-gray-200 rounded-xl bg-[#FAFAF9]"
                     />
                   )}
                 </div>
@@ -347,37 +343,42 @@ function SettingsPage() {
                 <div>
                   <label
                     htmlFor="weekdayHours"
-                    className="block text-gray-700 mb-2"
+                    className="block text-gray-600 mb-2 text-sm"
                   >
                     Weekdays
                   </label>
                   {isEditing.businessHours ? (
-                    <div className="flex items-center space-x-2">
-                      <div className="w-1/2">
-                        <label className="text-xs text-gray-500 mb-1 block">
-                          Open
-                        </label>
-                        <input
-                          type="time"
-                          id="weekdayOpenTime"
-                          name="weekdayOpenTime"
-                          value={userInfo.weekdayOpenTime}
-                          onChange={handleInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+                    <div className="relative">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-1/2">
+                          <label className="text-xs text-gray-500 mb-1 block">
+                            Open
+                          </label>
+                          <input
+                            type="time"
+                            id="weekdayOpenTime"
+                            name="weekdayOpenTime"
+                            value={userInfo.weekdayOpenTime}
+                            onChange={handleInputChange}
+                            className="w-full px-4 py-2 border border-[#295567]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#295567] transition-all duration-300"
+                          />
+                        </div>
+                        <div className="w-1/2">
+                          <label className="text-xs text-gray-500 mb-1 block">
+                            Close
+                          </label>
+                          <input
+                            type="time"
+                            id="weekdayCloseTime"
+                            name="weekdayCloseTime"
+                            value={userInfo.weekdayCloseTime}
+                            onChange={handleInputChange}
+                            className="w-full px-4 py-2 border border-[#295567]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#295567] transition-all duration-300"
+                          />
+                        </div>
                       </div>
-                      <div className="w-1/2">
-                        <label className="text-xs text-gray-500 mb-1 block">
-                          Close
-                        </label>
-                        <input
-                          type="time"
-                          id="weekdayCloseTime"
-                          name="weekdayCloseTime"
-                          value={userInfo.weekdayCloseTime}
-                          onChange={handleInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+                      <div className="absolute top-0 right-0 bg-[#295567] text-white text-xs px-2 py-1 rounded-bl-xl rounded-tr-xl">
+                        Editing
                       </div>
                     </div>
                   ) : (
@@ -388,7 +389,7 @@ function SettingsPage() {
                         userInfo.weekdayCloseTime
                       )}
                       disabled
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50"
+                      className="w-full px-4 py-2 border border-gray-200 rounded-xl bg-[#FAFAF9]"
                     />
                   )}
                 </div>
@@ -402,7 +403,7 @@ function SettingsPage() {
           <button
             type="button"
             onClick={handleSave}
-            className="px-12 py-2 bg-blue-200 text-blue-700 rounded-md hover:bg-blue-300 focus:outline-none"
+            className="px-12 py-2 bg-[#295567] text-white rounded-xl hover:bg-[#295567]/90 transition-all duration-300 shadow-sm"
           >
             Save
           </button>

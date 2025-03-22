@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from "react";
-import { Search, Filter, Plus, ChevronLeft, ChevronRight, Eye } from 'lucide-react';
+import { Search, Filter, ChevronLeft, ChevronRight, Eye, ArrowLeft, ArrowRight } from 'lucide-react';
 
 const PatientsTable = () => {
   const patients = [
@@ -119,54 +119,101 @@ const PatientsTable = () => {
   const records = [
     {
       "patient_id": "200-01",
-      "last_checked": "2024-04-21",
-      "prescription_id": "#24J83KT0",
-      "observation": "High fever and cough at normal hemoglobin levels.",
-      "prescription": [
-        {"medicine": "Paracetamol", "dosage": "2 times a day"},
-        {"medicine": "Wikoryl", "dosage": "Day and Night before meal"}
+      "history": [
+        {
+          "date": "2024-04-21",
+          "prescription_id": "#24J83KT0",
+          "observation": "High fever and cough at normal hemoglobin levels.",
+          "prescription": [
+            {"medicine": "Paracetamol", "dosage": "2 times a day"},
+            {"medicine": "Wikoryl", "dosage": "Day and Night before meal"}
+          ]
+        },
+        {
+          "date": "2024-03-15",
+          "prescription_id": "#24J15RT2",
+          "observation": "Seasonal allergies with runny nose and itchy eyes.",
+          "prescription": [
+            {"medicine": "Cetirizine", "dosage": "Once daily"},
+            {"medicine": "Nasal Spray", "dosage": "Twice daily"}
+          ]
+        },
+        {
+          "date": "2024-01-05",
+          "prescription_id": "#23K93LM7",
+          "observation": "Annual checkup. All vitals normal.",
+          "prescription": []
+        }
       ]
     },
     {
       "patient_id": "200-02",
-      "last_checked": "2024-04-22",
-      "prescription_id": "#A18X9YD3",
-      "observation": "Mild allergic reaction due to peanut exposure.",
-      "prescription": [
-        {"medicine": "Antihistamine", "dosage": "Once a day as needed"}
+      "history": [
+        {
+          "date": "2024-04-22",
+          "prescription_id": "#A18X9YD3",
+          "observation": "Mild allergic reaction due to peanut exposure.",
+          "prescription": [
+            {"medicine": "Antihistamine", "dosage": "Once a day as needed"}
+          ]
+        },
+        {
+          "date": "2024-02-18",
+          "prescription_id": "#B27Y5FT9",
+          "observation": "Skin rash after latex contact.",
+          "prescription": [
+            {"medicine": "Topical Steroid Cream", "dosage": "Apply to affected area twice daily"}
+          ]
+        }
       ]
     },
     {
       "patient_id": "200-03",
-      "last_checked": "2024-04-23",
-      "prescription_id": "#C92Z7PL5",
-      "observation": "Shortness of breath after dust exposure.",
-      "prescription": [
-        {"medicine": "Inhaler", "dosage": "As needed"},
-        {"medicine": "Antihistamine", "dosage": "Once a day"}
+      "history": [
+        {
+          "date": "2024-04-23",
+          "prescription_id": "#C92Z7PL5",
+          "observation": "Shortness of breath after dust exposure.",
+          "prescription": [
+            {"medicine": "Inhaler", "dosage": "As needed"},
+            {"medicine": "Antihistamine", "dosage": "Once a day"}
+          ]
+        },
+        {
+          "date": "2024-03-10",
+          "prescription_id": "#D35L7MT1",
+          "observation": "Routine checkup. Slightly elevated blood pressure.",
+          "prescription": [
+            {"medicine": "Blood Pressure Monitoring", "dosage": "Daily tracking"}
+          ]
+        }
       ]
     },
     {
       "patient_id": "200-04",
-      "last_checked": "2024-04-24",
-      "prescription_id": "#D56X8YH2",
-      "observation": "Mild stomach discomfort due to gluten ingestion.",
-      "prescription": [
-        {"medicine": "Digestive Enzyme", "dosage": "Before meals"},
-        {"medicine": "Antihistamine", "dosage": "Once a day"}
+      "history": [
+        {
+          "date": "2024-04-24",
+          "prescription_id": "#D56X8YH2",
+          "observation": "Mild stomach discomfort due to gluten ingestion.",
+          "prescription": [
+            {"medicine": "Digestive Enzyme", "dosage": "Before meals"},
+            {"medicine": "Antihistamine", "dosage": "Once a day"}
+          ]
+        }
       ]
     }
   ];
 
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab, setActiveTab] = useState("All");
   const [selectedPatient, setSelectedPatient] = useState(patients[0]);
-  const [selectedRecord, setSelectedRecord] = useState(null);
+  const [patientHistory, setPatientHistory] = useState([]);
+  const [currentHistoryIndex, setCurrentHistoryIndex] = useState(0);
   const [showDetails, setShowDetails] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
 
-  const rowsPerPage = 6;
+  const rowsPerPage = 8; // Increased to fit more patients on screen
 
   // Filter patients based on search term
   const filteredPatients = patients.filter(
@@ -196,6 +243,16 @@ const PatientsTable = () => {
     // Add animation by temporarily hiding details
     setShowDetails(false);
     setTimeout(() => setShowDetails(true), 300);
+    // Reset history index when selecting a new patient
+    setCurrentHistoryIndex(0);
+  };
+
+  const navigateHistory = (direction) => {
+    if (direction === 'next' && currentHistoryIndex < patientHistory.length - 1) {
+      setCurrentHistoryIndex(currentHistoryIndex + 1);
+    } else if (direction === 'prev' && currentHistoryIndex > 0) {
+      setCurrentHistoryIndex(currentHistoryIndex - 1);
+    }
   };
 
   // Simulating data loading
@@ -206,10 +263,11 @@ const PatientsTable = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Find matching record for selected patient
+  // Find matching record history for selected patient
   useEffect(() => {
     const record = records.find(record => record.patient_id === selectedPatient.patient_id);
-    setSelectedRecord(record || null);
+    setPatientHistory(record?.history || []);
+    setCurrentHistoryIndex(0); // Reset to first history entry
   }, [selectedPatient]);
 
   // Get initials for avatar
@@ -223,74 +281,57 @@ const PatientsTable = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gray-50">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
+      <div className="flex justify-center items-center h-full w-full bg-white">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#295567]"></div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col md:flex-row gap-6 bg-gray-50 min-h-screen p-4 animate-[fadeIn_0.4s_ease-out]">
+    <div className="flex h-full w-full bg-[#FAFAF9] rounded-tl-3xl overflow-hidden animate-pageTransition font-['Raleway',sans-serif]">
       {/* Main Table Section */}
-      <div className="md:w-2/3 animate-[slideInLeft_0.5s_ease-out]">
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+      <div className="w-3/5 h-full border-r border-gray-200 bg-white rounded-tl-3xl shadow-md">
+        <div className="h-full flex flex-col">
           {/* Header Section */}
-          <div className="p-6 flex justify-between items-center border-b border-gray-100 bg-white">
-            <div className="flex space-x-4">
-              {["All", "Booked", "Special"].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`font-medium transition-all duration-300 px-3 py-1 rounded-full ${
-                    activeTab === tab
-                      ? "text-blue-600 bg-blue-50"
-                      : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-            <span className="text-sm font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-              Total Patients: {patients.length}
+          <div className="p-4 flex justify-between items-center border-b border-gray-200 bg-white rounded-tl-3xl">
+            <h2 className="font-bold text-lg text-gray-800">Patients Directory</h2>
+            <span className="text-sm font-medium text-gray-500 bg-white px-3 py-1 rounded-full shadow-sm">
+              Total: {patients.length}
             </span>
           </div>
 
           {/* Filter and Search Section */}
-          <div className="p-6 flex items-center space-x-4 border-b border-gray-100 bg-gray-50">
-            <button className="p-2 text-gray-600 bg-white rounded-lg shadow-sm flex items-center gap-2 hover:bg-gray-50 transition-all">
-              <Filter size={16} /> <span className="text-sm font-medium">Filter</span>
-            </button>
-            <div className="flex-1 relative">
+          <div className="p-4 flex items-center space-x-4 border-b border-gray-200 bg-white">
+            <div className="flex-1 relative font-['Raleway',sans-serif]">
               <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search by name, email or date..."
+                placeholder="Search patients..."
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1); // Reset to first page on search
                 }}
-                className="w-full pl-10 pr-4 py-2 text-sm text-gray-700 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                className="w-full pl-10 pr-4 py-2 text-sm text-gray-700 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#295567] focus:border-transparent transition-all"
               />
             </div>
-            <button className="p-2 text-white bg-blue-600 rounded-lg shadow-sm flex items-center gap-2 hover:bg-blue-700 transition-all transform hover:scale-105">
-              <Plus size={16} /> <span className="text-sm font-medium">Add Patient</span>
-            </button>
           </div>
 
           {/* Table Section */}
-          <div className="overflow-x-auto">
+          <div className="overflow-y-auto flex-grow">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-white sticky top-0 z-10">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Name
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Info
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Age/Sex
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Last Visit
+                  </th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Action
                   </th>
                 </tr>
@@ -299,8 +340,10 @@ const PatientsTable = () => {
                 {currentPatients.map((patient, index) => (
                   <tr 
                     key={patient.patient_id}
-                    className={`group hover:bg-blue-50 transition-colors duration-150 ${
-                      selectedPatient.patient_id === patient.patient_id ? "bg-blue-50" : index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                    className={`group transition-colors duration-150 ${
+                      selectedPatient.patient_id === patient.patient_id 
+                        ? "bg-[#295567]/5" 
+                        : index % 2 === 0 ? "bg-white hover:bg-gray-50" : "bg-gray-50 hover:bg-gray-100"
                     }`}
                     style={{
                       animationName: 'fadeIn',
@@ -309,28 +352,32 @@ const PatientsTable = () => {
                       animationFillMode: 'both'
                     }}
                   >
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-3">
                       <div className="flex items-center">
-                        <div className="h-10 w-10 flex-shrink-0 mr-3 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-medium">
+                        <div className={`h-8 w-8 flex-shrink-0 mr-3 rounded-full flex items-center justify-center text-xs font-medium
+                          ${selectedPatient.patient_id === patient.patient_id 
+                            ? "bg-[#295567] text-white" 
+                            : "bg-[#295567]/20 text-[#295567]"}`}
+                        >
                           {getInitials(patient.name)}
                         </div>
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">{patient.name}</div>
-                          <div className="text-xs text-gray-500">ID: {patient.patient_id}</div>
-                        </div>
+                        <div className="text-sm font-medium text-gray-900">{patient.name}</div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900">{patient.email}</div>
-                      <div className="text-xs text-gray-500">Last visit: {patient.date}</div>
+                    <td className="px-4 py-3 text-sm text-gray-500">
+                      {patient.age} / {patient.sex}
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-4 py-3 text-sm text-gray-500">{patient.date}</td>
+                    <td className="px-4 py-3 text-right">
                       <button 
                         onClick={() => handlePatientSelect(patient)}
-                        className="text-blue-600 hover:text-blue-800 inline-flex items-center gap-1 transition-all duration-300 hover:translate-x-1"
+                        className={`inline-flex items-center gap-1 transition-all duration-300 rounded-lg px-2 py-1
+                          ${selectedPatient.patient_id === patient.patient_id 
+                            ? "text-[#295567] bg-[#295567]/10" 
+                            : "text-[#295567] hover:bg-[#295567]/10"}`}
                       >
                         <span>View</span>
-                        <Eye size={16} />
+                        <Eye size={14} />
                       </button>
                     </td>
                   </tr>
@@ -340,14 +387,14 @@ const PatientsTable = () => {
           </div>
 
           {/* Pagination Section */}
-          <div className="px-6 py-4 flex justify-between items-center border-t border-gray-100 bg-gray-50">
+          <div className="px-4 py-3 flex justify-between items-center border-t border-gray-200 bg-white">
             <button
               onClick={handlePrevious}
               disabled={currentPage === 1}
               className={`p-2 rounded-full ${
                 currentPage === 1
                   ? "text-gray-400 cursor-not-allowed"
-                  : "text-blue-600 hover:bg-blue-100"
+                  : "text-[#295567] hover:bg-[#295567]/10"
               } transition-all duration-300`}
             >
               <ChevronLeft size={20} />
@@ -361,7 +408,7 @@ const PatientsTable = () => {
               className={`p-2 rounded-full ${
                 currentPage === totalPages || totalPages === 0
                   ? "text-gray-400 cursor-not-allowed"
-                  : "text-blue-600 hover:bg-blue-100"
+                  : "text-[#295567] hover:bg-[#295567]/10"
               } transition-all duration-300`}
             >
               <ChevronRight size={20} />
@@ -371,25 +418,25 @@ const PatientsTable = () => {
       </div>
 
       {/* Patient Details Section */}
-      <div className="md:w-1/3 animate-[slideInRight_0.5s_ease-out]">
-        <div className={`bg-white rounded-2xl shadow-lg h-full overflow-hidden transition-opacity duration-300 ${showDetails ? 'opacity-100' : 'opacity-0'}`}>
+      <div className="w-2/5 h-full bg-[#FAFAF9]">
+        <div className={`h-full overflow-hidden transition-all duration-300 flex flex-col ${showDetails ? 'opacity-100' : 'opacity-0'}`}>
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-6 border-b border-blue-400">
+          <div className="bg-gradient-to-r from-[#295567] to-[#295567]/80 px-4 py-4 border-b border-[#295567]/40 shadow-md rounded-tr-3xl">
             <div className="flex items-center">
-              <div className="h-16 w-16 flex justify-center items-center bg-white rounded-full text-xl font-bold text-blue-700 shadow-md">
+              <div className="h-12 w-12 flex justify-center items-center bg-white rounded-full text-lg font-bold text-[#295567] shadow-md">
                 {getInitials(selectedPatient.name)}
               </div>
-              <div className="ml-4">
-                <h1 className="text-xl font-bold text-white">{selectedPatient.name}</h1>
+              <div className="ml-3">
+                <h1 className="text-lg font-bold text-white">{selectedPatient.name}</h1>
                 <div className="flex space-x-2 mt-1">
-                  <span className="px-2 py-1 bg-blue-400 bg-opacity-30 rounded-full text-xs font-medium text-white">
-                    ID: {selectedPatient.patient_id}
-                  </span>
-                  <span className="px-2 py-1 bg-blue-400 bg-opacity-30 rounded-full text-xs font-medium text-white">
+                  <span className="px-2 py-0.5 bg-white/20 rounded-full text-xs font-medium text-white">
                     {selectedPatient.age} yrs
                   </span>
-                  <span className="px-2 py-1 bg-blue-400 bg-opacity-30 rounded-full text-xs font-medium text-white">
+                  <span className="px-2 py-0.5 bg-white/20 rounded-full text-xs font-medium text-white">
                     {selectedPatient.sex}
+                  </span>
+                  <span className="px-2 py-0.5 bg-white/20 rounded-full text-xs font-medium text-white">
+                    {selectedPatient.blood_type}
                   </span>
                 </div>
               </div>
@@ -397,110 +444,90 @@ const PatientsTable = () => {
           </div>
 
           {/* Patient Details */}
-          <div className="p-6 space-y-5 max-h-[calc(100vh-230px)] overflow-y-auto">
+          <div className="p-4 space-y-4 overflow-y-auto flex-grow">
             {/* Basic Info Card */}
-            <div className="bg-gray-50 rounded-xl p-4 shadow-sm">
-              <h2 className="text-sm font-semibold text-gray-700 mb-3">Basic Information</h2>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-white p-3 rounded-lg">
-                  <p className="text-xs text-gray-500">Blood Type</p>
-                  <p className="text-sm font-medium text-gray-800">{selectedPatient.blood_type}</p>
-                </div>
-                <div className="bg-white p-3 rounded-lg">
-                  <p className="text-xs text-gray-500">Allergies</p>
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    {selectedPatient.allergies.map((allergy, index) => (
-                      <span key={index} className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">
-                        {allergy}
-                      </span>
-                    ))}
-                  </div>
+            <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-100">
+              <h2 className="text-sm font-semibold text-gray-700 mb-2">Allergies</h2>
+              <div className="bg-[#FAFAF9] p-2 rounded-xl border border-gray-100">
+                <div className="flex flex-wrap gap-1">
+                  {selectedPatient.allergies.map((allergy, index) => (
+                    <span key={index} className="text-xs bg-red-50 text-red-600 px-2 py-0.5 rounded-full border border-red-100">
+                      {allergy}
+                    </span>
+                  ))}
                 </div>
               </div>
             </div>
 
-            {/* Complaints Card */}
-            <div className="bg-gray-50 rounded-xl p-4 shadow-sm">
-              <h2 className="text-sm font-semibold text-gray-700 mb-3">Recent Complaints</h2>
-              <ul className="space-y-2">
-                <li className="flex items-start">
-                  <span className="h-2 w-2 mt-1.5 bg-blue-500 rounded-full mr-2"></span>
-                  <p className="text-sm text-gray-700">Persistent headache for three days</p>
-                </li>
-                <li className="flex items-start">
-                  <span className="h-2 w-2 mt-1.5 bg-blue-500 rounded-full mr-2"></span>
-                  <p className="text-sm text-gray-700">Mild shortness of breath during activity</p>
-                </li>
-                <li className="flex items-start">
-                  <span className="h-2 w-2 mt-1.5 bg-blue-500 rounded-full mr-2"></span>
-                  <p className="text-sm text-gray-700">Occasional dizziness when standing up</p>
-                </li>
-                <li className="flex items-start">
-                  <span className="h-2 w-2 mt-1.5 bg-blue-500 rounded-full mr-2"></span>
-                  <p className="text-sm text-gray-700">Morning nausea without vomiting</p>
-                </li>
-                <li className="flex items-start">
-                  <span className="h-2 w-2 mt-1.5 bg-blue-500 rounded-full mr-2"></span>
-                  <p className="text-sm text-gray-700">General fatigue throughout the day</p>
-                </li>
-              </ul>
-            </div>
+            {/* Medical History Navigation */}
+            {patientHistory.length > 0 ? (
+              <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-100">
+                <div className="flex justify-between items-center mb-2">
+                  <h2 className="text-sm font-semibold text-gray-700">Medical History</h2>
+                  <div className="flex items-center space-x-2">
+                    <button 
+                      onClick={() => navigateHistory('prev')}
+                      disabled={currentHistoryIndex === 0}
+                      className={`${currentHistoryIndex === 0 ? 'text-gray-300' : 'text-[#295567]'} hover:bg-[#FAFAF9] p-1 rounded-full`}
+                    >
+                      <ArrowLeft size={14} />
+                    </button>
+                    <span className="text-xs text-gray-600">
+                      {currentHistoryIndex + 1} of {patientHistory.length}
+                    </span>
+                    <button
+                      onClick={() => navigateHistory('next')}
+                      disabled={currentHistoryIndex === patientHistory.length - 1}
+                      className={`${currentHistoryIndex === patientHistory.length - 1 ? 'text-gray-300' : 'text-[#295567]'} hover:bg-[#FAFAF9] p-1 rounded-full`}
+                    >
+                      <ArrowRight size={14} />
+                    </button>
+                  </div>
+                </div>
 
-            {/* Last Medical Record */}
-            {selectedRecord ? (
-              <div className="bg-gray-50 rounded-xl p-4 shadow-sm">
-                <div className="flex justify-between items-center mb-3">
-                  <h2 className="text-sm font-semibold text-gray-700">Last Medical Record</h2>
-                  <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
-                    {selectedRecord.last_checked}
-                  </span>
-                </div>
-                
-                <div className="bg-white p-3 rounded-lg mb-3">
+                <div className="bg-[#FAFAF9] p-3 rounded-xl mb-2 border border-gray-100">
+                  <div className="flex justify-between items-center mb-2">
+                    <p className="text-xs font-semibold text-gray-800">{patientHistory[currentHistoryIndex].date}</p>
+                    <span className="text-xs bg-[#295567]/10 text-[#295567] px-2 py-0.5 rounded-full">
+                      {patientHistory[currentHistoryIndex].prescription_id}
+                    </span>
+                  </div>
                   <p className="text-xs text-gray-500 mb-1">Observation</p>
-                  <p className="text-sm text-gray-800">{selectedRecord.observation}</p>
-                </div>
-                
-                <div className="bg-white p-3 rounded-lg">
-                  <p className="text-xs text-gray-500 mb-1">Prescription</p>
-                  <ul className="space-y-2 mt-2">
-                    {selectedRecord.prescription.map((med, index) => (
-                      <li key={index} className="flex items-start">
-                        <div className="h-6 w-6 bg-green-100 rounded-full flex items-center justify-center mr-2">
-                          <span className="text-xs font-medium text-green-800">{index + 1}</span>
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-gray-800">{med.medicine}</p>
-                          <p className="text-xs text-gray-500">{med.dosage}</p>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
+                  <p className="text-sm text-gray-800 mb-2">{patientHistory[currentHistoryIndex].observation}</p>
+                  
+                  {patientHistory[currentHistoryIndex].prescription.length > 0 ? (
+                    <>
+                      <p className="text-xs text-gray-500 mb-1">Prescription</p>
+                      <ul className="space-y-2">
+                        {patientHistory[currentHistoryIndex].prescription.map((med, index) => (
+                          <li key={index} className="p-2 bg-white rounded-xl border border-gray-100">
+                            <p className="text-sm font-medium text-gray-800">{med.medicine}</p>
+                            <p className="text-xs text-gray-500">{med.dosage}</p>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  ) : (
+                    <p className="text-xs text-gray-500 italic">No medications prescribed</p>
+                  )}
                 </div>
               </div>
             ) : (
-              <div className="bg-gray-50 rounded-xl p-4 shadow-sm text-center">
-                <p className="text-sm text-gray-500">No medical records available</p>
+              <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-100">
+                <h2 className="text-sm font-semibold text-gray-700 mb-2">Medical History</h2>
+                <div className="bg-[#FAFAF9] p-3 rounded-xl text-center border border-gray-100">
+                  <p className="text-sm text-gray-500">No medical records available</p>
+                </div>
               </div>
             )}
             
             {/* Notes */}
-            <div className="bg-gray-50 rounded-xl p-4 shadow-sm">
-              <h2 className="text-sm font-semibold text-gray-700 mb-3">Physician's Notes</h2>
-              <div className="bg-white p-3 rounded-lg">
+            <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-100">
+              <h2 className="text-sm font-semibold text-gray-700 mb-2">Physician's Notes</h2>
+              <div className="bg-[#FAFAF9] p-3 rounded-xl border border-gray-100">
                 <p className="text-sm text-gray-700">{selectedPatient.note}</p>
               </div>
             </div>
-          </div>
-          
-          {/* Actions Footer */}
-          <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-between">
-            <button className="px-4 py-2 bg-white text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-all duration-300">
-              Edit Details
-            </button>
-            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105">
-              Add Prescription
-            </button>
           </div>
         </div>
       </div>
@@ -520,6 +547,11 @@ const PatientsTable = () => {
         @keyframes slideInRight {
           from { transform: translateX(20px); opacity: 0; }
           to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes pageTransition {
+          0% { opacity: 0; transform: translateY(10px); }
+          100% { opacity: 1; transform: translateY(0); }
         }
       `}</style>
     </div>

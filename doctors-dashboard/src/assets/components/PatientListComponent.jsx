@@ -1,14 +1,30 @@
 import React from "react";
 
-function PatientListComponent() {
-  // Session patients data
-  const sessionPatients = [
+function PatientListComponent({ patients }) {
+  // Session patients data - use passed in data or fallback to mock data
+  const sessionPatients = patients || [
     { name: "Denzel White", time: "9:00 AM", code: "200 - 01", initials: "DW" },
     { name: "Stacy Mitchell", time: "9:15 AM", code: "220 - 02", initials: "SM" },
     { name: "Amy Dunham", time: "9:30 AM", code: "254 - 02", initials: "AD" },
     { name: "Demi Joan", time: "9:50 AM", code: "260 - 01", initials: "DJ" },
     { name: "Susan Myers", time: "10:15 AM", code: "240 - 03", initials: "SM" },
   ];
+
+  // Get avatar initials from name if not provided
+  const getInitials = (name) => {
+    if (!name) return "";
+    
+    return name
+      .split(" ")
+      .map((part) => part[0])
+      .join("")
+      .toUpperCase();
+  };
+
+  // Get initials from first name and last name
+  const getInitialsFromNames = (firstName, lastName) => {
+    return (firstName ? firstName[0] : "") + (lastName ? lastName[0] : "");
+  };
 
   // Get initial colors based on name
   const getAvatarColor = (initials) => {
@@ -22,7 +38,11 @@ function PatientListComponent() {
   };
 
   // Calculate today's date in format similar to the image
-  const today = "Today";
+  const today = new Date().toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  });
 
   return (
     <div className="bg-white rounded-[20px] shadow-md overflow-hidden">
@@ -35,24 +55,38 @@ function PatientListComponent() {
           </svg>
         </div>
       </div>
-      
+     
       <div className="max-h-[330px] overflow-y-auto p-4 space-y-4">
-        {sessionPatients.map((patient, index) => (
-          <div key={index} className="flex justify-between items-center px-4 py-3 rounded-xl">
-            <div className="flex items-center">
-              <div className={`flex items-center justify-center w-10 h-10 rounded-full border ${getAvatarColor(patient.initials)}`}>
-                {patient.initials}
+        {sessionPatients.length > 0 ? (
+          sessionPatients.map((patient, index) => {
+            // Handle different property naming from the API
+            const name = patient.name || (patient.firstName && patient.lastName ? `${patient.firstName} ${patient.lastName}` : "Unknown");
+            const patientInitials = patient.initials || 
+                                    (patient.name ? getInitials(patient.name) : 
+                                    (patient.firstName && patient.lastName ? getInitialsFromNames(patient.firstName, patient.lastName) : "??"));
+            
+            return (
+              <div key={index} className="flex justify-between items-center px-4 py-3 rounded-xl">
+                <div className="flex items-center">
+                  <div className={`flex items-center justify-center w-10 h-10 rounded-full border ${getAvatarColor(patientInitials)}`}>
+                    {patientInitials}
+                  </div>
+                  <div className="ml-4">
+                    <h3 className="font-medium">{name}</h3>
+                    <p className="text-sm text-blue-600">{patient.code || patient.patientId || patient._id}</p>
+                  </div>
+                </div>
+                <div className="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm font-medium">
+                  {patient.time || patient.contactNumber || "N/A"}
+                </div>
               </div>
-              <div className="ml-4">
-                <h3 className="font-medium">{patient.name}</h3>
-                <p className="text-sm text-blue-600">{patient.code}</p>
-              </div>
-            </div>
-            <div className="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm font-medium">
-              {patient.time}
-            </div>
+            );
+          })
+        ) : (
+          <div className="text-center py-6 text-gray-500">
+            No patients in current session
           </div>
-        ))}
+        )}
       </div>
     </div>
   );

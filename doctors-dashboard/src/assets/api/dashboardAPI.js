@@ -1,8 +1,3 @@
-/**
- * Combined API functions for the dashboard component
- * Includes functions for records, patients, and sessions
- */
-
 // Base API URL
 const API_BASE_URL = 'http://localhost:8080/api';
 
