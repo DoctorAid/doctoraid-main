@@ -1,7 +1,18 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { 
+  View, 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  StyleSheet, 
+  SafeAreaView, 
+  ScrollView, 
+  Animated, 
+  Dimensions,
+  KeyboardAvoidingView,
+  Platform
+} from 'react-native';
 import { useRouter } from 'expo-router';
-// Import Ionicons from Expo vector icons instead of Lucide
 import { Ionicons } from '@expo/vector-icons';
 
 const Scene03 = () => {
@@ -18,6 +29,23 @@ const Scene03 = () => {
     height: ''
   });
 
+  // Screen dimensions
+  const { width, height } = Dimensions.get('window');
+  
+  // Animation values
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const formSlideAnim = useRef(new Animated.Value(height)).current;
+
+  // Start with form sliding up animation on component mount
+  useEffect(() => {
+    Animated.spring(formSlideAnim, {
+      toValue: 0,
+      tension: 45,
+      friction: 10,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
   const handleChange = (name, value) => {
     setFormData({
       ...formData,
@@ -25,24 +53,59 @@ const Scene03 = () => {
     });
   };
 
+  const animateStepTransition = (nextStep) => {
+    // Slide out current step
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start(() => {
+      // Change step
+      setStep(nextStep);
+      // Slide in next step
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 250,
+        useNativeDriver: true,
+      }).start();
+    });
+  };
+
   const handleNext = () => {
-    setStep(2);
+    animateStepTransition(2);
   };
 
   const handleBack = () => {
-    setStep(1);
+    animateStepTransition(1);
   };
 
   const goToHome = () => {
     // Submit form data if needed
     console.log('Form submitted:', formData);
     
-    // Navigate to home
-    router.replace('/(Tabs)/home');
+    // Animate the form sliding down first
+    Animated.timing(formSlideAnim, {
+      toValue: height,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      // Then fade out before navigation
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start(() => {
+        // Navigate to home
+        router.replace('/(Tabs)/home');
+      });
+    });
   };
 
+  // Calculate current form step
+  const currentFormStep = step;
+
   const renderStep1 = () => (
-    <>
+    <Animated.View style={{ opacity: fadeAnim }}>
       <View style={styles.formGroup}>
         <Text style={styles.label}>Your Name<Text style={styles.required}>*</Text></Text>
         <TextInput
@@ -94,16 +157,20 @@ const Scene03 = () => {
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
-          {/* Use Ionicons instead of Lucide */}
-          <Ionicons name="chevron-forward" size={24} color="#ffffff" />
+        <TouchableOpacity 
+          style={styles.nextButton} 
+          onPress={handleNext}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.nextButtonText}>Next</Text>
+          <Ionicons name="chevron-forward" size={20} color="#ffffff" style={styles.buttonIcon} />
         </TouchableOpacity>
       </View>
-    </>
+    </Animated.View>
   );
 
   const renderStep2 = () => (
-    <>
+    <Animated.View style={{ opacity: fadeAnim }}>
       <View style={styles.formGroup}>
         <Text style={styles.label}>Relation<Text style={styles.required}>*</Text></Text>
         <TextInput
@@ -121,6 +188,7 @@ const Scene03 = () => {
           placeholder="Enter weight"
           value={formData.weight}
           onChangeText={(text) => handleChange('weight', text)}
+          keyboardType="numeric"
         />
       </View>
 
@@ -131,49 +199,76 @@ const Scene03 = () => {
           placeholder="Enter height"
           value={formData.height}
           onChangeText={(text) => handleChange('height', text)}
+          keyboardType="numeric"
         />
       </View>
 
       <View style={styles.buttonRow}>
-        <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-          {/* Use Ionicons instead of Lucide */}
-          <Ionicons name="chevron-back" size={24} color="#5591BC" />
+        <TouchableOpacity 
+          style={styles.backButton} 
+          onPress={handleBack}
+          activeOpacity={0.8}
+        >
+          <Ionicons name="chevron-back" size={20} color="#5591BC" style={styles.buttonIconBack} />
+          <Text style={styles.backButtonText}>Back</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.doneButton} onPress={goToHome}>
-          <Text style={styles.doneButtonText}>Done</Text>
+        <TouchableOpacity 
+          style={styles.doneButton} 
+          onPress={goToHome}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.doneButtonText}>Complete</Text>
+          <Ionicons name="checkmark" size={20} color="#FFFFFF" style={styles.buttonIcon} />
         </TouchableOpacity>
       </View>
-    </>
+    </Animated.View>
   );
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollView}>
+      <View style={styles.mainContent}>
         <View style={styles.header}>
-          <Text style={styles.title}>Lets Get Started</Text>
-          <View style={styles.progressBar}>
-            <View 
-              style={[
-                styles.progressIndicator, 
-                step === 1 ? styles.activeIndicatorLeft : styles.inactiveIndicatorLeft
-              ]} 
-            />
-            <View 
-              style={[
-                styles.progressIndicator, 
-                step === 2 ? styles.activeIndicatorRight : styles.inactiveIndicatorRight
-              ]} 
-            />
-          </View>
+          <Text style={styles.title}>Let's Get Started</Text>
+          <Text style={styles.subtitle}>Complete your profile to customize your experience</Text>
         </View>
 
-        <View style={styles.formContainer}>
-          <Text style={styles.formTitle}>Tell us about you</Text>
-          <Text style={styles.formSubtitle}>You will be the primary member of the family.</Text>
+        {/* Form container with slide up animation */}
+        <KeyboardAvoidingView 
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.keyboardAvoid}
+        >
+          <Animated.View 
+            style={[
+              styles.formOuterContainer,
+              { transform: [{ translateY: formSlideAnim }] }
+            ]}
+          >
+            <View style={styles.formHandle} />
+            
+            <ScrollView contentContainerStyle={styles.scrollView}>
+              <View style={styles.formContainer}>
+                {/* Form step indicator */}
+                <View style={styles.formProgressContainer}>
+                  <View style={styles.formProgressBar}>
+                    <View 
+                      style={[
+                        styles.formProgressFill, 
+                        { width: `${(currentFormStep / 2) * 100}%` }
+                      ]} 
+                    />
+                  </View>
+                  <Text style={styles.formStepText}>Form Step {currentFormStep} of 2</Text>
+                </View>
+                
+                <Text style={styles.formTitle}>Tell us about you</Text>
+                <Text style={styles.formSubtitle}>You will be the primary member of the family.</Text>
 
-          {step === 1 ? renderStep1() : renderStep2()}
-        </View>
-      </ScrollView>
+                {currentFormStep === 1 ? renderStep1() : renderStep2()}
+              </View>
+            </ScrollView>
+          </Animated.View>
+        </KeyboardAvoidingView>
+      </View>
     </SafeAreaView>
   );
 };
@@ -183,57 +278,87 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#E6F2F8',
   },
+  mainContent: {
+    flex: 1,
+    position: 'relative',
+    paddingTop: 40, // Added padding to offset removal of the top bar
+  },
+  header: {
+    paddingVertical: 30,
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  title: {
+    fontSize: 36,
+    fontWeight: '600',
+    fontFamily: 'Raleway-SemiBold',
+    color: '#2C5C74',
+    marginBottom: 12,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#5591BC',
+    textAlign: 'center',
+    fontFamily: 'Raleway-Regular',
+  },
+  keyboardAvoid: {
+    flex: 1,
+  },
+  formOuterContainer: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    flex: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -8 },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
+    elevation: 10,
+  },
+  formHandle: {
+    width: 40,
+    height: 5,
+    backgroundColor: '#E0E0E0',
+    borderRadius: 3,
+    alignSelf: 'center',
+    marginTop: 12,
+    marginBottom: 12,
+  },
   scrollView: {
     flexGrow: 1,
     paddingBottom: 30,
   },
-  header: {
-    paddingTop: 50,
-    paddingBottom: 30,
-    alignItems: 'center',
+  formContainer: {
+    padding: 24,
+    paddingTop: 8,
   },
-  title: {
-    fontSize: 32,
-    fontWeight: '600',
-    color: '#2C5C74',
+  formProgressContainer: {
+    width: '100%',
     marginBottom: 20,
   },
-  progressBar: {
-    flexDirection: 'row',
-    width: 60,
-    height: 6,
-  },
-  progressIndicator: {
-    flex: 1,
-    height: 6,
-    borderRadius: 3,
-  },
-  activeIndicatorLeft: {
-    backgroundColor: '#2C5C74',
-    marginRight: 3,
-  },
-  inactiveIndicatorLeft: {
+  formProgressBar: {
+    width: '100%',
+    height: 4,
     backgroundColor: '#D9D9D9',
-    marginRight: 3,
+    borderRadius: 2,
+    overflow: 'hidden',
+    marginBottom: 8,
   },
-  activeIndicatorRight: {
-    backgroundColor: '#2C5C74',
-    marginLeft: 3,
+  formProgressFill: {
+    height: '100%',
+    backgroundColor: '#5591BC',
+    borderRadius: 2,
   },
-  inactiveIndicatorRight: {
-    backgroundColor: '#D9D9D9',
-    marginLeft: 3,
-  },
-  formContainer: {
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    padding: 24,
-    flex: 1,
+  formStepText: {
+    alignSelf: 'flex-end',
+    fontSize: 12,
+    color: '#5591BC',
+    fontFamily: 'Raleway-Regular',
   },
   formTitle: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: '600',
+    fontFamily: 'Raleway-SemiBold',
     color: '#2C5C74',
     marginBottom: 8,
   },
@@ -241,6 +366,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#95A7B1',
     marginBottom: 24,
+    fontFamily: 'Raleway-Regular',
   },
   formGroup: {
     marginBottom: 20,
@@ -250,67 +376,94 @@ const styles = StyleSheet.create({
     color: '#2C5C74',
     marginBottom: 8,
     fontWeight: '500',
+    fontFamily: 'Raleway-Medium',
   },
   required: {
     color: '#E74C3C',
+    marginLeft: 4,
   },
   input: {
     backgroundColor: '#F9F9F9',
-    borderRadius: 8,
+    borderRadius: 12,
     padding: 16,
     fontSize: 16,
     color: '#333',
     borderWidth: 1,
     borderColor: '#EEEEEE',
+    fontFamily: 'Raleway-Regular',
   },
   buttonContainer: {
-    alignItems: 'flex-end',
-    marginTop: 20,
+    alignItems: 'center',
+    marginTop: 24,
   },
   nextButton: {
     backgroundColor: '#5591BC',
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
+    borderRadius: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    flexDirection: 'row',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    justifyContent: 'center',
+    shadowColor: '#5591BC',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+    minWidth: 180,
+  },
+  nextButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+    fontFamily: 'Raleway-SemiBold',
+    marginRight: 6,
+  },
+  buttonIcon: {
+    marginLeft: 4,
+  },
+  buttonIconBack: {
+    marginRight: 4,
   },
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 20,
+    marginTop: 24,
   },
   backButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
     borderWidth: 1,
     borderColor: '#5591BC',
+    backgroundColor: 'rgba(85, 145, 188, 0.05)',
+    borderRadius: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backButtonText: {
+    color: '#5591BC',
+    fontSize: 16,
+    fontWeight: '600',
+    fontFamily: 'Raleway-SemiBold',
   },
   doneButton: {
     backgroundColor: '#5591BC',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    justifyContent: 'center',
+    borderRadius: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    flexDirection: 'row',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    justifyContent: 'center',
+    shadowColor: '#5591BC',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
   doneButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
+    fontFamily: 'Raleway-SemiBold',
   }
 });
 

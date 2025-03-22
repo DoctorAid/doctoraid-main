@@ -28,7 +28,7 @@ const ProfileForm = ({
                     <Text style={styles.changeImageText}>Change Picture</Text>
                 </TouchableOpacity>
             </View>
-
+            
             <Text style={styles.inputLabel}>Name *</Text>
             <TextInput
                 style={styles.input}
@@ -114,7 +114,7 @@ const ProfileForm = ({
                     <View key={index} style={styles.allergyChip}>
                         <Text style={styles.allergyText}>{allergy}</Text>
                         <TouchableOpacity onPress={() => onRemoveAllergy(index)}>
-                            <Feather name="x" size={16} color="#2C4157" />
+                            <Feather name="x" size={16} color="#295567" />
                         </TouchableOpacity>
                     </View>
                 ))}
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 10,
         fontSize: 16,
-        backgroundColor: '#F8FBFE',
+        backgroundColor: '#295567',
         marginRight: 10,
     },
     addAllergyButton: {
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
     allergyChip: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#E8F1F9',
+        backgroundColor: '#295567',
         borderRadius: 20,
         paddingVertical: 6,
         paddingHorizontal: 12,
