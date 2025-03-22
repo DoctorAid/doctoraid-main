@@ -13,7 +13,8 @@ const recordsSchema = new mongoose.Schema({
         required: true
     },
       familyId: {
-        type: String, 
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Family',
         required: true
     },
     date: {
