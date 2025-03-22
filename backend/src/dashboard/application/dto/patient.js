@@ -9,8 +9,7 @@ import Session from "../../../infrastructure/schema/sessions_schema.js";
 export const createPatients = async (req, res) => {
     try {
         const {
-            firstName,
-            lastName,
+            name,
             dateOfBirth,
             gender,
             contactNumber,
@@ -18,12 +17,14 @@ export const createPatients = async (req, res) => {
             address,
             weight,
             height,
+            bloodGroup,
+            allergies,
             relation,
             clerkId
         } = req.body;
        
         // Validate required fields
-        if (!firstName || !lastName || !dateOfBirth || !gender || !contactNumber || !email || !weight || !height || !relation) {
+        if ( !name || !dateOfBirth || !gender || !contactNumber || !email || !weight || !bloodGroup || !allergies || !height || !relation) {
             return res.status(400).json({ message: "All required fields must be provided." });
         }
        
@@ -45,7 +46,7 @@ export const createPatients = async (req, res) => {
         }
        
         // Validate relation
-        const validRelations = ['Father', 'Mother', 'Son', 'Daughter', 'Husband', 'Wife', 'Sibling', 'Other'];
+        const validRelations = ['Father', 'Mother', 'Son', 'Daughter', 'Husband', 'Wife', 'Grandfather', 'Grandmother'];
         if (!validRelations.includes(relation)) {
             return res.status(400).json({ message: "Invalid relation value." });
         }
@@ -66,11 +67,9 @@ export const createPatients = async (req, res) => {
         
         // Create new patient with the family reference
         const newPatient = new Patient({
-            firstName,
-            lastName,
+            name,
             dateOfBirth,
             gender,
-            // doctors: [],
             contactNumber,
             email: email.toLowerCase(),
             address: {
@@ -80,6 +79,8 @@ export const createPatients = async (req, res) => {
             },
             weight,
             height,
+            bloodGroup,
+            allergies,
             relation,
             familyId: formattedFamilyId,
         });
@@ -121,8 +122,7 @@ export const createPatients = async (req, res) => {
 export const addPatient = async (req, res) => {
     try {
         const {
-            firstName,
-            lastName,
+            name,
             dateOfBirth,
             gender,
             contactNumber,
@@ -130,12 +130,14 @@ export const addPatient = async (req, res) => {
             address,
             weight,
             height,
+            bloodGroup,
+            allergies,
             relation,
             familyId
         } = req.body;
        
         // Validate required fields
-        if (!firstName || !lastName || !dateOfBirth || !gender || !contactNumber || !email || !weight || !height || !relation || !familyId) {
+        if (! name || !dateOfBirth || !gender || !contactNumber || !email || !weight || !bloodGroup || !allergies || !height || !relation || !familyId) {
             return res.status(400).json({ message: "All required fields must be provided." });
         }
        
@@ -157,7 +159,7 @@ export const addPatient = async (req, res) => {
         }
        
         // Validate relation
-        const validRelations = ['Father', 'Mother', 'Son', 'Daughter', 'Husband', 'Wife', 'Sibling', 'Other'];
+        const validRelations = ['Father', 'Mother', 'Son', 'Daughter', 'Husband', 'Wife', 'Grandfather', 'Grandmother'];
         if (!validRelations.includes(relation)) {
             return res.status(400).json({ message: "Invalid relation value." });
         }
@@ -183,6 +185,8 @@ export const addPatient = async (req, res) => {
             },
             weight,
             height,
+            bloodGroup,
+            allergies,
             relation,
             familyId
         });
