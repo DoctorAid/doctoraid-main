@@ -10,10 +10,13 @@ import {
   Animated, 
   Dimensions,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  Modal,
+  FlatList
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const Scene03 = () => {
   const router = useRouter();
@@ -26,8 +29,18 @@ const Scene03 = () => {
     city: '',
     relation: '',
     weight: '',
-    height: ''
+    height: '',
+    birthday: new Date()
   });
+
+  // Dropdown state
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+  const relations = ["Father", "Mother", "Son", "Daughter", "Grandmother", "Grandfather"];
+  
+  // Date picker state
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  // Adding tempDate to store selected date temporarily before confirming on iOS
+  const [tempDate, setTempDate] = useState(new Date());
 
   // Screen dimensions
   const { width, height } = Dimensions.get('window');
@@ -98,6 +111,52 @@ const Scene03 = () => {
         // Navigate to home
         router.replace('/(Tabs)/home');
       });
+    });
+  };
+
+  // Handle relation selection from dropdown
+  const selectRelation = (relation) => {
+    handleChange('relation', relation);
+    setDropdownVisible(false);
+  };
+
+  // Handle opening date picker
+  const openDatePicker = () => {
+    // Initialize tempDate with current birthday value
+    setTempDate(formData.birthday);
+    setShowDatePicker(true);
+  };
+
+  // Handle date change
+  const onDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || formData.birthday;
+    
+    if (Platform.OS === 'android') {
+      setShowDatePicker(false);
+      handleChange('birthday', currentDate);
+    } else {
+      // For iOS, just update the tempDate
+      setTempDate(currentDate);
+    }
+  };
+
+  // Confirm date selection on iOS
+  const confirmIOSDate = () => {
+    handleChange('birthday', tempDate);
+    setShowDatePicker(false);
+  };
+
+  // Cancel date selection on iOS
+  const cancelIOSDate = () => {
+    setShowDatePicker(false);
+  };
+
+  // Format the date for display
+  const formatDate = (date) => {
+    return date.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
     });
   };
 
@@ -173,12 +232,67 @@ const Scene03 = () => {
     <Animated.View style={{ opacity: fadeAnim }}>
       <View style={styles.formGroup}>
         <Text style={styles.label}>Relation<Text style={styles.required}>*</Text></Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Mother / Father etc"
-          value={formData.relation}
-          onChangeText={(text) => handleChange('relation', text)}
-        />
+        <TouchableOpacity 
+          style={[styles.input, styles.dropdownButton]} 
+          onPress={() => setDropdownVisible(true)}
+        >
+          <Text style={formData.relation ? styles.dropdownSelectedText : styles.dropdownPlaceholder}>
+            {formData.relation || "Select Relation"}
+          </Text>
+          <Ionicons name="chevron-down" size={18} color="#95A7B1" />
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.formGroup}>
+        <Text style={styles.label}>Birthday<Text style={styles.required}>*</Text></Text>
+        <TouchableOpacity 
+          style={[styles.input, styles.dropdownButton]} 
+          onPress={openDatePicker}
+        >
+          <Text style={styles.dropdownSelectedText}>
+            {formatDate(formData.birthday)}
+          </Text>
+          <Ionicons name="calendar-outline" size={18} color="#95A7B1" />
+        </TouchableOpacity>
+        
+        {/* Render date picker based on platform */}
+        {showDatePicker && (
+          Platform.OS === 'ios' ? (
+            <Modal
+              transparent={true}
+              animationType="slide"
+              visible={showDatePicker}
+            >
+              <View style={styles.datePickerModalContainer}>
+                <View style={styles.datePickerContainer}>
+                  <View style={styles.datePickerHeader}>
+                    <TouchableOpacity onPress={cancelIOSDate}>
+                      <Text style={styles.datePickerCancel}>Cancel</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={confirmIOSDate}>
+                      <Text style={styles.datePickerDone}>Done</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <DateTimePicker
+                    value={tempDate}
+                    mode="date"
+                    display="spinner"
+                    onChange={onDateChange}
+                    style={styles.iosDatePicker}
+                    textColor="#2C5C74"
+                  />
+                </View>
+              </View>
+            </Modal>
+          ) : (
+            <DateTimePicker
+              value={formData.birthday}
+              mode="date"
+              display="default"
+              onChange={onDateChange}
+            />
+          )
+        )}
       </View>
 
       <View style={styles.formGroup}>
@@ -222,6 +336,41 @@ const Scene03 = () => {
         </TouchableOpacity>
       </View>
     </Animated.View>
+  );
+
+  // Dropdown modal
+  const renderDropdownModal = () => (
+    <Modal
+      visible={dropdownVisible}
+      transparent={true}
+      animationType="fade"
+      onRequestClose={() => setDropdownVisible(false)}
+    >
+      <TouchableOpacity 
+        style={styles.modalOverlay} 
+        activeOpacity={1}
+        onPress={() => setDropdownVisible(false)}
+      >
+        <View style={styles.dropdownModalContainer}>
+          <View style={styles.dropdownModal}>
+            <Text style={styles.dropdownModalTitle}>Select Relation</Text>
+            <FlatList
+              data={relations}
+              keyExtractor={(item) => item}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.dropdownItem}
+                  onPress={() => selectRelation(item)}
+                >
+                  <Text style={styles.dropdownItemText}>{item}</Text>
+                </TouchableOpacity>
+              )}
+              ItemSeparatorComponent={() => <View style={styles.dropdownSeparator} />}
+            />
+          </View>
+        </View>
+      </TouchableOpacity>
+    </Modal>
   );
 
   return (
@@ -269,6 +418,9 @@ const Scene03 = () => {
           </Animated.View>
         </KeyboardAvoidingView>
       </View>
+      
+      {/* Render the dropdown modal */}
+      {renderDropdownModal()}
     </SafeAreaView>
   );
 };
@@ -391,6 +543,100 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#EEEEEE',
     fontFamily: 'Raleway-Regular',
+  },
+  // Dropdown styles
+  dropdownButton: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  dropdownPlaceholder: {
+    color: '#95A7B1',
+    fontSize: 16,
+    fontFamily: 'Raleway-Regular',
+  },
+  dropdownSelectedText: {
+    color: '#333',
+    fontSize: 16,
+    fontFamily: 'Raleway-Regular',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dropdownModalContainer: {
+    width: '80%',
+    maxHeight: '50%',
+    backgroundColor: 'white',
+    borderRadius: 12,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  dropdownModal: {
+    width: '100%',
+  },
+  dropdownModalTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#2C5C74',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EEEEEE',
+    textAlign: 'center',
+    fontFamily: 'Raleway-SemiBold',
+  },
+  dropdownItem: {
+    padding: 16,
+  },
+  dropdownItemText: {
+    fontSize: 16,
+    color: '#333',
+    fontFamily: 'Raleway-Regular',
+  },
+  dropdownSeparator: {
+    height: 1,
+    backgroundColor: '#EEEEEE',
+  },
+  // Date picker styles
+  datePickerModalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  datePickerContainer: {
+    backgroundColor: 'white',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 10,
+  },
+  datePickerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderBottomWidth: 1,
+    borderBottomColor: '#EEEEEE',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+  },
+  datePickerCancel: {
+    color: '#5591BC',
+    fontSize: 16,
+    fontFamily: 'Raleway-Medium',
+  },
+  datePickerDone: {
+    color: '#5591BC',
+    fontSize: 16,
+    fontWeight: '600',
+    fontFamily: 'Raleway-SemiBold',
+  },
+  iosDatePicker: {
+    height: 200,
+    width: '100%',
   },
   buttonContainer: {
     alignItems: 'center',
