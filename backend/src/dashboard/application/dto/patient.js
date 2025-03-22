@@ -342,56 +342,58 @@ export const getNearbyDoctors = async (req, res) => {
 export const bookSlot = async (req, res) => {
     try {
         const { slotId } = req.params;  // Get slotId from URL params
-        const { patientId, familyId, patientNote } = req.body;
+        const { patientId, patientNote } = req.body;
        
         // Validate required fields
-        if (!patientId || !familyId) {
-            return res.status(400).json({ 
+        if (!patientId) {
+            return res.status(400).json({
                 success: false,
-                message: "Patient ID and Family ID are required." 
+                message: "Patient ID is required."
             });
         }
        
-        // Validate MongoDB ObjectIds for all IDs
+        // Validate MongoDB ObjectIds
         if (!mongoose.Types.ObjectId.isValid(slotId) ||
-            !mongoose.Types.ObjectId.isValid(patientId) ||
-            !mongoose.Types.ObjectId.isValid(familyId)) {
-            return res.status(400).json({ 
+            !mongoose.Types.ObjectId.isValid(patientId)) {
+            return res.status(400).json({
                 success: false,
-                message: "Invalid ID format. All IDs must be valid MongoDB ObjectIDs." 
+                message: "Invalid ID format. All IDs must be valid MongoDB ObjectIDs."
             });
         }
        
+        // Find the slot
         const slot = await Slot.findById(slotId);
         if (!slot) {
-            return res.status(404).json({ 
+            return res.status(404).json({
                 success: false,
-                message: "Slot not found." 
+                message: "Slot not found."
             });
         }
        
+        // Check if slot is available
         if (slot.status !== 'available') {
-            return res.status(400).json({ 
+            return res.status(400).json({
                 success: false,
-                message: "This slot is already booked." 
+                message: "This slot is already booked."
             });
         }
        
-        // Find patient to get their name
+        // Find patient to get their name and family ID
         const patient = await Patient.findById(patientId);
         if (!patient) {
-            return res.status(404).json({ 
+            return res.status(404).json({
                 success: false,
-                message: "Patient not found." 
+                message: "Patient not found."
             });
         }
        
-        // Verify the family exists
-        const family = await Family.findById(familyId);
-        if (!family) {
-            return res.status(404).json({ 
+        // Get familyId from patient document
+        const familyId = patient.familyId;
+        
+        if (!familyId) {
+            return res.status(404).json({
                 success: false,
-                message: "Family not found." 
+                message: "Patient doesn't have an associated family."
             });
         }
        
@@ -401,26 +403,26 @@ export const bookSlot = async (req, res) => {
             patientId: patientId,
             familyId: familyId,
             patientNote: patientNote || '',
-            patientName: `${patient.firstName} ${patient.lastName}`
+            patientName: patient.name  // Use name directly from the patient schema
         };
-        
+       
         // Use findByIdAndUpdate to ensure all fields are updated
         const updatedSlot = await Slot.findByIdAndUpdate(
             slotId,
             updateData,
             { new: true, runValidators: true }
         );
-        
+       
         if (!updatedSlot) {
-            return res.status(500).json({ 
+            return res.status(500).json({
                 success: false,
-                message: "Failed to update slot." 
+                message: "Failed to update slot."
             });
         }
-        
+       
         // Retrieve session details for the response
         const session = await mongoose.model('Session').findById(slot.Session);
-        
+       
         return res.status(200).json({
             success: true,
             message: "Appointment booked successfully",
