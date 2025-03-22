@@ -10,9 +10,9 @@ function SignInPage() {
   const { isSignedIn } = useAuth();
   const navigate = useNavigate();
   const images = [
-    new URL("/src/assets/images/Login UI Post 01.jpg", import.meta.url).href,
-    new URL("/src/assets/images/Login UI Post 02.jpg", import.meta.url).href,
-    new URL("/src/assets/images/Login UI Post 03.jpg", import.meta.url).href,
+    new URL("/src/assets/images/webdoc.svg", import.meta.url).href,
+    new URL("/src/assets/images/webqueue.svg", import.meta.url).href,
+    new URL("/src/assets/images/webdash.svg", import.meta.url).href,
   ];
 
   const [currentImage, setCurrentImage] = useState(0);
