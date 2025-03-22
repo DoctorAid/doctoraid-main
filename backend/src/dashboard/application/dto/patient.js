@@ -12,6 +12,7 @@ export const createPatients = async (req, res) => {
             name,
             dateOfBirth,
             gender,
+            age,
             contactNumber,
             email,
             address,
@@ -24,7 +25,7 @@ export const createPatients = async (req, res) => {
         } = req.body;
        
         // Validate required fields
-        if ( !name || !dateOfBirth || !gender || !contactNumber || !email || !weight || !bloodGroup || !allergies || !height || !relation) {
+        if ( !name || !dateOfBirth || !gender || !age || !contactNumber || !email || !weight || !bloodGroup || !allergies || !height || !relation) {
             return res.status(400).json({ message: "All required fields must be provided." });
         }
        
@@ -70,6 +71,7 @@ export const createPatients = async (req, res) => {
             name,
             dateOfBirth,
             gender,
+            age,
             contactNumber,
             email: email.toLowerCase(),
             address: {
@@ -125,6 +127,7 @@ export const addPatient = async (req, res) => {
             name,
             dateOfBirth,
             gender,
+            age,
             contactNumber,
             email,
             address,
@@ -137,7 +140,7 @@ export const addPatient = async (req, res) => {
         } = req.body;
        
         // Validate required fields
-        if (! name || !dateOfBirth || !gender || !contactNumber || !email || !weight || !bloodGroup || !allergies || !height || !relation || !familyId) {
+        if (! name || !dateOfBirth || !gender ||!age || !contactNumber || !email || !weight || !bloodGroup || !allergies || !height || !relation || !familyId) {
             return res.status(400).json({ message: "All required fields must be provided." });
         }
        
@@ -176,6 +179,7 @@ export const addPatient = async (req, res) => {
             lastName,
             dateOfBirth,
             gender,
+            age,
             contactNumber,
             email: email.toLowerCase(),
             address: {
