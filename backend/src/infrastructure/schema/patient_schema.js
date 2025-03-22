@@ -49,6 +49,14 @@ const patientsSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    bloodGroup: {
+        type: String,
+        required: true
+    },
+    allergies: {
+        type: String,
+        required: true
+    },
     relation: {
         type: String,
         enum: ['Father', 'Mother', 'Son', 'Daughter', 'Husband', 'Wife', 'Sibling', 'Other'],
