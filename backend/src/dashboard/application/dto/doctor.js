@@ -96,12 +96,20 @@ export const deleteDoctorDetails = async (req, res) => {
 export const getSessionsByDoctor = async (req, res) => {
     try {
         const { id: doctorId } = req.params;
-        console.log(doctorId);
+        
         if (!doctorId) {
             return res.status(400).json({ message: 'Doctor ID is required' });
         }
 
-        const sessions = await Session.find({ doctorId: doctorId });
+        const doctor = await Doctor.findOne({doctorId : doctorId});
+      
+        if (!doctor) {
+            return res.status(404).json({ message: 'Doctor not found' });
+        }
+
+        const mongoId = doctor._id;
+
+        const sessions = await Session.find({ doctorId: mongoId });
         if (!sessions || sessions.length === 0) {
             return res.status(404).json({ message: 'No sessions found for this doctor' });
         }
