@@ -12,11 +12,18 @@ function PatientListComponent({ patients }) {
 
   // Get avatar initials from name if not provided
   const getInitials = (name) => {
+    if (!name) return "";
+    
     return name
       .split(" ")
       .map((part) => part[0])
       .join("")
       .toUpperCase();
+  };
+
+  // Get initials from first name and last name
+  const getInitialsFromNames = (firstName, lastName) => {
+    return (firstName ? firstName[0] : "") + (lastName ? lastName[0] : "");
   };
 
   // Get initial colors based on name
@@ -52,7 +59,12 @@ function PatientListComponent({ patients }) {
       <div className="max-h-[330px] overflow-y-auto p-4 space-y-4">
         {sessionPatients.length > 0 ? (
           sessionPatients.map((patient, index) => {
-            const patientInitials = patient.initials || getInitials(patient.name);
+            // Handle different property naming from the API
+            const name = patient.name || (patient.firstName && patient.lastName ? `${patient.firstName} ${patient.lastName}` : "Unknown");
+            const patientInitials = patient.initials || 
+                                    (patient.name ? getInitials(patient.name) : 
+                                    (patient.firstName && patient.lastName ? getInitialsFromNames(patient.firstName, patient.lastName) : "??"));
+            
             return (
               <div key={index} className="flex justify-between items-center px-4 py-3 rounded-xl">
                 <div className="flex items-center">
@@ -60,12 +72,12 @@ function PatientListComponent({ patients }) {
                     {patientInitials}
                   </div>
                   <div className="ml-4">
-                    <h3 className="font-medium">{patient.name}</h3>
-                    <p className="text-sm text-blue-600">{patient.code || patient.patientId}</p>
+                    <h3 className="font-medium">{name}</h3>
+                    <p className="text-sm text-blue-600">{patient.code || patient.patientId || patient._id}</p>
                   </div>
                 </div>
                 <div className="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm font-medium">
-                  {patient.time}
+                  {patient.time || patient.contactNumber || "N/A"}
                 </div>
               </div>
             );

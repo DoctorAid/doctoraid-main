@@ -47,7 +47,7 @@ function DashboardPage() {
   console.log("clerkId is:", clerkId);
 
   // Use the known active session ID
-  const activeSessionId = "67dc39fb2e1614dc3bce9f6c";
+  const activeSessionId = "67de8e3da59adc9e14b1a348";
   const [selectedSession, setSelectedSession] = useState({_id: activeSessionId});
 
   // Socket connection
@@ -123,10 +123,16 @@ function DashboardPage() {
       console.log("Fetching waiting list for session:", activeSessionId);
       const waitingListData = await getSessionWaitingList(activeSessionId);
       console.log("Waiting list fetched:", waitingListData);
-      setWaitingList(waitingListData || []);
+      
+      // Extract the patients array from the nested response
+      const patients = waitingListData && waitingListData.data && waitingListData.data.patients 
+        ? waitingListData.data.patients 
+        : [];
+        
+      setWaitingList(patients);
       
       // Select first patient if available
-      if (waitingListData && waitingListData.length > 0) {
+      if (patients.length > 0) {
         setCurrentPatientIndex(0);
       }
     } catch (error) {
@@ -144,7 +150,13 @@ function DashboardPage() {
       console.log("Fetching patient list for session:", activeSessionId);
       const patientListData = await getSessionPatientList(activeSessionId);
       console.log("Patient list fetched:", patientListData);
-      setPatientList(patientListData || []);
+      
+      // Extract the patients array from the nested response
+      const patients = patientListData && patientListData.data && patientListData.data.patients 
+        ? patientListData.data.patients 
+        : [];
+        
+      setPatientList(patients);
     } catch (error) {
       console.error('Error fetching patient list:', error);
       setPatientList([]);
@@ -161,7 +173,10 @@ function DashboardPage() {
       setLoading(true);
       const details = await getPatientDetails(patientId);
       console.log("Patient details fetched:", details);
-      setPatientDetails(details);
+      
+      // Check if response has a data property
+      const patientDetails = details && details.data ? details.data : details;
+      setPatientDetails(patientDetails);
     } catch (error) {
       console.error('Error fetching patient details:', error);
       setPatientDetails(null);
@@ -178,7 +193,10 @@ function DashboardPage() {
       setLoading(true);
       const records = await getRecordsByPatientAndDoctor(patientId, doctorId);
       console.log("Patient records fetched:", records);
-      setPatientRecords(records || []);
+      
+      // Check if response has a data property
+      const patientRecords = records && records.data ? records.data : records;
+      setPatientRecords(patientRecords || []);
       
       // Reset history index
       setCurrentHistoryIndex(0);
@@ -381,12 +399,14 @@ function DashboardPage() {
                   onClick={() => setCurrentPatientIndex(index)}
                 >
                   <div className="flex items-center justify-center w-12 h-12 bg-blue-200 rounded-full text-lg font-bold text-blue-600">
-                    {patient.name.charAt(0)}
+                    {patient.name ? patient.name.charAt(0) : (patient.firstName ? patient.firstName.charAt(0) : '?')}
                   </div>
                   <div className="ml-4">
-                    <h3 className="text-gray-800 font-semibold text-lg">{patient.name}</h3>
+                    <h3 className="text-gray-800 font-semibold text-lg">
+                      {patient.name || (patient.firstName && patient.lastName ? `${patient.firstName} ${patient.lastName}` : 'Unknown')}
+                    </h3>
                     <p className="text-gray-500 text-sm">
-                      {patient.date} <span className="mx-2">|</span> {patient.time}
+                      {patient.date} <span className="mx-2">|</span> {patient.time || patient.contactNumber}
                     </p>
                   </div>
                 </div>
@@ -417,21 +437,24 @@ function DashboardPage() {
                       {/* Patient Avatar */}
                       <div className="h-16 w-16 flex items-center justify-center bg-blue-100 text-blue-600 text-xl font-bold rounded-full border border-blue-300">
                         {currentPatient.name
-                          .split(" ")
-                          .map((part) => part[0])
-                          .join("")
-                          .toUpperCase()}
+                          ? currentPatient.name.split(" ").map((part) => part[0]).join("").toUpperCase()
+                          : (currentPatient.firstName
+                              ? currentPatient.firstName.charAt(0).toUpperCase() + (currentPatient.lastName ? currentPatient.lastName.charAt(0).toUpperCase() : '')
+                              : '?')}
                       </div>
                       <div className="ml-4">
-                        <p className="text-lg font-bold">{currentPatient.name}</p>
-                        <p className="text-gray-500">Patient ID - {currentPatient.patientId}</p>
+                        <p className="text-lg font-bold">
+                          {currentPatient.name || (currentPatient.firstName && currentPatient.lastName ? `${currentPatient.firstName} ${currentPatient.lastName}` : 'Unknown')}
+                        </p>
+                        <p className="text-gray-500">Patient ID - {currentPatient.patientId || currentPatient._id}</p>
                       </div>
                     </div>
 
                     <div className="mt-4 text-gray-700">
-                      <p><strong>Sex:</strong> {currentPatient.sex}</p>
-                      <p><strong>Age:</strong> {currentPatient.age}</p>
-                      <p><strong>Blood:</strong> {currentPatient.bloodType}</p>
+                      <p><strong>Sex:</strong> {currentPatient.sex || 'Not specified'}</p>
+                      <p><strong>Age:</strong> {currentPatient.age || 'Not specified'}</p>
+                      <p><strong>Blood:</strong> {currentPatient.bloodType || 'Not specified'}</p>
+                      <p><strong>Contact:</strong> {currentPatient.contactNumber || 'Not specified'}</p>
                       <p><strong>Allergies:</strong></p>
                       <ul className="list-disc pl-5">
                         {currentPatient.allergies && currentPatient.allergies.length > 0 ? (
@@ -447,7 +470,7 @@ function DashboardPage() {
                     <hr className="my-4" />
 
                     <h3 className="font-semibold">Added Complaints</h3>
-                    <p className="text-gray-600">{currentPatient.addedComplaints}</p>
+                    <p className="text-gray-600">{currentPatient.addedComplaints || 'No complaints recorded'}</p>
                   </div>
 
                   {/* Right: Consultation History */}
@@ -458,24 +481,26 @@ function DashboardPage() {
                         {currentHistory && (
                           <>
                             <p>
-                              <strong>Last Checked:</strong> {currentHistory.lastChecked || currentHistory.date} 
+                              <strong>Last Checked:</strong> {currentHistory.lastChecked || currentHistory.date || 'Not recorded'} 
                               <a href="#" className="text-blue-600 underline ml-2">
-                                #{currentHistory.prescriptionId || currentHistory._id}
+                                #{currentHistory.prescriptionId || currentHistory._id || 'N/A'}
                               </a>
                             </p>
-                            <p><strong>Observation:</strong> {currentHistory.observation}</p>
+                            <p><strong>Observation:</strong> {currentHistory.observation || 'None'}</p>
                             <p><strong>Prescription:</strong></p>
                             <ul className="list-disc pl-5">
                               {currentHistory.prescriptions 
                                 ? currentHistory.prescriptions.map((prescription, index) => (
                                   <li key={index}>{prescription}</li>
                                 ))
-                                : currentHistory.prescription && (
+                                : currentHistory.prescription ? (
                                   <li>{currentHistory.prescription}</li>
+                                ) : (
+                                  <li>No prescriptions</li>
                                 )
                               }
                             </ul>
-                            <p><strong>Note:</strong> {currentHistory.note}</p>
+                            <p><strong>Note:</strong> {currentHistory.note || 'None'}</p>
                           </>
                         )}
                         
