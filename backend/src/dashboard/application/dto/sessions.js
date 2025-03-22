@@ -177,35 +177,34 @@ export const getPatientList = async (req, res) => {
 export const getWaitingList = async (req, res) => {
     try {
         const { sessionId } = req.params;
-        
+       
         // Validate if sessionId is a valid MongoDB ObjectId
         if (!sessionId.match(/^[0-9a-fA-F]{24}$/)) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Invalid session ID format' 
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid session ID format'
             });
         }
-
+        
         // Find the session to get the pin
         const session = await Session.findById(sessionId);
-        
+       
         if (!session) {
             return res.status(404).json({
                 success: false,
                 message: 'Session not found'
             });
         }
-
+        
         // Find booked slots for the given session that have been activated
-        // Assumption: slot is activated when patient enters the pin
-        const waitingPatients = await Slot.find({
+        const waitingSlots = await Slot.find({
             Session: sessionId,
             status: 'booked',
             activated: true,
             patientId: { $ne: null }
         });
-
-        if (waitingPatients.length === 0) {
+        
+        if (waitingSlots.length === 0) {
             return res.status(200).json({
                 success: true,
                 message: 'No patients in the waiting list',
@@ -215,24 +214,34 @@ export const getWaitingList = async (req, res) => {
                 }
             });
         }
-
-        // Extract patient IDs from waiting slots
-        const patientIds = waitingPatients.map(slot => slot.patientId);
         
-        // Find patient details
-        const patients = await Patient.find({
-            _id: { $in: patientIds }
-        }).select('_id firstName lastName email contactNumber');
-
+        // Create an array to store patient data with appointment time
+        const waitingPatients = [];
+        
+        // For each slot, find the patient and add relevant data
+        for (const slot of waitingSlots) {
+            const patient = await Patient.findById(slot.patientId)
+                .select('_id name email contactNumber');
+            
+            if (patient) {
+                waitingPatients.push({
+                    _id: patient._id,
+                    name: patient.name, // Using the name field from updated schema
+                    email: patient.email,
+                    contactNumber: patient.contactNumber,
+                    appointmentTime: slot.startTime // Adding the appointment time
+                });
+            }
+        }
+        
         return res.status(200).json({
             success: true,
             message: 'Waiting list retrieved successfully',
             data: {
-                waitingCount: patients.length,
-                patients: patients
+                waitingCount: waitingPatients.length,
+                patients: waitingPatients
             }
         });
-
     } catch (error) {
         console.error('Error in getWaitingList:', error);
         return res.status(500).json({
