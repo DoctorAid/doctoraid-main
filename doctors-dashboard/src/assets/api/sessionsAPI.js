@@ -2,7 +2,7 @@ export const getSessionsByDocId = async (id) => {
     //const token = await window.Clerk?.session?.getToken();
     console.log("getSessionsByDocId API called");
   
-    const res = await fetch(`http://localhost:5000/api/sessions/get/${id}`, {
+    const res = await fetch(`http://localhost:8080/api/sessions/get/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -17,7 +17,7 @@ export const getAllSessions = async () => {
   //const token = await window.Clerk?.session?.getToken();
   console.log("getAllSessions API called"); // Debugging log  
 
-  const res = await fetch("http://localhost:5000/api/sessions/get", {
+  const res = await fetch("http://localhost:8080/api/sessions/get", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -41,7 +41,7 @@ export const getPatientsList = async () => {
   console.log("getPatientsList API called"); 
   
   // Make a GET request to the patients list endpoint
-  const res = await fetch("http://localhost:5000/api/sessions/patientslist", {
+  const res = await fetch("http://localhost:8080/api/sessions/patientslist", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -70,7 +70,7 @@ export const getWaitingList = async () => {
   console.log("getWaitingList API called");
   
   // Make a GET request to the waiting list endpoint
-  const res = await fetch("http://localhost:5000/api/sessions/waitinglist", {
+  const res = await fetch("http://localhost:8080/api/sessions/waitinglist", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

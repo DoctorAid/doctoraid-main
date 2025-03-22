@@ -8,7 +8,7 @@ import {
 
 const sessionsRouter = express.Router();
 
-sessionsRouter.get('/get:doctorId', getSessionsByDocId);
+sessionsRouter.get('/get/:doctorId', getSessionsByDocId);
 sessionsRouter.get('/:sessionId/waitingList', getWaitingList);
 sessionsRouter.get('/:sessionId/patientList', getPatientList);
 

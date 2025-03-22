@@ -15,6 +15,10 @@ const sessionsSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    event: {
+        type: String,
+        required: true
+    },
     pin: {
         type: String,
         required: true

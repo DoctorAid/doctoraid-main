@@ -37,6 +37,7 @@ function DashboardPage() {
   const [bookedSlots, setBookedSlots] = useState([]);
   const [selectedSession, setSelectedSession] = useState(null);
   
+  
 
 
   // // Store the selected session in localStorage whenever it changes
@@ -52,7 +53,7 @@ function DashboardPage() {
   
   // const _id = "67d8f3b6df847e7d9cbc2626";
 
-  const socket = io("http://localhost:5000", {    //Socket initialization
+  const socket = io("http://localhost:8080", {    //Socket initialization
     transports: ["websocket"],
     reconnectionAttempts: 5, // Try 5 times before stopping
     reconnectionDelay: 3000, // Wait 3s between attempts

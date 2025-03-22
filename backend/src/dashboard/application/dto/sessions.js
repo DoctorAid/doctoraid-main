@@ -5,9 +5,12 @@ import Patient from "../../../infrastructure/schema/patient_schema.js";
 
 export const getSessionsByDocId = async (req, res) => {
     try{
-        console.log(req.params);
+        
         const {doctorId} = req.params;
-        const sessions = await Session.find(doctorId);
+        const doctor = await Doctor.findOne({doctorId: doctorId});
+        const mongoId = doctor._id;
+        const sessions = await Session.find({doctorId: mongoId});
+        console.log(sessions);
         res.status(200).json(sessions);
 
     }catch(error){

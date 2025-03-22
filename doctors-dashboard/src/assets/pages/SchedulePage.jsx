@@ -6,6 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { createSlots } from '../api/slotsAPI.js';
 import { Clock, Calendar, Timer,CircleArrowRight,CircleArrowLeft } from 'lucide-react';
 import { getAllSessions} from '../api/sessionsAPI.js';
+import { getSessionsByDocId } from '../api/sessionsAPI.js';
 import { getSlotsbySessionId } from '../api/slotsAPI.js';
 import {useUser} from '@clerk/clerk-react'
 
@@ -19,7 +20,7 @@ function SchedulePage() {
   const [sessions, setSessions] = useState([]);
 
   const [currentSlots, setCurrentSlots] = useState([]);
-  const [currentSession, setCurrentSession] = useState(sessions[0]);
+  const [currentSession, setCurrentSession] = useState(null);
   const [availableSlotsCount, setAvailableSlotsCount] = useState(0);
   const [bookedSlotsCount, setBookedSlotsCount] = useState(0);
   const [daynumber, setDayNumber] = useState(0);
@@ -43,13 +44,10 @@ function SchedulePage() {
   const handleSubmit = async (e) => {
   e.preventDefault();
   
-  
-  
   setMessage('');
 
   if (!selectedDate || !startingTime || !endTime || !selectedTime) {
     setMessage('Please fill in all fields');
-    
     return;
   }
   const pin = Math.floor(1000 + Math.random() * 9999);
@@ -61,18 +59,18 @@ function SchedulePage() {
     startTime: startingTime.toTimeString().slice(0, 5),
     endTime: endTime.toTimeString().slice(0, 5),
     duration: selectedTime,
-    text: text,
+    event: text,
     pin: pin
   };
 
   console.log(formData);
 
   try {
+
     console.log(formData);
     const data = await createSlots(formData);
     console.log('Slots created:', data);
     setMessage('Slots created successfully!');
-
     setSelectedDate(null);
     setStartingTime(null);
     setEndTime(null);
@@ -86,17 +84,16 @@ function SchedulePage() {
   }
 };
 
-
 useEffect(() => {
   const fetchSessions = async () => {
     try {
       setLoading(true);
-      const sessionData = await getAllSessions();
+      const sessionData = await getSessionsByDocId(clerkId);
       console.log("Session data fetched:", sessionData);
       setSessions(sessionData);
       
       // Extract dates and create an event map with arrays of events
-      if (sessionData && sessionData.length > 0) {
+      if (sessionData && sessionData.length >= 0) {
         const dateList = sessionData.map(item => new Date(item.date));
         console.log("Date List:", dateList);
         const eventMap = sessionData.reduce((acc, item) => {
@@ -174,11 +171,8 @@ const fetchSlots = async () => {
     const slotsData = await getSlotsbySessionId(currentSession._id);
     console.log("Slots data fetched:", slotsData);
     setCurrentSlots(slotsData);
-    
   } catch (error) {
     console.error('Error fetching slots:', error);
-  } finally {
-   
   }
 };
 
@@ -195,8 +189,6 @@ useEffect(() => {
     setSlots();
   }
 }, [currentSlots, currentSession]);
-
-
 
 // function slotsInfo(){
  
@@ -218,8 +210,7 @@ useEffect(() => {
 //   setBookedSlotsCount(bookedSlotsCount.length);
   
 // }
-  
-  
+
   const handleDateChange = (date) => {
     setSelectedDate(date);
   
@@ -285,7 +276,7 @@ useEffect(() => {
 
               <div className='flex flex-col'>
                 <div className='text-4xl font-bold'>ID</div>
-                <div className="text-center text-[#6394b5] text-5xl font-bold font-['Instrument Sans']">#{"0"}</div>
+                <div className="text-center text-[#6394b5] text-5xl font-bold font-['Instrument Sans']"> #{!loading && currentSession?._id ? currentSession._id.slice(-6) : "0"}</div>
               </div>
               <CircleArrowLeft className="w-8 h-8 text-[#295567] cursor-pointer" onClick={previousSession} />
               <CircleArrowRight className="w-8 h-8 text-[#295567] cursor-pointer" onClick={nextSession} />
