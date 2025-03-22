@@ -197,8 +197,8 @@ function SchedulePage() {
   console.log("Current Session:", currentSession);
   if(loading){
     return (
-      <div className="flex text-3xl w-full items-center justify-center h-screen font-['Raleway']">
-        <div className="animate-pulse">Loading...</div>
+      <div className="flex justify-center items-center h-full w-full bg-white">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#295567]"></div>
       </div>
     )
   }
@@ -414,10 +414,17 @@ function SchedulePage() {
                     highlightDates={bookedDates}
                     inline
                     className="w-full"
+                    calendarClassName="text-xs"
+                    dayClassName={date => 
+                      date.getDate() === (selectedDate && selectedDate.getDate()) && 
+                      date.getMonth() === (selectedDate && selectedDate.getMonth())
+                        ? "bg-[#295567] text-white rounded-full"
+                        : undefined
+                    }
                   />
                 </div>
                 {selectedDate && (
-                  <p className="text-[#295567] font-medium mt-1 text-sm">
+                  <p className="text-[#295567] font-medium mt-1 text-xs text-center">
                     Selected: {selectedDate.toLocaleDateString()}
                   </p>
                 )}
