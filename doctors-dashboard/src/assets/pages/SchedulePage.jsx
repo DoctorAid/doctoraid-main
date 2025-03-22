@@ -7,6 +7,7 @@ import { createSlots } from '../api/slotsAPI.js';
 import { Clock, Calendar, Timer,CircleArrowRight,CircleArrowLeft } from 'lucide-react';
 import { getAllSessions} from '../api/sessionsAPI.js';
 import { getSlotsbySessionId } from '../api/slotsAPI.js';
+import {useUser} from '@clerk/clerk-react'
 
 function SchedulePage() {
   const [SelectedSlot, setSelectedSlot] = useState({});
@@ -30,6 +31,10 @@ function SchedulePage() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [text, setText] = useState("");
 
+  const { user } = useUser();
+  
+  const clerkId = user ? user.id : null;
+  console.log("clerkId is:", clerkId);
 
   useEffect(() => {
     console.log("Loading state changed:", loading);
@@ -50,7 +55,7 @@ function SchedulePage() {
   const pin = Math.floor(1000 + Math.random() * 9999);
   
   const formData = {
-    doctorid:"12345",
+    doctorid: clerkId,
     date: new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000))
        .toISOString().split('T')[0],
     startTime: startingTime.toTimeString().slice(0, 5),

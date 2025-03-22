@@ -13,6 +13,7 @@ import { createRecord } from '../api/recordsAPI';
 import { getSlotsbySessionId } from '../api/slotsAPI';
 import MedicinesPage from './MedicinesPage';
 
+
 function DashboardPage() {
   // State variables
   const [loading, setLoading] = useState(false);
@@ -20,20 +21,39 @@ function DashboardPage() {
   const [currentPatientIndex, setCurrentPatientIndex] = useState(0);
   const [doctorId, setDoctorId] = useState("12345"); // This would typically come from auth
   const [currentHistoryIndex, setCurrentHistoryIndex] = useState(0);
+
+  const { user } = useUser();
+  
+
+  const clerkId = user ? user.id : null;
+  console.log("clerkId is:", clerkId);
+
   const [formData, setFormData] = useState({
     observation: "",
     prescription: "",
     note: "",
   });
+  
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [limit, setLimit] = useState(10);
   const [currentSlots, setCurrentSlots] = useState([]);
   const [bookedSlots, setBookedSlots] = useState([]);
-  const [selectedSession, setSelectedSession] = useState({});
+  const [selectedSession, setSelectedSession] = useState(null);
+  
+
+
+  // // Store the selected session in localStorage whenever it changes
+  // useEffect(() => {
+  //   if (selectedSession) {
+  //     localStorage.setItem("selectedSession", JSON.stringify(selectedSession));
+  //   } else {
+  //     localStorage.removeItem("selectedSession"); // Clear if session is null
+  //   }
+  // }, [selectedSession]);
 
   // Current user information
-  const { user } = useUser();
-  const _id = "67d8f3b6df847e7d9cbc2626";
+  
+  // const _id = "67d8f3b6df847e7d9cbc2626";
 
   const socket = io("http://localhost:5000", {    //Socket initialization
     transports: ["websocket"],
@@ -44,7 +64,7 @@ function DashboardPage() {
   useEffect(() => {
     socket.on("connect", () => {
       console.log("Connected to server with ID:", socket.id);
-      socket.emit("process_request", _id);
+      socket.emit("process_request", clerkId);
     });
 
     socket.on("process_response", (response) => {

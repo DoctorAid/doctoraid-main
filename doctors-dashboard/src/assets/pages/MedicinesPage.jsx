@@ -1,6 +1,7 @@
 import React from 'react';
 import { useEffect ,useState} from "react";
 import { getSessionsByDoctor } from '../api/doctorsAPI';
+import {useUser} from "@clerk/clerk-react";
 
 const MedicinesPage = ({setSession}) => {
 
@@ -8,9 +9,16 @@ const MedicinesPage = ({setSession}) => {
   const [sessionsData, setSessionsData] = useState([]);
   const[latestSession, setLatestSession] = useState([]);
 
+  const { user } = useUser();
+  
+
+  const clerkId = user ? user.id : null;
+  console.log("clerkId is:", clerkId);
+
   const fetchSessions = async () => {
     try {
-      const data = await getSessionsByDoctor('67d8aff139afa54b845fc507');
+      const data = await getSessionsByDoctor(clerkId);
+      
       console.log("Sessions data fetched:", data);
       setSessionsData(data);
     } catch (error) {
