@@ -24,12 +24,11 @@ function DashboardPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [currentPatientIndex, setCurrentPatientIndex] = useState(0);
-  const [doctorId, setDoctorId] = useState("12345"); // This would typically come from auth
-  const [currentHistoryIndex, setCurrentHistoryIndex] = useState(0);
+  const [doctorId, setDoctorId] = useState("67d8aff139afa54b845fc507");  const [currentHistoryIndex, setCurrentHistoryIndex] = useState(0);
   const [formData, setFormData] = useState({
     observation: "",
     prescription: "",
-    note: "",
+    notes: "", // Changed from "note" to "notes" to match API expectation
   });
 
   // API data states
@@ -227,6 +226,68 @@ function DashboardPage() {
     }
   }, [waitingList, currentPatientIndex]);
 
+  // Handle record creation - UPDATED to match API requirements
+  const handleCreateRecord = async () => {
+    if (!currentPatient || !currentPatient._id) {
+      setMessage('No patient selected or invalid patient ID');
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      setMessage('');
+
+      // Get the slot ID if available (either from the patient object or from the current slot)
+      let slotId = null;
+      if (currentPatient.slotId) {
+        slotId = currentPatient.slotId;
+      } else if (bookedSlots.length > 0) {
+        // Try to find a matching slot for the current patient
+        const matchingSlot = bookedSlots.find(slot => 
+          slot.patientId === currentPatient._id
+        );
+        if (matchingSlot) {
+          slotId = matchingSlot._id;
+        }
+      }
+
+      // Prepare the record data to match the backend API requirements
+      const recordData = {
+        patientId: currentPatient._id,
+        prescription: formData.prescription,
+        observation: formData.observation,
+        notes: formData.notes, // Previously was "note"
+        date: new Date().toISOString().split('T')[0],
+        slotId: slotId
+      };
+
+      console.log('Sending record data:', recordData);
+
+      // Use the API function to create the record
+      const data = await createRecord(doctorId, recordData);
+      console.log('Record created:', data);
+      setMessage('Record created successfully!');
+
+      // Clear the form
+      setFormData({ observation: "", prescription: "", notes: "" }); // Updated from "note" to "notes"
+      
+      // Refresh patient records
+      if (currentPatient._id) {
+        fetchPatientRecords(currentPatient._id);
+      }
+      
+      // Move to next patient after saving
+      handleNextPatient();
+
+      return data;
+    } catch (error) {
+      setMessage(error.message || 'Failed to create record');
+      console.error('Error creating record:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Mock patient data to use as fallback
   const mockPatientsData = [
     {
@@ -289,47 +350,6 @@ function DashboardPage() {
   const patientsData = waitingList.length > 0 ? waitingList : mockPatientsData;
   const currentPatient = patientDetails || (patientsData.length > 0 ? patientsData[currentPatientIndex] : null);
 
-  // Handle record creation
-  const handleCreateRecord = async () => {
-    if (!currentPatient) return;
-    
-    try {
-      setLoading(true);
-      setMessage('');
-
-      // Prepare the record data
-      const recordData = {
-        ...formData,
-        doctorId: doctorId,
-        date: new Date().toISOString().split('T')[0],
-        patientId: currentPatient._id
-      };
-
-      // Use the API function to create the record
-      const data = await createRecord(doctorId, recordData);
-      console.log('Record created:', data);
-      setMessage('Record created successfully!');
-
-      // Clear the form
-      setFormData({ observation: "", prescription: "", note: "" });
-      
-      // Move to next patient after saving
-      handleNextPatient();
-
-      // Refresh patient records
-      if (currentPatient._id) {
-        fetchPatientRecords(currentPatient._id);
-      }
-
-      return data;
-    } catch (error) {
-      setMessage(error.message || 'Failed to create record');
-      console.error('Error creating record:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   // Navigation functions for patient history
   const nextHistory = () => {
     const historyLength = patientRecords.length || (currentPatient?.history?.length || 0);
@@ -349,7 +369,7 @@ function DashboardPage() {
     if (currentPatientIndex < patientsData.length - 1) {
       setCurrentPatientIndex(currentPatientIndex + 1);
       // Reset form and history index for the new patient
-      setFormData({ observation: "", prescription: "", note: "" });
+      setFormData({ observation: "", prescription: "", notes: "" }); // Updated from "note" to "notes"
       setCurrentHistoryIndex(0);
     } else {
       // If we're at the last patient, show a message
@@ -536,7 +556,7 @@ function DashboardPage() {
                               
                               <div>
                                 <p className="text-xs text-gray-500 mb-1">Note</p>
-                                <p className="text-sm">{currentHistory.note || 'None'}</p>
+                                <p className="text-sm">{currentHistory.note || currentHistory.notes || 'None'}</p>
                               </div>
                             </div>
                           </>
@@ -610,8 +630,8 @@ function DashboardPage() {
                         <label className="block text-gray-600 text-sm font-medium mb-1">Note:</label>
                         <textarea
                           className="w-full border border-gray-200 rounded-xl p-2 h-24 focus:ring-2 focus:ring-[#295567]/30 focus:outline-none transition-all duration-200"
-                          value={formData.note}
-                          onChange={(e) => setFormData({ ...formData, note: e.target.value })}
+                          value={formData.notes}
+                          onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                           placeholder="Add additional notes here"
                         />
                       </div>
