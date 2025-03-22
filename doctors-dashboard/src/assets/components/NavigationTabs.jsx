@@ -25,7 +25,7 @@ function NavigationTabs() {
           key={item.name}
           className={`flex h-11 items-center text-start pl-5 cursor-pointer transition-all duration-300 rounded-l-xl ${
             activeItem === item.name 
-              ? 'bg-[#FAFAF9] text-[#295567] font-medium shadow-sm' 
+              ? ' bg-[#FAFAF9] text-[#295567] font-medium shadow-sm' 
               : 'text-white hover:bg-white/10'
           } hover:translate-x-1`}
           onClick={() => setActiveItem(item.name)}
