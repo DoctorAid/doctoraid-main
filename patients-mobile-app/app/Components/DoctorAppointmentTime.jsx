@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const TimeSelector = () => {
+const TimeSelector = ({ onTimeSelect }) => {
   const [selectedTime, setSelectedTime] = useState('9:10 am');
 
   const times = [
@@ -11,12 +11,20 @@ const TimeSelector = () => {
     { id: 4, time: '9:30 am' },
   ];
 
+  const handleTimeSelection = (time) => {
+    setSelectedTime(time);
+    // This is the key line that was missing - call the callback function
+    if (onTimeSelect) {
+      onTimeSelect(time);
+    }
+  };
+
   return (
     <View style={styles.container}>
       {times.map(({ id, time }) => (
         <TouchableOpacity
           key={id}
-          onPress={() => setSelectedTime(time)}
+          onPress={() => handleTimeSelection(time)}
           style={[
             styles.timeBox,
             selectedTime === time && styles.selectedBox
@@ -31,6 +39,7 @@ const TimeSelector = () => {
   );
 };
 
+// Styles remain the same
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',

@@ -1,5 +1,5 @@
 
-const API_BASE_URL = "http://localhost:5000/api/doctors";
+const API_BASE_URL = "http://localhost:8080/api/doctors";
 
 /**
  * Fetches all doctor details

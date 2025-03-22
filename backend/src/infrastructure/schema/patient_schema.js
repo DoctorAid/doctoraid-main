@@ -18,6 +18,10 @@ const patientsSchema = new mongoose.Schema({
         enum: ['Male', 'Female', 'Other'],
         required: true
     },
+    age: {
+        type: Number,
+        required: true
+    },
     contactNumber: {
         type: String,
         required: true
@@ -47,6 +51,14 @@ const patientsSchema = new mongoose.Schema({
     },
     height: {
         type: Number,
+        required: true
+    },
+    bloodGroup: {
+        type: String,
+        required: true
+    },
+    allergies: {
+        type: String,
         required: true
     },
     relation: {

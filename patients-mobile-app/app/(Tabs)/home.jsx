@@ -118,7 +118,7 @@ export default function Tab() {
       <ScrollView contentContainerStyle={styles.container}>
         <WelcomeMessage />
         
-        <Animated.View style={{ opacity: fadeAnim }}>
+        <Animated.View style={{ opacity: fadeAnim, marginBottom: 15 }}>
           {currentStep === "step1" && <DoctorCardType1 onPress={handlePinSubmit} />}
           {currentStep === "step3" && <OngoingCardType1 />}
         </Animated.View>
@@ -180,6 +180,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   sectionTitle: {
+    fontFamily:"Raleway",
     paddingHorizontal: 30,
     fontSize: 20,
     fontWeight: "bold",

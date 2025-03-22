@@ -10,6 +10,7 @@ const doctorProfiles = [
     location: "Kandy",
     weekdayHours: "8:00pm - 10:00pm",
     weekendHours: "8:00pm - 10:00pm",
+    subscribed: false,
     // imageUrl: require("./assets/doctor1.png"), // Replace with actual image path
   },
   {
@@ -18,6 +19,7 @@ const doctorProfiles = [
     location: "Colombo",
     weekdayHours: "9:00am - 11:00am",
     weekendHours: "10:00am - 12:00pm",
+    subscribed: true,
     // imageUrl: require("./assets/doctor2.png"), // Replace with actual image path
   },
   {
@@ -26,6 +28,7 @@ const doctorProfiles = [
     location: "Galle",
     weekdayHours: "4:00pm - 6:00pm",
     weekendHours: "3:00pm - 5:00pm",
+    subscribed: false,
     // imageUrl: require("./assets/doctor3.png"), // Replace with actual image path
   },
 ];
@@ -34,9 +37,10 @@ const DoctorCard = ({ doctor }) => {
   const navigation = useNavigation();
   
   const handleViewAppointments = () => {
-    navigation.navigate('DoctorAppointment', { 
-      doctorId: doctor.id, 
-      doctorName: doctor.name 
+    // Navigate to AppointmentScreen component with doctor data
+    navigation.navigate('./DoctorAppointment', { 
+      doctor: doctor,
+      onBack: () => navigation.goBack()
     });
   };
   

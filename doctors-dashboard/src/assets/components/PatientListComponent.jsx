@@ -3,55 +3,56 @@ import React from "react";
 function PatientListComponent() {
   // Session patients data
   const sessionPatients = [
-    { name: "Denzel White", time: "9:00 AM", code: "200 - 01" },
-    { name: "Stacy Mitchell", time: "9:15 AM", code: "220 - 02" },
-    { name: "Amy Dunham", time: "9:30 AM", code: "254 - 02" },
-    { name: "Demi Joan", time: "9:50 AM", code: "260 - 01" },
-    { name: "Susan Myers", time: "10:15 AM", code: "240 - 03" },
+    { name: "Denzel White", time: "9:00 AM", code: "200 - 01", initials: "DW" },
+    { name: "Stacy Mitchell", time: "9:15 AM", code: "220 - 02", initials: "SM" },
+    { name: "Amy Dunham", time: "9:30 AM", code: "254 - 02", initials: "AD" },
+    { name: "Demi Joan", time: "9:50 AM", code: "260 - 01", initials: "DJ" },
+    { name: "Susan Myers", time: "10:15 AM", code: "240 - 03", initials: "SM" },
   ];
 
-  // Card height and visible cards calculation for styling
-  const cardHeight = 90; // Each card height
-  const visibleCards = 3; // Show exactly 3 cards
-  const containerHeight = cardHeight * visibleCards + 16 * (visibleCards - 1); // Includes spacing
+  // Get initial colors based on name
+  const getAvatarColor = (initials) => {
+    const colors = {
+      'DW': 'bg-[#E2F1FB] text-[#5B89A6] border-[#A7D1EF]',
+      'SM': 'bg-[#FFE2E5] text-[#FF6B81] border-[#FFBAC5]',
+      'AD': 'bg-[#E6E6FA] text-[#6A5ACD] border-[#B8B2E5]',
+      'DJ': 'bg-[#E2F1FB] text-[#5B89A6] border-[#A7D1EF]',
+    };
+    return colors[initials] || 'bg-[#FFE2E5] text-[#FF6B81] border-[#FFBAC5]';
+  };
+
+  // Calculate today's date in format similar to the image
+  const today = "Today";
 
   return (
-    <div className="h-100 rounded-[20px] bg-white shadow-md pr-2">
-      <div className="font-[500] text-[1.5rem] pl-5 pt-4 text-gray-800">
-        Session's Patient List
+    <div className="bg-white rounded-[20px] shadow-md overflow-hidden">
+      <div className="flex justify-between items-center px-5 pt-4 pb-2">
+        <h2 className="font-medium text-2xl text-gray-800">Session's Patient List</h2>
+        <div className="flex items-center">
+          <span className="text-gray-600">{today}</span>
+          <svg className="w-5 h-5 ml-1 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
       </div>
-      <div className="relative mx-auto">
-        {/* Scrollable Container */}
-        <div
-          className="overflow-y-auto space-y-4 p-4 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-200"
-          style={{ height: `${containerHeight}px` }} // Dynamic height
-        >
-          {sessionPatients.map((patient, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between p-4 rounded-2xl h-[80px] bg-white"
-            >
-              {/* Circular Avatar */}
-              <div className="flex items-center">
-                <div
-                  className="flex items-center justify-center h-12 w-12 rounded-full border-2 border-[#6A8FC7] text-black font-bold"
-                >
-                  {patient.name.split(" ").map((part) => part[0]).join("").toUpperCase()}
-                </div>
-                <div className="ml-4">
-                  <div className="text-black font-bold text-lg">{patient.name}</div>
-                  <div className="text-sm text-[#6A8FC7]">{patient.code}</div>
-                </div>
+      
+      <div className="max-h-[330px] overflow-y-auto p-4 space-y-4">
+        {sessionPatients.map((patient, index) => (
+          <div key={index} className="flex justify-between items-center px-4 py-3 rounded-xl">
+            <div className="flex items-center">
+              <div className={`flex items-center justify-center w-10 h-10 rounded-full border ${getAvatarColor(patient.initials)}`}>
+                {patient.initials}
               </div>
-              {/* Time */}
-              <div
-                className="px-3 py-1 rounded-lg text-sm font-semibold bg-[#6A8FC7] text-white"
-              >
-                {patient.time}
+              <div className="ml-4">
+                <h3 className="font-medium">{patient.name}</h3>
+                <p className="text-sm text-blue-600">{patient.code}</p>
               </div>
             </div>
-          ))}
-        </div>
+            <div className="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm font-medium">
+              {patient.time}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

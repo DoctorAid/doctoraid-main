@@ -10,7 +10,10 @@ import {
     TouchableWithoutFeedback,
     ScrollView,
     KeyboardAvoidingView,
-    Platform
+    Platform,
+    FlatList,
+    ActivityIndicator,
+    Alert
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import FormField from './FormField';
@@ -26,6 +29,17 @@ const EditProfileModal = ({ isVisible, onClose, section, profile, onSave }) => {
         }
         return Array.isArray(allergiesData) ? allergiesData : [];
     };
+
+    // Relation options
+    const relationOptions = [
+        'Father', 
+        'Mother', 
+        'Son', 
+        'Daughter', 
+        'Grandfather', 
+        'Grandmother', 
+        'Other'
+    ];
 
     // Initial form state based on section and profile data
     const initialFormState = () => {
@@ -50,6 +64,8 @@ const EditProfileModal = ({ isVisible, onClose, section, profile, onSave }) => {
     const [formData, setFormData] = useState(initialFormState());
     const [slideAnim] = useState(new Animated.Value(300));
     const [fadeAnim] = useState(new Animated.Value(0));
+    const [showRelationDropdown, setShowRelationDropdown] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Reset form data when modal opens with new section
     useEffect(() => {
@@ -91,6 +107,16 @@ const EditProfileModal = ({ isVisible, onClose, section, profile, onSave }) => {
         setFormData(prev => ({ ...prev, [key]: value }));
     };
 
+    // Relation dropdown handlers
+    const toggleRelationDropdown = () => {
+        setShowRelationDropdown(!showRelationDropdown);
+    };
+
+    const selectRelation = (relation) => {
+        handleChange('relation', relation);
+        setShowRelationDropdown(false);
+    };
+
     // Allergy handlers
     const handleAddAllergy = (allergy) => {
         setFormData(prev => ({
@@ -106,13 +132,112 @@ const EditProfileModal = ({ isVisible, onClose, section, profile, onSave }) => {
         }));
     };
 
-    const handleSave = () => {
-        onSave(section, formData);
-        onClose();
+    // Submit profile updates to backend
+    const submitProfileToBackend = async (profileData) => {
+        setIsSubmitting(true);
+        
+        try {
+            // Log the data that would be sent to the backend
+            console.log(`Submitting updated ${section} profile data to backend:`, {
+                profileId: profile.id,
+                section: section,
+                data: profileData
+            });
+            
+            // In future, you would add your API call here:
+            // const response = await fetch('your-api-endpoint/profiles/' + profile.id, {
+            //     method: 'PATCH', // or PUT depending on your API
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //         'Authorization': 'Bearer ' + yourAuthToken,
+            //     },
+            //     body: JSON.stringify({
+            //         section: section,
+            //         data: profileData
+            //     }),
+            // });
+            // const data = await response.json();
+            
+            // Simulate API delay
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Return success for now
+            return { success: true };
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            return { success: false, error: error.message };
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleSave = async () => {
+        // Validate required fields
+        if (section === 'general' && !formData.name) {
+            Alert.alert('Error', 'Name is a required field.');
+            return;
+        }
+        
+        // Submit to backend
+        const result = await submitProfileToBackend(formData);
+        
+        if (result.success) {
+            // Update local state after successful submission
+            onSave(section, formData);
+            onClose();
+            
+            // Optional: Show success message
+            // Alert.alert('Success', 'Profile updated successfully!');
+        } else {
+            // Show error message
+            Alert.alert('Error', 'Failed to update profile. Please try again.');
+        }
     };
 
     const dismissKeyboard = () => {
         Keyboard.dismiss();
+        setShowRelationDropdown(false);
+    };
+
+    // Render relation dropdown
+    const renderRelationField = () => {
+        return (
+            <View style={styles.fieldContainer}>
+                <Text style={styles.fieldLabel}>Relation</Text>
+                <TouchableOpacity 
+                    style={styles.dropdownButton}
+                    onPress={toggleRelationDropdown}
+                >
+                    <Text style={styles.dropdownButtonText}>
+                        {formData.relation || 'Select relation'}
+                    </Text>
+                    <Feather 
+                        name={showRelationDropdown ? "chevron-up" : "chevron-down"} 
+                        size={20} 
+                        color="#6B7C8F" 
+                    />
+                </TouchableOpacity>
+                
+                {showRelationDropdown && (
+                    <View style={styles.dropdownContainer}>
+                        <FlatList
+                            data={relationOptions}
+                            keyExtractor={(item) => item}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity 
+                                    style={styles.dropdownItem}
+                                    onPress={() => selectRelation(item)}
+                                >
+                                    <Text style={styles.dropdownItemText}>{item}</Text>
+                                </TouchableOpacity>
+                            )}
+                            nestedScrollEnabled={true}
+                            style={styles.dropdownList}
+                        />
+                    </View>
+                )}
+            </View>
+        );
     };
 
     // Render form fields based on section
@@ -121,7 +246,7 @@ const EditProfileModal = ({ isVisible, onClose, section, profile, onSave }) => {
             return (
                 <>
                     <FormField label="Name" value={formData.name} onChange={val => handleChange('name', val)} />
-                    <FormField label="Relation" value={formData.relation} onChange={val => handleChange('relation', val)} />
+                    {renderRelationField()}
                     <FormField label="Birth Date" value={formData.birthDate} onChange={val => handleChange('birthDate', val)} />
                     <FormField label="Age" value={formData.age} onChange={val => handleChange('age', val)} />
                     <FormField label="Weight" value={formData.weight} onChange={val => handleChange('weight', val)} />
@@ -185,11 +310,23 @@ const EditProfileModal = ({ isVisible, onClose, section, profile, onSave }) => {
                         </ScrollView>
                         
                         <View style={styles.buttonContainer}>
-                            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+                            <TouchableOpacity 
+                                style={styles.cancelButton} 
+                                onPress={onClose}
+                                disabled={isSubmitting}
+                            >
                                 <Text style={styles.cancelButtonText}>Cancel</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-                                <Text style={styles.saveButtonText}>Save</Text>
+                            <TouchableOpacity 
+                                style={[styles.saveButton, isSubmitting && styles.saveButtonDisabled]} 
+                                onPress={handleSave}
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting ? (
+                                    <ActivityIndicator size="small" color="#FFFFFF" />
+                                ) : (
+                                    <Text style={styles.saveButtonText}>Save</Text>
+                                )}
                             </TouchableOpacity>
                         </View>
                     </Animated.View>
@@ -279,12 +416,69 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.3,
         shadowRadius: 5,
         elevation: 3,
+        minWidth: 100,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    saveButtonDisabled: {
+        backgroundColor: '#A0AEC0',
+        shadowOpacity: 0.1,
     },
     saveButtonText: {
         fontSize: 16,
         color: '#FFFFFF',
         fontWeight: '600',
-    }
+    },
+    // New styles for dropdown
+    fieldContainer: {
+        marginBottom: 15,
+    },
+    fieldLabel: {
+        fontSize: 16,
+        color: '#2C4157',
+        marginBottom: 8,
+        fontWeight: '500',
+    },
+    dropdownButton: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#E8F1F9',
+        borderRadius: 10,
+        padding: 15,
+        backgroundColor: '#F9FBFD',
+    },
+    dropdownButtonText: {
+        fontSize: 16,
+        color: '#6B7C8F',
+    },
+    dropdownContainer: {
+        marginTop: 5,
+        borderWidth: 1,
+        borderColor: '#E8F1F9',
+        borderRadius: 10,
+        backgroundColor: '#FFFFFF',
+        zIndex: 1000,
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+    },
+    dropdownList: {
+        maxHeight: 200,
+    },
+    dropdownItem: {
+        paddingVertical: 12,
+        paddingHorizontal: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: '#F0F6FD',
+    },
+    dropdownItemText: {
+        fontSize: 16,
+        color: '#2C4157',
+    },
 });
 
 export default EditProfileModal;
