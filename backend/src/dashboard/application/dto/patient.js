@@ -363,7 +363,6 @@ export const bookSlot = async (req, res) => {
             });
         }
        
-        // Find the slot
         const slot = await Slot.findById(slotId);
         if (!slot) {
             return res.status(404).json({ 
@@ -372,7 +371,6 @@ export const bookSlot = async (req, res) => {
             });
         }
        
-        // Check if slot is available
         if (slot.status !== 'available') {
             return res.status(400).json({ 
                 success: false,
