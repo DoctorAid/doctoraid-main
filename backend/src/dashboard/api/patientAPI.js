@@ -13,11 +13,13 @@ import {
     getSubscribedDoctors,
     getAllBookings,
     enterPin
+    // getDetails
 } from '../application/dto/patient.js';
 
 const patientRouter = express.Router();
 
 patientRouter.post('/create', createPatients); //creating patients
+// patientRouter.get('/get/details/:id', getDetails);  //getting patient details
 patientRouter.post('/add', addPatient); //adding patients
 patientRouter.put('/update/:id', updatePatient); //updating patients
 patientRouter.get('/nearby-doctors/:id', getNearbyDoctors); //getting nearby doctors
