@@ -103,22 +103,22 @@ export const getActiveSlotsBySession = async (req, res) => {
 export const getPatientList = async (req, res) => {
     try {
         const { sessionId } = req.params;
-        
+       
         // Validate if sessionId is a valid MongoDB ObjectId
         if (!sessionId.match(/^[0-9a-fA-F]{24}$/)) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Invalid session ID format' 
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid session ID format'
             });
         }
-
+        
         // Find booked slots for the given session
         const bookedSlots = await Slot.find({
             Session: sessionId,
             status: 'booked',
             patientId: { $ne: null } // Ensure patient ID exists
         });
-
+        
         if (bookedSlots.length === 0) {
             return res.status(200).json({
                 success: true,
@@ -129,24 +129,41 @@ export const getPatientList = async (req, res) => {
                 }
             });
         }
-
+        
         // Extract patient IDs from booked slots
         const patientIds = bookedSlots.map(slot => slot.patientId);
-        
+       
         // Find patient details
         const patients = await Patient.find({
             _id: { $in: patientIds }
-        }).select('_id firstName lastName email contactNumber');
-
+        }).select('_id name email contactNumber');
+        
+        // Combine patient data with slot data (time)
+        const combinedPatientData = patients.map(patient => {
+            // Find the slot for this patient
+            const matchingSlot = bookedSlots.find(slot => 
+                slot.patientId.toString() === patient._id.toString()
+            );
+            
+            return {
+                _id: patient._id,
+                patientName: patient.name, // Use the actual name from patient document
+                patientId: patient._id,
+                email: patient.email,
+                contactNumber: patient.contactNumber,
+                startTime: matchingSlot ? matchingSlot.startTime : 'N/A',
+                endTime: matchingSlot ? matchingSlot.endTime : 'N/A'
+            };
+        });
+        
         return res.status(200).json({
             success: true,
             message: 'Patient list retrieved successfully',
             data: {
-                patientCount: patients.length,
-                patients: patients
+                patientCount: combinedPatientData.length,
+                patients: combinedPatientData
             }
         });
-
     } catch (error) {
         console.error('Error in getPatientList:', error);
         return res.status(500).json({
@@ -156,6 +173,7 @@ export const getPatientList = async (req, res) => {
         });
     }
 };
+
 export const getWaitingList = async (req, res) => {
     try {
         const { sessionId } = req.params;
