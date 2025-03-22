@@ -1,11 +1,6 @@
 import mongoose from 'mongoose';
 
 const familySchema = new mongoose.Schema({
-    familyId: {
-        type: String,
-        required: true,
-        // unique: true
-    },
     clerkId: {
         type: String,
         required: true,

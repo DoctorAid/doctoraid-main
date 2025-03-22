@@ -47,7 +47,7 @@ function DashboardPage() {
   console.log("clerkId is:", clerkId);
 
   // Use the known active session ID
-  const activeSessionId = "67de8e3da59adc9e14b1a348";
+  const activeSessionId = "67dc39fb2e1614dc3bce9f6c";
   const [selectedSession, setSelectedSession] = useState({_id: activeSessionId});
 
   // Socket connection

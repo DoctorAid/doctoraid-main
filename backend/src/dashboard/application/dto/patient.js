@@ -25,7 +25,7 @@ export const createPatients = async (req, res) => {
         } = req.body;
        
         // Validate required fields
-        if ( !name || !dateOfBirth || !gender || !age || !contactNumber || !email || !weight || !bloodGroup || !allergies || !height || !relation) {
+        if (!name || !dateOfBirth || !gender || !age || !contactNumber || !email || !weight || !bloodGroup || !allergies || !height || !relation) {
             return res.status(400).json({ message: "All required fields must be provided." });
         }
        
@@ -47,23 +47,18 @@ export const createPatients = async (req, res) => {
         }
        
         // Validate relation
-        const validRelations = ['Father', 'Mother', 'Son', 'Daughter', 'Husband', 'Wife', 'Grandfather', 'Grandmother'];
+        const validRelations = ['Father', 'Mother', 'Son', 'Daughter', 'Husband', 'Wife', 'Grandfather', 'Grandmother', 'Sibling', 'Other'];
         if (!validRelations.includes(relation)) {
             return res.status(400).json({ message: "Invalid relation value." });
         }
         
-        // Generate a temporary familyId before creating the Family document
-        const tempId = new mongoose.Types.ObjectId();
-        const formattedFamilyId = `FM${tempId.toString().slice(-4)}`;
-        
-        // Create a new Family document with the familyId already set
+        // Create a new Family document
         const newFamily = new Family({
-            familyId: formattedFamilyId,
             clerkId: clerkId || email.toLowerCase(), // Use email as userId if not provided
             members: [] // Empty initially
         });
         
-        // Save the family with the pre-generated familyId
+        // Save the family
         const savedFamily = await newFamily.save();
         
         // Create new patient with the family reference
@@ -84,7 +79,7 @@ export const createPatients = async (req, res) => {
             bloodGroup,
             allergies,
             relation,
-            familyId: formattedFamilyId,
+            familyId: savedFamily._id, // Use the ObjectId directly
         });
        
         // Save patient
@@ -107,10 +102,7 @@ export const createPatients = async (req, res) => {
         return res.status(201).json({
             message: "Patient and family created successfully",
             patient: savedPatient,
-            family: {
-                familyId: formattedFamilyId,
-                _id: savedFamily._id
-            }
+            family: savedFamily
         });
     } catch (error) {
         console.error('Error creating patient and family:', error);
@@ -140,7 +132,7 @@ export const addPatient = async (req, res) => {
         } = req.body;
        
         // Validate required fields
-        if (! name || !dateOfBirth || !gender ||!age || !contactNumber || !email || !weight || !bloodGroup || !allergies || !height || !relation || !familyId) {
+        if (!name || !dateOfBirth || !gender || !age || !contactNumber || !email || !weight || !bloodGroup || !allergies || !height || !relation || !familyId) {
             return res.status(400).json({ message: "All required fields must be provided." });
         }
        
@@ -162,21 +154,20 @@ export const addPatient = async (req, res) => {
         }
        
         // Validate relation
-        const validRelations = ['Father', 'Mother', 'Son', 'Daughter', 'Husband', 'Wife', 'Grandfather', 'Grandmother'];
+        const validRelations = ['Father', 'Mother', 'Son', 'Daughter', 'Husband', 'Wife', 'Grandfather', 'Grandmother', 'Sibling', 'Other'];
         if (!validRelations.includes(relation)) {
             return res.status(400).json({ message: "Invalid relation value." });
         }
-        
-        // Check if family exists with the provided familyId
-        const existingFamily = await Family.findOne({ familyId });
+       
+        // Check if family exists with the provided familyId (MongoDB ObjectId)
+        const existingFamily = await Family.findById(familyId);
         if (!existingFamily) {
             return res.status(404).json({ message: "Family not found." });
         }
-        
+       
         // Create new patient
         const newPatient = new Patient({
-            firstName,
-            lastName,
+            name,
             dateOfBirth,
             gender,
             age,
@@ -192,12 +183,12 @@ export const addPatient = async (req, res) => {
             bloodGroup,
             allergies,
             relation,
-            familyId
+            familyId // This is already the ObjectId
         });
        
         // Save patient
         const savedPatient = await newPatient.save();
-        
+       
         // Update family members array with the new patient
         await Family.findByIdAndUpdate(
             existingFamily._id,
@@ -210,7 +201,7 @@ export const addPatient = async (req, res) => {
                 }
             }
         );
-        
+       
         // Return success response
         return res.status(201).json({
             message: "Patient added successfully to existing family",
