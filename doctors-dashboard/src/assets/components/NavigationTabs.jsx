@@ -11,23 +11,23 @@ function NavigationTabs() {
   );
 
   const menuItems = [
-    { name: 'Dashboard', icon: <Layout size={18} /> },
-    { name: 'Schedule', icon: <Calendar size={18} /> },
-    { name: 'Patients', icon: <Users size={18} /> },
-    { name: 'Settings', icon: <Settings size={18} /> },
-    { name: 'Medicines', icon: <Pill size={18} /> }
+    { name: 'Dashboard', icon: <Layout size={16} /> },
+    { name: 'Schedule', icon: <Calendar size={16} /> },
+    { name: 'Patients', icon: <Users size={16} /> },
+    { name: 'Medicines', icon: <Pill size={16} /> },
+    { name: 'Settings', icon: <Settings size={16} /> }
   ];
 
   return (
-    <div className='flex flex-col gap-3 px-4'>
+    <div className='flex flex-col gap-2 px-4'>
       {menuItems.map((item, index) => (
         <Link
           key={item.name}
-          className={`flex h-12 items-center text-start pl-6 cursor-pointer transition-all duration-300 rounded-l-2xl hover:translate-x-1 ${
+          className={`flex h-11 items-center text-start pl-5 cursor-pointer transition-all duration-300 rounded-l-xl ${
             activeItem === item.name 
-              ? 'bg-[#FAFAF9] text-[#295567] font-medium shadow-md' 
+              ? 'bg-[#FAFAF9] text-[#295567] font-medium shadow-sm' 
               : 'text-white hover:bg-white/10'
-          }`}
+          } hover:translate-x-1`}
           onClick={() => setActiveItem(item.name)}
           to={`/${item.name.toLowerCase()}`}
           style={{
@@ -35,11 +35,15 @@ function NavigationTabs() {
             animationDuration: '0.5s',
             animationTimingFunction: 'ease-out',
             animationFillMode: 'both',
-            animationDelay: `${index * 0.1}s`
+            animationDelay: `${index * 0.08}s`
           }}
         >
-          <span className="mr-3">{item.icon}</span>
-          <p className="font-medium">{item.name}</p>
+          <span className={`mr-3 ${activeItem === item.name ? 'text-[#295567]' : 'text-white/90'}`}>
+            {item.icon}
+          </span>
+          <p className={activeItem === item.name ? 'font-medium' : 'font-normal'}>
+            {item.name}
+          </p>
         </Link>
       ))}
     </div>
