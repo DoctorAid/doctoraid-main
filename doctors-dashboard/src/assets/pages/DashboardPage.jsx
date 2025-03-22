@@ -4,12 +4,9 @@ import { useClerk, UserButton, useUser } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import DashboardNavigation from '../page_sections/dashboard/DashboardNavigation';
-
 import PatientListComponent from '../components/PatientListComponent';
 import SessionInfo from '../components/SessionInfo';
 import { io } from "socket.io-client";
-// import { createRecord, getRecordsByPatient, getRecordsByPatientAndDoctor } from '../api/recordsAPI.js';
-import { createRecord } from '../api/recordsAPI';
 import { getSlotsbySessionId } from '../api/slotsAPI';
 import MedicinesPage from './MedicinesPage';
 
