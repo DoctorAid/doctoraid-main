@@ -462,7 +462,7 @@ function DashboardPage() {
                         <p className="text-lg font-bold">
                           {currentPatient?.name || 'Unknown'}
                         </p>
-                        <p className="text-gray-500">Patient ID - {currentPatient?._id?.slice(-6) || '?'}</p>
+                        {/* <p className="text-gray-500">Patient ID - {currentPatient?._id?.slice(-6) || '?'}</p> */}
                       </div>
                     </div>
 
