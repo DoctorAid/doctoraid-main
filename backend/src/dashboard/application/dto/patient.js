@@ -953,3 +953,72 @@ export const getAllBookings = async (req, res) => {
     }
 };
 
+export const getDetails = async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        // Validate if id exists and is a valid ObjectId
+        if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ 
+                success: false,
+                message: "Valid patient ID is required." 
+            });
+        }
+        
+        // Find the patient by MongoDB ObjectId
+        const patient = await Patient.findById(id);
+        if (!patient) {
+            return res.status(404).json({ 
+                success: false,
+                message: "Patient not found." 
+            });
+        }
+        
+        // Find the latest appointment slot for this patient to get patient notes
+        // Sort by createdAt in descending order to get the most recent one
+        const latestSlot = await Slot.findOne({ 
+            patientId: mongoose.Types.ObjectId(id) 
+        })
+        .sort({ createdAt: -1 })
+        .populate({
+            path: 'Session',
+            select: 'date'
+        });
+        
+        // Create response with required details
+        const patientDetails = {
+            id: patient._id,
+            name: `${patient.firstName} ${patient.lastName}`,
+            gender: patient.gender,
+            age: patient.age,
+            bloodGroup: patient.bloodGroup,
+            allergies: patient.allergies,
+            patientNote: latestSlot ? latestSlot.patientNote : null,
+            // Include additional helpful fields
+            contactNumber: patient.contactNumber,
+            email: patient.email,
+            address: patient.address,
+            weight: patient.weight,
+            height: patient.height,
+            familyId: patient.familyId,
+            relation: patient.relation,
+            dateOfBirth: patient.dateOfBirth,
+            // Include last appointment date if available
+            lastAppointment: latestSlot?.Session?.date || null
+        };
+        
+        return res.status(200).json({
+            success: true,
+            message: "Patient details retrieved successfully",
+            patient: patientDetails
+        });
+        
+    } catch (error) {
+        console.error('Error retrieving patient details:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+            error: error.message
+        });
+    }
+};
