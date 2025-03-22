@@ -1,116 +1,501 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  Image, 
+  TouchableOpacity, 
+  ScrollView, 
+  SafeAreaView, 
+  Modal, 
+  Alert,
+  Animated,
+  Dimensions,
+  StatusBar
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import DateSelector from '../Components/DoctorAppoinmentDate';
-import TimeSelector from '../Components/DoctorAppointmentTime';
+import UserSwitch from './UserSwitch';
+import AppointmentNote from './AppointmentNote';
+import BookingSection from './BookingSection';
 
-export default function AppointmentScreen() {
-  const navigation = useNavigation();
-  const route = useRoute();
-  const doctor= { 
-    id: '1', 
-    name: 'Dr. Lakee Jayamanne', 
-    location: 'Kandy', 
-    subscribed: true 
-  };
-  
+const { width } = Dimensions.get('window');
+
+export default function AppointmentScreen({ doctor, onBack }) {
   const [isSubscribed, setIsSubscribed] = useState(doctor.subscribed);
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [appointmentNote, setAppointmentNote] = useState('');
+  const [bookingDetails, setBookingDetails] = useState(null);
+  
+  // Animation values
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const modalSlideAnim = useRef(new Animated.Value(300)).current;
+  const buttonScaleAnim = useRef(new Animated.Value(1)).current;
+  const actionButtonsAnim = useRef(new Animated.Value(0)).current;
+  const doctorInfoAnim = useRef(new Animated.Value(0)).current;
+  const errorFadeAnim = useRef(new Animated.Value(0)).current;
+  const scrollY = useRef(new Animated.Value(0)).current;
+  
+  // Sample family profiles
+  const familyProfiles = [
+    {
+      id: '1',
+      name: 'Nimesha Dahanayake',
+      relation: 'Daughter',
+      image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80'
+    },
+    {
+      id: '2',
+      name: 'Sakith Seneviratne',
+      relation: 'Son',
+      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80'
+    },
+    {
+      id: '3',
+      name: 'Lakmindee',
+      relation: 'Daughter',
+      image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80'
+    },
+    {
+      id: '4',
+      name: 'Sandith Thenuwara',
+      relation: 'Grand Father',
+      image: 'https://images.unsplash.com/photo-1552058544-f2b08422138a?ixlib=rb-1.2.1&auto=format&fit=crop&w=344&q=80'
+    }
+  ];
+  
+  const [selectedProfile, setSelectedProfile] = useState(familyProfiles[0]);
+  
+  useEffect(() => {
+    // Initial animations when screen loads
+    Animated.sequence([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(doctorInfoAnim, {
+        toValue: 1,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+      Animated.stagger(100, [
+        Animated.timing(actionButtonsAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]),
+    ]).start();
+  }, []);
+  
+  useEffect(() => {
+    // Animation for modal appearance/disappearance
+    if (showBookingModal) {
+      Animated.spring(modalSlideAnim, {
+        toValue: 0,
+        friction: 8,
+        tension: 40,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(modalSlideAnim, {
+        toValue: 300,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [showBookingModal]);
   
   const toggleSubscription = () => {
+    // Button press animation
+    Animated.sequence([
+      Animated.timing(buttonScaleAnim, {
+        toValue: 0.95,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(buttonScaleAnim, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+    ]).start();
+    
     setIsSubscribed(!isSubscribed);
   };
 
   const handleGoBack = () => {
-    navigation.goBack();
+    // Fade out animation before going back
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      onBack();
+    });
   };
+  
+  const handleBookingComplete = (details) => {
+    setBookingDetails(details);
+    setShowBookingModal(true);
+  };
+  
+  const handleCloseModal = () => {
+    setShowBookingModal(false);
+  };
+  
+  const handleProfileChange = (profile) => {
+    setSelectedProfile(profile);
+  };
+  
+  const handleNoteChange = (text) => {
+    setAppointmentNote(text);
+  };
+  
+  const handleBookNow = () => {
+    // Button press animation
+    Animated.sequence([
+      Animated.timing(buttonScaleAnim, {
+        toValue: 0.95,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(buttonScaleAnim, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+    ]).start();
+    
+    // Create appointment object
+    const appointment = {
+      doctorId: doctor.id,
+      doctorName: doctor.name,
+      patientId: selectedProfile.id,
+      patientName: selectedProfile.name,
+      patientRelation: selectedProfile.relation,
+      note: appointmentNote,
+      date: bookingDetails.date,
+      time: bookingDetails.time,
+      session: bookingDetails.session.name
+    };
+    
+    console.log('Booking appointment:', appointment);
+    
+    // Close modal with animation
+    setShowBookingModal(false);
+    
+    // Show success message after a slight delay to let modal close animation finish
+    setTimeout(() => {
+      Alert.alert(
+        "Appointment Booked",
+        `Your appointment with ${doctor.name} has been scheduled for ${bookingDetails.date} at ${bookingDetails.time} (${bookingDetails.session.name}).`,
+        [{ text: "OK", onPress: () => onBack() }]
+      );
+    }, 300);
+  };
+
+  // Action button animation styles
+  const actionButtonStyle = index => {
+    return {
+      opacity: actionButtonsAnim,
+      transform: [
+        { scale: actionButtonsAnim.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0.8, 1]
+        }) },
+        { translateY: actionButtonsAnim.interpolate({
+          inputRange: [0, 1],
+          outputRange: [20, 0]
+        }) }
+      ],
+    };
+  };
+
+  // Header background opacity based on scroll position
+  const headerBackgroundOpacity = scrollY.interpolate({
+    inputRange: [0, 40, 80],
+    outputRange: [0, 0.5, 1],
+    extrapolate: 'clamp'
+  });
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container}>
-        <View style={styles.content}>
-          <View style={styles.header}>
-            <TouchableOpacity onPress={handleGoBack}>
-              <Ionicons name="chevron-back" size={24} color="#334155" />
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.doctorInfo}>
-            <Image
-              source={{ uri: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&auto=format&fit=crop&q=60' }}
-              style={styles.doctorImage}
-            />
-            <View style={styles.doctorDetails}>
-              <Text style={styles.doctorName}>{doctor.name}</Text>
-              <Text style={styles.doctorLocation}>{doctor.location}</Text>
-              <View style={styles.actions}>
-                <TouchableOpacity style={styles.actionButton}>
-                  <Ionicons name="call" size={24} color="#FFFFFF" />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.actionButton}>
-                  <Ionicons name="location" size={24} color="#FFFFFF" />
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  style={[styles.subscribeButton, isSubscribed && styles.subscribedButton]}
-                  onPress={toggleSubscription}
-                >
-                  <Ionicons 
-                    name={isSubscribed ? "notifications" : "notifications-outline"} 
-                    size={20} 
-                    color={isSubscribed ? "#295567" : "#FFFFFF"} 
-                  />
-                  <Text style={[styles.subscribeText, isSubscribed && styles.subscribedButtonText]}>
-                    {isSubscribed ? "Subscribed" : "Subscribe"}
-                  </Text>
-                </TouchableOpacity>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      
+      {/* Simplified Header */}
+      <Animated.View style={[
+        styles.headerContainer,
+        { backgroundColor: scrollY.interpolate({
+            inputRange: [0, 100],
+            outputRange: ['rgba(255,255,255,0)', 'rgba(255,255,255,1)'],
+            extrapolate: 'clamp'
+          })
+        }
+      ]}>
+        <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
+          <Ionicons name="chevron-back" size={24} color="#334155" />
+        </TouchableOpacity>
+      </Animated.View>
+      
+      <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
+        <Animated.ScrollView 
+          style={styles.scrollContainer}
+          showsVerticalScrollIndicator={false}
+          scrollEventThrottle={16}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            { useNativeDriver: true }
+          )}
+        >
+          <View style={styles.content}>
+            {/* Doctor Profile Card */}
+            <Animated.View 
+              style={[
+                styles.doctorCard,
+                { 
+                  opacity: doctorInfoAnim,
+                  transform: [
+                    { translateY: doctorInfoAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [20, 0]
+                    }) }
+                  ]
+                }
+              ]}
+            >
+              {/* Top section with image, name and badge */}
+              <View style={styles.doctorHeader}>
+                <Image
+                  source={{ uri: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&auto=format&fit=crop&q=60' }}
+                  style={styles.doctorImageLarge}
+                />
+                <View style={styles.doctorHeaderOverlay}>
+                  <View style={styles.doctorNameRow}>
+                    <Text style={styles.doctorNameLarge}>{doctor.name}</Text>
+                    {isSubscribed && (
+                      <View style={styles.subBadgeNew}>
+                        <Ionicons name="checkmark-circle" size={16} color="#FFFFFF" />
+                      </View>
+                    )}
+                  </View>
+                </View>
               </View>
-            </View>
-          </View>
+              
+              {/* Info section */}
+              <View style={styles.doctorInfoDetails}>
+                <View style={styles.infoRow}>
+                  <Ionicons name="location-outline" size={16} color="#64748B" />
+                  <Text style={styles.infoText}>{doctor.location}</Text>
+                </View>
+                <View style={styles.infoRow}>
+                  <Ionicons name="medical-outline" size={16} color="#64748B" />
+                  <Text style={styles.infoText}>{doctor.specialty}</Text>
+                </View>
+              </View>
+              
+              {/* Action Buttons */}
+              <View style={styles.actionsNew}>
+                <Animated.View style={actionButtonStyle(0)}>
+                  <TouchableOpacity style={styles.actionButtonNew}>
+                    <Ionicons name="call" size={20} color="#295567" />
+                    <Text style={styles.actionButtonText}>Call</Text>
+                  </TouchableOpacity>
+                </Animated.View>
+                
+                <Animated.View style={actionButtonStyle(1)}>
+                  <TouchableOpacity style={styles.actionButtonNew}>
+                    <Ionicons name="location" size={20} color="#295567" />
+                    <Text style={styles.actionButtonText}>Location</Text>
+                  </TouchableOpacity>
+                </Animated.View>
+                
+                <Animated.View 
+                  style={[
+                    actionButtonStyle(2),
+                    { transform: [{ scale: buttonScaleAnim }] }
+                  ]}
+                >
+                  <TouchableOpacity 
+                    style={[styles.actionButtonNew, isSubscribed && styles.subscribedButtonNew]}
+                    onPress={toggleSubscription}
+                  >
+                    <Ionicons 
+                      name={isSubscribed ? "notifications" : "notifications-outline"} 
+                      size={20} 
+                      color="#295567" 
+                    />
+                    <Text style={styles.actionButtonText}>
+                      {isSubscribed ? "Subscribed" : "Subscribe"}
+                    </Text>
+                  </TouchableOpacity>
+                </Animated.View>
+              </View>
+            </Animated.View>
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Description</Text>
-            <Text style={styles.description}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet,
-              consectetur adipiscing elit.
-            </Text>
-          </View>
+            <Animated.View 
+              style={[
+                styles.section,
+                { 
+                  opacity: fadeAnim,
+                  transform: [
+                    { translateY: fadeAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [20, 0]
+                    }) }
+                  ]
+                }
+              ]}
+            >
+              <Text style={styles.sectionTitle}>About Doctor</Text>
+              <Text style={styles.description}>
+                Dr. Smith is a specialist cardiologist with over 15 years of experience in treating heart conditions. She completed her medical education at Harvard Medical School and residency at Mayo Clinic.
+              </Text>
+            </Animated.View>
 
-          <View style={styles.timings}>
-            <View style={styles.timingBlock}>
-              <Text style={styles.timingTitle}>Weekdays</Text>
-              <Text style={styles.timingHours}>4:00pm - 8pm</Text>
-            </View>
-            <View style={styles.timingBlock}>
-              <Text style={styles.timingTitle}>Weekends</Text>
-              <Text style={styles.timingHours}>9:00am - 12pm</Text>
-              <Text style={styles.timingHours}>& 4pm-8pm</Text>
-            </View>
+            {/* New Booking Section */}
+            <BookingSection 
+              onBookingComplete={handleBookingComplete}
+              fadeAnim={fadeAnim}
+              buttonScaleAnim={buttonScaleAnim}
+            />
           </View>
-
-          <View style={styles.sessions}>
-            <Text style={styles.sessionTitle}>Sessions</Text>
+        </Animated.ScrollView>
+      </Animated.View>
+      
+      {/* Booking Modal */}
+      <Modal
+        visible={showBookingModal}
+        animationType="none"
+        transparent={true}
+        onRequestClose={handleCloseModal}
+      >
+        <View style={styles.modalContainer}>
+          <Animated.View 
+            style={[
+              styles.modalContent,
+              { 
+                transform: [{ translateY: modalSlideAnim }]
+              }
+            ]}
+          >
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Book Appointment</Text>
+              <TouchableOpacity onPress={handleCloseModal} style={styles.closeButton}>
+                <Ionicons name="close" size={22} color="#334155" />
+              </TouchableOpacity>
+            </View>
             
-            <View style={styles.dateSection}>
-              <Text style={styles.sectionLabel}>Select Date</Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                <DateSelector onDateSelect={(date) => console.log(date)} />
-              </ScrollView>
+            <ScrollView style={styles.modalBody} showsVerticalScrollIndicator={false}>
+              <Animated.View 
+                style={[
+                  styles.appointmentDetails,
+                  { 
+                    opacity: fadeAnim,
+                    transform: [
+                      { translateY: fadeAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [20, 0]
+                      }) }
+                    ]
+                  }
+                ]}
+              >
+                <View style={styles.detailRow}>
+                  <View style={styles.detailIconContainer}>
+                    <Ionicons name="person" size={18} color="#295567" />
+                  </View>
+                  <View style={styles.detailTextContainer}>
+                    <Text style={styles.detailsLabel}>Doctor</Text>
+                    <Text style={styles.detailsValue}>{doctor.name}</Text>
+                  </View>
+                </View>
+                
+                <View style={styles.detailRow}>
+                  <View style={styles.detailIconContainer}>
+                    <Ionicons name="calendar" size={18} color="#295567" />
+                  </View>
+                  <View style={styles.detailTextContainer}>
+                    <Text style={styles.detailsLabel}>Date & Time</Text>
+                    <Text style={styles.detailsValue}>
+                      {bookingDetails ? `${bookingDetails.date}, ${bookingDetails.time}` : 'Not selected'}
+                    </Text>
+                  </View>
+                </View>
+                
+                <View style={styles.detailRow}>
+                  <View style={styles.detailIconContainer}>
+                    <Ionicons name="time" size={18} color="#295567" />
+                  </View>
+                  <View style={styles.detailTextContainer}>
+                    <Text style={styles.detailsLabel}>Session</Text>
+                    <Text style={styles.detailsValue}>
+                      {bookingDetails ? `${bookingDetails.session.name} (${bookingDetails.session.startTime} - ${bookingDetails.session.endTime})` : 'Not selected'}
+                    </Text>
+                  </View>
+                </View>
+              </Animated.View>
+              
+              {/* Family Profile Selection */}
+              <Animated.View 
+                style={[
+                  styles.profileSelectionContainer,
+                  { 
+                    opacity: fadeAnim,
+                    transform: [
+                      { translateY: fadeAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [20, 0]
+                      }) }
+                    ]
+                  }
+                ]}
+              >
+                <Text style={styles.modalSectionTitle}>Select Patient</Text>
+                <UserSwitch 
+                  profiles={familyProfiles}
+                  selectedProfile={selectedProfile}
+                  onProfileChange={handleProfileChange}
+                />
+              </Animated.View>
+              
+              {/* Note Input */}
+              <Animated.View 
+                style={[
+                  styles.noteContainer,
+                  { 
+                    opacity: fadeAnim,
+                    transform: [
+                      { translateY: fadeAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [20, 0]
+                      }) }
+                    ]
+                  }
+                ]}
+              >
+                <Text style={styles.modalSectionTitle}>Add Note (Optional)</Text>
+                <AppointmentNote 
+                  onNoteChange={handleNoteChange}
+                  initialNote={appointmentNote}
+                />
+              </Animated.View>
+            </ScrollView>
+            
+            <View style={styles.modalFooter}>
+              <Animated.View style={{ transform: [{ scale: buttonScaleAnim }], flex: 1 }}>
+                <TouchableOpacity 
+                  style={styles.bookNowButton}
+                  onPress={handleBookNow}
+                  activeOpacity={0.9}
+                >
+                  <Text style={styles.bookNowButtonText}>Confirm Booking</Text>
+                </TouchableOpacity>
+              </Animated.View>
             </View>
-
-            <View style={styles.timeSection}>
-              <Text style={styles.sectionLabel}>Select Time</Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                <TimeSelector />
-              </ScrollView>
-            </View>
-
-            <TouchableOpacity style={styles.bookButton}>
-              <Text style={styles.bookButtonText}>Book Appointment</Text>
-              <Ionicons name="chevron-forward" size={24} color="#FFFFFF" />
-            </TouchableOpacity>
-          </View>
+          </Animated.View>
         </View>
-      </ScrollView>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -122,147 +507,250 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F8FAFC',
+  },
+  scrollContainer: {
+    flex: 1,
   },
   content: {
     flex: 1,
     paddingHorizontal: 20,
+    paddingTop: 70, // Reduced padding to account for simpler header
+    paddingBottom: 30,
   },
-  header: {
-    paddingVertical: 16,
-    paddingTop: 48,
-  },
-  doctorInfo: {
+  // Simplified Header
+  headerContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 70,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 24,
+    paddingHorizontal: 20,
+    paddingTop: 30,
+    zIndex: 1000,
   },
-  doctorImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginRight: 16,
-  },
-  doctorDetails: {
-    flex: 1,
-  },
-  doctorName: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: '#334155',
-    marginBottom: 8,
-  },
-  doctorLocation: {
-    fontSize: 14,
-    color: '#64748B',
-    marginBottom: 12,
-  },
-  actions: {
-    flexDirection: 'row',
-    gap: 12,
-    alignItems: 'center',
-  },
-  actionButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: '#295567',
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
+    elevation: 3,
   },
-  subscribeButton: {
+  // Doctor Card Styles
+  doctorCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+    overflow: 'hidden',
+  },
+  doctorHeader: {
+    position: 'relative',
+    height: 150,
+  },
+  doctorImageLarge: {
+    width: '100%',
+    height: '100%',
+  },
+  doctorHeaderOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    padding: 16,
+  },
+  doctorNameRow: {
     flexDirection: 'row',
-    backgroundColor: '#295567',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
     alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  doctorNameLarge: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  subBadgeNew: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(41, 85, 103, 0.8)',
+    paddingHorizontal: 4,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  
+  doctorInfoDetails: {
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  infoText: {
+    fontSize: 14,
+    color: '#64748B',
     marginLeft: 8,
   },
-  subscribedButton: {
+  actionsNew: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    padding: 12,
+  },
+  actionButtonNew: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: 12,
+    borderRadius: 12,
+    backgroundColor: '#F1F5F9',
+    minWidth: 90,
+  },
+  subscribedButtonNew: {
     backgroundColor: '#E6F4F1',
     borderWidth: 1,
     borderColor: '#295567',
   },
-  subscribeText: {
-    color: '#FFFFFF',
-    fontWeight: '500',
-    fontSize: 14,
-    marginLeft: 4,
-  },
-  subscribedButtonText: {
+  actionButtonText: {
     color: '#295567',
+    fontWeight: '500',
+    fontSize: 12,
+    marginTop: 4,
   },
+  // About Section
   section: {
-    marginBottom: 24,
+    marginBottom: 20,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
     color: '#334155',
-    marginBottom: 8,
+    marginBottom: 10,
   },
   description: {
     fontSize: 14,
+    lineHeight: 22,
     color: '#64748B',
-    lineHeight: 20,
   },
-  timings: {
+  // Modal Styles
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingTop: 20,
+    maxHeight: '80%',
+  },
+  modalHeader: {
     flexDirection: 'row',
-    gap: 24,
-    marginBottom: 32,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
   },
-  timingBlock: {
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#334155',
+  },
+  closeButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#F1F5F9',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalBody: {
+    padding: 20,
+    maxHeight: '60%',
+  },
+  modalFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#F1F5F9',
+  },
+  // Appointment Details
+  appointmentDetails: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 20,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  detailIconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: '#E6F4F1',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  detailTextContainer: {
     flex: 1,
   },
-  timingTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#334155',
-    marginBottom: 4,
-  },
-  timingHours: {
-    fontSize: 14,
+  detailsLabel: {
+    fontSize: 12,
     color: '#64748B',
+    marginBottom: 2,
   },
-  sessions: {
-    marginBottom: 32,
-  },
-  sessionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  detailsValue: {
+    fontSize: 14,
+    fontWeight: '500',
     color: '#334155',
-    marginBottom: 24,
   },
-  dateSection: {
-    marginBottom: 24,
-    marginRight: -20,
-    marginLeft: -20,
+  // Profile Selection
+  profileSelectionContainer: {
+    marginBottom: 20,
   },
-  timeSection: {
-    marginBottom: 32,
-    marginRight: -20,
-    marginLeft: -20,
-  },
-  sectionLabel: {
-    marginLeft: 20,
+  modalSectionTitle: {
     fontSize: 16,
     fontWeight: '600',
     color: '#334155',
     marginBottom: 12,
   },
-  bookButton: {
-    backgroundColor: '#295567',
-    borderRadius: 15,
-    padding: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+  // Note Container
+  noteContainer: {
+    marginBottom: 20,
   },
-  bookButtonText: {
+  // Booking
+  bookNowButton: {
+    backgroundColor: '#295567',
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  bookNowButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
-    marginRight: 8,
-  },
+  }
 });

@@ -343,7 +343,7 @@ export const getNearbyDoctors = async (req, res) => {
 export const bookSlot = async (req, res) => {
     try {
         const { slotId } = req.params;  // Get slotId from URL params
-        const { patientId, familyId, note } = req.body;
+        const { patientId, familyId, patientNote } = req.body;
        
         // Validate required fields
         if (!patientId || !familyId) {
@@ -403,7 +403,7 @@ export const bookSlot = async (req, res) => {
             status: 'booked',
             patientId: patientId,
             familyId: familyId,
-            patientNote: note || '',
+            patientNote: patientNote || '',
             patientName: `${patient.firstName} ${patient.lastName}`
         };
         
@@ -436,7 +436,7 @@ export const bookSlot = async (req, res) => {
                 patientName: updatedSlot.patientName,
                 patientId: updatedSlot.patientId,
                 familyId: updatedSlot.familyId,
-                note: updatedSlot.patientNote,
+                patientNote: updatedSlot.patientNote,
                 doctorId: session ? session.doctorId : null
             }
         });
