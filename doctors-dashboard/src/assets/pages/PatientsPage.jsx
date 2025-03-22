@@ -113,6 +113,172 @@ const PatientsTable = () => {
       "date": "2024-11-30",
       "email": "olivia.davis@example.com",
       "note": "Patient has no known allergies. Routine medical check-ups and a balanced lifestyle are recommended."
+    },
+    // Additional patients for pagination testing
+    {
+      "name": "David Thompson",
+      "patient_id": "200-11",
+      "sex": "Male",
+      "age": 52,
+      "blood_type": "O+",
+      "allergies": ["Aspirin", "Sulfa drugs"],
+      "date": "2024-12-01",
+      "email": "david.thompson@example.com",
+      "note": "Patient has cardiovascular issues and should avoid strenuous activities. Regular monitoring of blood pressure and cholesterol levels recommended."
+    },
+    {
+      "name": "Jennifer Harris",
+      "patient_id": "200-12",
+      "sex": "Female",
+      "age": 33,
+      "blood_type": "B+",
+      "allergies": ["Bee stings"],
+      "date": "2024-12-02",
+      "email": "jennifer.harris@example.com",
+      "note": "Patient has severe allergic reactions to bee stings. Must carry epinephrine auto-injector at all times, especially during outdoor activities in warmer months."
+    },
+    {
+      "name": "Thomas Williams",
+      "patient_id": "200-13",
+      "sex": "Male",
+      "age": 41,
+      "blood_type": "AB+",
+      "allergies": ["None"],
+      "date": "2024-12-03",
+      "email": "thomas.williams@example.com",
+      "note": "Patient has type 2 diabetes. Needs to maintain strict blood sugar monitoring and follow prescribed diet and exercise regimen."
+    },
+    {
+      "name": "Jessica Martinez",
+      "patient_id": "200-14",
+      "sex": "Female",
+      "age": 26,
+      "blood_type": "A+",
+      "allergies": ["Peanuts", "Tree nuts"],
+      "date": "2024-12-04",
+      "email": "jessica.martinez@example.com",
+      "note": "Patient has severe nut allergies. Must be vigilant about food ingredients and avoid cross-contamination. Carries an epinephrine auto-injector."
+    },
+    {
+      "name": "Kevin Taylor",
+      "patient_id": "200-15",
+      "sex": "Male",
+      "age": 37,
+      "blood_type": "O-",
+      "allergies": ["Ibuprofen"],
+      "date": "2024-12-05",
+      "email": "kevin.taylor@example.com",
+      "note": "Patient experiences migraines. Recommend stress management techniques and avoiding triggers. Alternative pain management strategies discussed."
+    },
+    {
+      "name": "Amanda Clark",
+      "patient_id": "200-16",
+      "sex": "Female",
+      "age": 30,
+      "blood_type": "A-",
+      "allergies": ["Shellfish"],
+      "date": "2024-12-06",
+      "email": "amanda.clark@example.com",
+      "note": "Patient has asthma that is well-controlled with current medication. Should continue regular check-ups and maintain rescue inhaler access."
+    },
+    {
+      "name": "Brandon Lewis",
+      "patient_id": "200-17",
+      "sex": "Male",
+      "age": 44,
+      "blood_type": "B-",
+      "allergies": ["None"],
+      "date": "2024-12-07",
+      "email": "brandon.lewis@example.com",
+      "note": "Patient has hypertension. Needs to maintain low-sodium diet and regular exercise. Blood pressure should be monitored weekly."
+    },
+    {
+      "name": "Sophia Robinson",
+      "patient_id": "200-18",
+      "sex": "Female",
+      "age": 25,
+      "blood_type": "AB-",
+      "allergies": ["Penicillin", "Dust"],
+      "date": "2024-12-08",
+      "email": "sophia.robinson@example.com",
+      "note": "Patient has eczema which flares up with stress and certain environmental factors. Recommended moisturizing routine and avoiding triggers."
+    },
+    {
+      "name": "Christopher Garcia",
+      "patient_id": "200-19",
+      "sex": "Male",
+      "age": 38,
+      "blood_type": "O+",
+      "allergies": ["Latex"],
+      "date": "2024-12-09",
+      "email": "christopher.garcia@example.com",
+      "note": "Patient has lower back issues. Physical therapy exercises prescribed. Should avoid heavy lifting and maintain proper posture."
+    },
+    {
+      "name": "Samantha Moore",
+      "patient_id": "200-20",
+      "sex": "Female",
+      "age": 32,
+      "blood_type": "A+",
+      "allergies": ["None"],
+      "date": "2024-12-10",
+      "email": "samantha.moore@example.com",
+      "note": "Patient is pregnant (second trimester). Regular prenatal check-ups scheduled. Maintaining healthy diet and appropriate exercise levels."
+    },
+    {
+      "name": "Daniel Jackson",
+      "patient_id": "200-21",
+      "sex": "Male",
+      "age": 55,
+      "blood_type": "B+",
+      "allergies": ["Sulfa drugs"],
+      "date": "2024-12-11",
+      "email": "daniel.jackson@example.com",
+      "note": "Patient recovering from knee replacement surgery. Physical therapy ongoing. Pain management plan in place with non-opioid alternatives where possible."
+    },
+    {
+      "name": "Elizabeth Walker",
+      "patient_id": "200-22",
+      "sex": "Female",
+      "age": 29,
+      "blood_type": "AB+",
+      "allergies": ["Cats", "Dogs"],
+      "date": "2024-12-12",
+      "email": "elizabeth.walker@example.com",
+      "note": "Patient has severe animal allergies. Recommended HEPA filters at home and antihistamines when exposure cannot be avoided."
+    },
+    {
+      "name": "Andrew Hall",
+      "patient_id": "200-23",
+      "sex": "Male",
+      "age": 47,
+      "blood_type": "O-",
+      "allergies": ["None"],
+      "date": "2024-12-13",
+      "email": "andrew.hall@example.com",
+      "note": "Patient has high cholesterol. Currently on statin medication. Diet and exercise improvements discussed and monitored."
+    },
+    {
+      "name": "Michelle Young",
+      "patient_id": "200-24",
+      "sex": "Female",
+      "age": 31,
+      "blood_type": "A-",
+      "allergies": ["Gluten"],
+      "date": "2024-12-14",
+      "email": "michelle.young@example.com",
+      "note": "Patient has celiac disease. Strict gluten-free diet must be maintained. Nutritional supplementation discussed to prevent deficiencies."
+    },
+    {
+      "name": "Ryan Allen",
+      "patient_id": "200-25",
+      "sex": "Male",
+      "age": 40,
+      "blood_type": "B-",
+      "allergies": ["Pollen", "Mold"],
+      "date": "2024-12-15",
+      "email": "ryan.allen@example.com",
+      "note": "Patient has seasonal allergies and asthma that worsens during spring and fall. Preventative inhaler prescribed and environmental modifications suggested."
     }
   ];
 
@@ -202,6 +368,94 @@ const PatientsTable = () => {
           ]
         }
       ]
+    },
+    // Additional records for new patients
+    {
+      "patient_id": "200-11",
+      "history": [
+        {
+          "date": "2024-12-01",
+          "prescription_id": "#E67Y9RT3",
+          "observation": "Patient showing signs of elevated blood pressure and occasional chest discomfort.",
+          "prescription": [
+            {"medicine": "Lisinopril", "dosage": "10mg once daily"},
+            {"medicine": "Aspirin (low dose)", "dosage": "81mg once daily"}
+          ]
+        },
+        {
+          "date": "2024-10-15",
+          "prescription_id": "#F82Z3LP9",
+          "observation": "Annual physical examination. Cholesterol levels slightly elevated.",
+          "prescription": [
+            {"medicine": "Atorvastatin", "dosage": "10mg once daily with evening meal"}
+          ]
+        }
+      ]
+    },
+    {
+      "patient_id": "200-12",
+      "history": [
+        {
+          "date": "2024-12-02",
+          "prescription_id": "#G14H7PM2",
+          "observation": "Follow-up after bee sting incident last month. Skin reaction has subsided.",
+          "prescription": [
+            {"medicine": "EpiPen", "dosage": "Use as needed for severe allergic reactions"}
+          ]
+        }
+      ]
+    },
+    {
+      "patient_id": "200-15",
+      "history": [
+        {
+          "date": "2024-12-05",
+          "prescription_id": "#H29J4KT7",
+          "observation": "Severe migraine episode, lasting 3 days. Light and sound sensitivity.",
+          "prescription": [
+            {"medicine": "Sumatriptan", "dosage": "50mg at onset of migraine, may repeat after 2 hours if needed"},
+            {"medicine": "Propranolol", "dosage": "40mg twice daily as preventative"}
+          ]
+        },
+        {
+          "date": "2024-11-20",
+          "prescription_id": "#I35K8LM1",
+          "observation": "Discussion of migraine triggers. Patient notes stress and lack of sleep as primary factors.",
+          "prescription": [
+            {"medicine": "Magnesium Supplement", "dosage": "400mg daily"}
+          ]
+        },
+        {
+          "date": "2024-09-05",
+          "prescription_id": "#J41L2MT6",
+          "observation": "Initial consultation for migraines. Occurring 3-4 times monthly.",
+          "prescription": [
+            {"medicine": "Acetaminophen", "dosage": "500mg as needed for pain, not to exceed 4000mg in 24 hours"}
+          ]
+        }
+      ]
+    },
+    {
+      "patient_id": "200-20",
+      "history": [
+        {
+          "date": "2024-12-10",
+          "prescription_id": "#K56M3NT8",
+          "observation": "18-week prenatal check-up. Fetal heartbeat normal. Mild anemia detected.",
+          "prescription": [
+            {"medicine": "Prenatal Vitamins", "dosage": "One tablet daily"},
+            {"medicine": "Iron Supplement", "dosage": "65mg elemental iron daily with vitamin C source"}
+          ]
+        },
+        {
+          "date": "2024-10-28",
+          "prescription_id": "#L62N7PT4",
+          "observation": "12-week prenatal check-up. Normal progression. Patient experiencing morning sickness.",
+          "prescription": [
+            {"medicine": "Vitamin B6", "dosage": "25mg three times daily for nausea"}
+          ]
+        }
+      ]
     }
   ];
 
@@ -213,7 +467,7 @@ const PatientsTable = () => {
   const [showDetails, setShowDetails] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
 
-  const rowsPerPage = 8; // Increased to fit more patients on screen
+  const rowsPerPage = 10; // Changed to exactly 10 patients per page
 
   // Filter patients based on search term
   const filteredPatients = patients.filter(
@@ -380,6 +634,13 @@ const PatientsTable = () => {
                         <Eye size={14} />
                       </button>
                     </td>
+                  </tr>
+                ))}
+
+                {/* Add empty rows to maintain consistent height when fewer than 10 patients */}
+                {currentPatients.length < rowsPerPage && Array.from({ length: rowsPerPage - currentPatients.length }).map((_, index) => (
+                  <tr key={`empty-${index}`} className="h-[51px]"> {/* Height matches the patient row height */}
+                    <td colSpan={4}></td>
                   </tr>
                 ))}
               </tbody>
