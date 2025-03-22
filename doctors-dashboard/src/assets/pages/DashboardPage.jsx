@@ -367,18 +367,22 @@ function DashboardPage() {
 
   // Show loading screen during initial data load
   if (loading && !patientsData.length) {
-    return <div className="flex text-4xl w-full items-center justify-center h-screen">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen bg-[#FAFAF9] font-['Raleway',sans-serif]">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#295567]"></div>
+      </div>
+    );
   }
 
   return (
-    <div className='flex flex-col h-[100%] gap-5 bg-[#FAFAF9] w-full px-2 py-2 items-start justify-start text-black animate-[pop_0.3s_ease-out]'>
+    <div className='flex flex-col h-[100%] gap-5 bg-[#FAFAF9] w-full px-4 py-4 items-start justify-start text-gray-800 animate-pageTransition font-["Raleway",sans-serif]'>
       <DashboardNavigation />
       
-      <div className="grid grid-flow-col grid-cols-[350px_minmax(0,1fr)] justify-center align-middle gap-4 w-full">
-        <div className="flex flex-col gap-2 space-y-4 w-full">
+      <div className="grid grid-flow-col grid-cols-[350px_minmax(0,1fr)] justify-center align-middle gap-6 w-full">
+        <div className="flex flex-col gap-4 space-y-4 w-full">
           
           {/* Session Info */}
-          <div className="pr-2 pl-2 h-30">
+          <div className="pr-2 pl-2">
             <SessionInfo 
               SessionId={activeSessionId.slice(-6)} 
               totalSlots={currentSlots.length} 
@@ -387,26 +391,34 @@ function DashboardPage() {
           </div>
 
           {/* Waiting List - Highlighting the current patient */}
-          <div className="flex rounded-[20px] bg-white shadow-md flex-col gap-3 pr-2">
-            <div className="font-[500] text-[1.5rem] pl-5 pt-4 text-gray-800">
+          <div className="flex rounded-3xl bg-white shadow-sm border border-gray-100 flex-col gap-3 pr-2">
+            <div className="font-medium text-xl pl-5 pt-4 text-gray-800">
               Waiting List
             </div>
-            <div className="max-h-[250px] overflow-y-auto w-full space-y-4 p-4 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-200">
+            <div className="max-h-[250px] overflow-y-auto w-full space-y-3 p-4">
               {patientsData.map((patient, index) => (
                 <div 
                   key={index} 
-                  className={`flex items-center ${index === currentPatientIndex ? 'bg-blue-100 border-2 border-blue-300' : 'bg-blue-50'} rounded-lg p-4 w-full h-[80px] cursor-pointer`}
+                  className={`flex items-center ${
+                    index === currentPatientIndex 
+                      ? 'bg-[#295567]/10 border border-[#295567]/30' 
+                      : 'bg-gray-50 hover:bg-gray-100'
+                  } rounded-xl p-3 w-full cursor-pointer transition-colors duration-200`}
                   onClick={() => setCurrentPatientIndex(index)}
                 >
-                  <div className="flex items-center justify-center w-12 h-12 bg-blue-200 rounded-full text-lg font-bold text-blue-600">
+                  <div className={`flex items-center justify-center w-10 h-10 ${
+                    index === currentPatientIndex 
+                      ? 'bg-[#295567] text-white' 
+                      : 'bg-[#295567]/20 text-[#295567]'
+                  } rounded-full text-base font-medium transition-colors duration-200`}>
                     {patient.name ? patient.name.charAt(0) : (patient.firstName ? patient.firstName.charAt(0) : '?')}
                   </div>
-                  <div className="ml-4">
-                    <h3 className="text-gray-800 font-semibold text-lg">
+                  <div className="ml-3">
+                    <h3 className="text-gray-800 font-medium">
                       {patient.name || (patient.firstName && patient.lastName ? `${patient.firstName} ${patient.lastName}` : 'Unknown')}
                     </h3>
                     <p className="text-gray-500 text-sm">
-                      {patient.date} <span className="mx-2">|</span> {patient.time || patient.contactNumber}
+                      {patient.date} <span className="mx-1">•</span> {patient.time || patient.contactNumber}
                     </p>
                   </div>
                 </div>
@@ -425,17 +437,17 @@ function DashboardPage() {
 
         {/* Patient Details - Showing the current patient */}
         <div className="w-full h-full">
-          <div className="p-6 bg-white flex flex-col rounded-[40px] shadow-md h-full">
+          <div className="p-6 bg-white flex flex-col rounded-3xl shadow-sm border border-gray-100 h-full">
             {currentPatient ? (
               <>
                 {/* Top Section */}
                 <div className="flex justify-between flex-1">
                   {/* Left: Patient Details */}
                   <div className="w-1/2 pr-8">
-                    <h2 className="text-2xl font-bold">On-going - Patient Details</h2>
+                    <h2 className="text-xl font-bold text-gray-800">On-going - Patient Details</h2>
                     <div className="flex items-center mt-4">
                       {/* Patient Avatar */}
-                      <div className="h-16 w-16 flex items-center justify-center bg-blue-100 text-blue-600 text-xl font-bold rounded-full border border-blue-300">
+                      <div className="h-14 w-14 flex items-center justify-center bg-[#295567]/10 text-[#295567] text-lg font-bold rounded-full border border-[#295567]/20">
                         {currentPatient.name
                           ? currentPatient.name.split(" ").map((part) => part[0]).join("").toUpperCase()
                           : (currentPatient.firstName
@@ -450,57 +462,79 @@ function DashboardPage() {
                       </div>
                     </div>
 
-                    <div className="mt-4 text-gray-700">
-                      <p><strong>Sex:</strong> {currentPatient.sex || 'Not specified'}</p>
-                      <p><strong>Age:</strong> {currentPatient.age || 'Not specified'}</p>
-                      <p><strong>Blood:</strong> {currentPatient.bloodType || 'Not specified'}</p>
-                      <p><strong>Contact:</strong> {currentPatient.contactNumber || 'Not specified'}</p>
-                      <p><strong>Allergies:</strong></p>
-                      <ul className="list-disc pl-5">
-                        {currentPatient.allergies && currentPatient.allergies.length > 0 ? (
-                          currentPatient.allergies.map((allergy, index) => (
-                            <li key={index}>{allergy}</li>
-                          ))
-                        ) : (
-                          <li>No known allergies</li>
-                        )}
-                      </ul>
+                    <div className="mt-6 text-gray-700 space-y-2">
+                      <p><span className="font-medium text-gray-600">Sex:</span> {currentPatient.sex || 'Not specified'}</p>
+                      <p><span className="font-medium text-gray-600">Age:</span> {currentPatient.age || 'Not specified'}</p>
+                      <p><span className="font-medium text-gray-600">Blood:</span> {currentPatient.bloodType || 'Not specified'}</p>
+                      <p><span className="font-medium text-gray-600">Contact:</span> {currentPatient.contactNumber || 'Not specified'}</p>
+                      <div>
+                        <p className="font-medium text-gray-600">Allergies:</p>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {currentPatient.allergies && currentPatient.allergies.length > 0 ? (
+                            currentPatient.allergies.map((allergy, index) => (
+                              <span key={index} className="text-xs bg-red-50 text-red-600 px-2 py-0.5 rounded-full border border-red-100">
+                                {allergy}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-xs bg-gray-50 text-gray-600 px-2 py-0.5 rounded-full border border-gray-200">
+                              No known allergies
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
 
-                    <hr className="my-4" />
-
-                    <h3 className="font-semibold">Added Complaints</h3>
-                    <p className="text-gray-600">{currentPatient.addedComplaints || 'No complaints recorded'}</p>
+                    <div className="mt-6 pt-4 border-t border-gray-100">
+                      <h3 className="font-medium text-gray-800 mb-2">Added Complaints</h3>
+                      <p className="text-gray-600 text-sm bg-[#FAFAF9] p-3 rounded-xl">
+                        {currentPatient.addedComplaints || 'No complaints recorded'}
+                      </p>
+                    </div>
                   </div>
 
                   {/* Right: Consultation History */}
-                  <div className="w-1/2 pl-8">
-                    <h2 className="text-2xl font-bold">Consultation History</h2>
+                  <div className="w-1/2 pl-8 border-l border-gray-100">
+                    <h2 className="text-xl font-bold text-gray-800">Consultation History</h2>
                     {(patientRecords.length > 0 || (currentPatient.history && currentPatient.history.length > 0)) ? (
-                      <div className="mt-4 text-gray-700">
+                      <div className="mt-4 text-gray-700 bg-[#FAFAF9] p-4 rounded-xl border border-gray-100">
                         {currentHistory && (
                           <>
-                            <p>
-                              <strong>Last Checked:</strong> {currentHistory.lastChecked || currentHistory.date || 'Not recorded'} 
-                              <a href="#" className="text-blue-600 underline ml-2">
-                                #{currentHistory.prescriptionId || currentHistory._id || 'N/A'}
-                              </a>
-                            </p>
-                            <p><strong>Observation:</strong> {currentHistory.observation || 'None'}</p>
-                            <p><strong>Prescription:</strong></p>
-                            <ul className="list-disc pl-5">
-                              {currentHistory.prescriptions 
-                                ? currentHistory.prescriptions.map((prescription, index) => (
-                                  <li key={index}>{prescription}</li>
-                                ))
-                                : currentHistory.prescription ? (
-                                  <li>{currentHistory.prescription}</li>
-                                ) : (
-                                  <li>No prescriptions</li>
-                                )
-                              }
-                            </ul>
-                            <p><strong>Note:</strong> {currentHistory.note || 'None'}</p>
+                            <div className="flex justify-between items-center mb-3">
+                              <span className="text-sm font-medium text-gray-600">
+                                {currentHistory.lastChecked || currentHistory.date || 'Not recorded'}
+                              </span>
+                              <span className="text-xs bg-[#295567]/10 text-[#295567] px-2 py-0.5 rounded-full">
+                                #{currentHistory.prescriptionId || currentHistory._id?.slice(-6) || 'N/A'}
+                              </span>
+                            </div>
+                            <div className="space-y-3">
+                              <div>
+                                <p className="text-xs text-gray-500 mb-1">Observation</p>
+                                <p className="text-sm">{currentHistory.observation || 'None'}</p>
+                              </div>
+                              
+                              <div>
+                                <p className="text-xs text-gray-500 mb-1">Prescription</p>
+                                {currentHistory.prescriptions ? 
+                                  <ul className="space-y-1">
+                                    {currentHistory.prescriptions.map((prescription, index) => (
+                                      <li key={index} className="text-sm pl-2 border-l-2 border-[#295567]/30">{prescription}</li>
+                                    ))}
+                                  </ul>
+                                  : currentHistory.prescription ? (
+                                    <p className="text-sm pl-2 border-l-2 border-[#295567]/30">{currentHistory.prescription}</p>
+                                  ) : (
+                                    <p className="text-sm text-gray-500 italic">No prescriptions</p>
+                                  )
+                                }
+                              </div>
+                              
+                              <div>
+                                <p className="text-xs text-gray-500 mb-1">Note</p>
+                                <p className="text-sm">{currentHistory.note || 'None'}</p>
+                              </div>
+                            </div>
                           </>
                         )}
                         
@@ -508,64 +542,73 @@ function DashboardPage() {
                         {(patientRecords.length > 1 || (currentPatient.history && currentPatient.history.length > 1)) && (
                           <div className="flex justify-center space-x-4 mt-4">
                             <button 
-                              className={`text-gray-500 text-2xl ${currentHistoryIndex === 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`} 
+                              className={`flex items-center justify-center w-8 h-8 rounded-full ${
+                                currentHistoryIndex === 0 
+                                  ? "text-gray-300 cursor-not-allowed" 
+                                  : "text-[#295567] hover:bg-[#295567]/10"
+                              } transition-all duration-200`} 
                               onClick={prevHistory}
                               disabled={currentHistoryIndex === 0}
                             >
-                              &lt;
+                              <ChevronLeft size={18} />
                             </button>
                             <button 
-                              className={`text-gray-500 text-2xl ${
+                              className={`flex items-center justify-center w-8 h-8 rounded-full ${
                                 currentHistoryIndex === (patientRecords.length > 0 
                                   ? patientRecords.length - 1 
                                   : (currentPatient.history ? currentPatient.history.length - 1 : 0)) 
-                                  ? "opacity-50 cursor-not-allowed" 
-                                  : "cursor-pointer"
-                              }`} 
+                                  ? "text-gray-300 cursor-not-allowed" 
+                                  : "text-[#295567] hover:bg-[#295567]/10"
+                              } transition-all duration-200`} 
                               onClick={nextHistory}
                               disabled={currentHistoryIndex === (patientRecords.length > 0 
                                 ? patientRecords.length - 1 
                                 : (currentPatient.history ? currentPatient.history.length - 1 : 0))}
                             >
-                              &gt;
+                              <ChevronRight size={18} />
                             </button>
                           </div>
                         )}
                       </div>
                     ) : (
-                      <div className="mt-4 text-gray-500 italic">No previous consultations found</div>
+                      <div className="mt-4 text-gray-500 italic bg-[#FAFAF9] p-4 rounded-xl border border-gray-100">
+                        No previous consultations found
+                      </div>
                     )}
                   </div>
                 </div>
 
                 {/* Ongoing Treatment Inputs */}
-                <div className="mt-8">
-                  <h2 className="text-2xl font-bold">On-going</h2>
-                  <div className="mt-4 space-y-4">
+                <div className="mt-8 pt-4 border-t border-gray-100">
+                  <h2 className="text-xl font-bold text-gray-800 mb-4">On-going</h2>
+                  <div className="space-y-4">
                     <div>
-                      <label className="block text-gray-700 font-semibold">Observation:</label>
+                      <label className="block text-gray-600 text-sm font-medium mb-1">Observation:</label>
                       <input
                         type="text"
-                        className="w-full border border-blue-300 rounded-md p-2 mt-1"
+                        className="w-full border border-gray-200 rounded-xl p-2 focus:ring-2 focus:ring-[#295567]/30 focus:outline-none transition-all duration-200"
                         value={formData.observation}
                         onChange={(e) => setFormData({ ...formData, observation: e.target.value })}
+                        placeholder="Enter your observation"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-gray-700 font-semibold">Prescription:</label>
+                        <label className="block text-gray-600 text-sm font-medium mb-1">Prescription:</label>
                         <textarea
-                          className="w-full border border-blue-300 rounded-md p-2 mt-1 h-24"
+                          className="w-full border border-gray-200 rounded-xl p-2 h-24 focus:ring-2 focus:ring-[#295567]/30 focus:outline-none transition-all duration-200"
                           value={formData.prescription}
                           onChange={(e) => setFormData({ ...formData, prescription: e.target.value })}
+                          placeholder="Enter prescription details"
                         />
                       </div>
                       <div>
-                        <label className="block text-gray-700 font-semibold">Note:</label>
+                        <label className="block text-gray-600 text-sm font-medium mb-1">Note:</label>
                         <textarea
-                          className="w-full border border-blue-300 rounded-md p-2 mt-1 h-24"
+                          className="w-full border border-gray-200 rounded-xl p-2 h-24 focus:ring-2 focus:ring-[#295567]/30 focus:outline-none transition-all duration-200"
                           value={formData.note}
                           onChange={(e) => setFormData({ ...formData, note: e.target.value })}
+                          placeholder="Add additional notes here"
                         />
                       </div>
                     </div>
@@ -575,17 +618,19 @@ function DashboardPage() {
                 {/* Save & Next Buttons */}
                 <div className="flex justify-end mt-6 space-x-4">
                   {message && (
-                    <div className="text-green-500 self-center mr-auto">{message}</div>
+                    <div className="text-green-600 self-center mr-auto text-sm bg-green-50 px-3 py-1 rounded-full">
+                      {message}
+                    </div>
                   )}
                   <button 
-                    className="bg-blue-100 hover:bg-blue-200 text-blue-600 font-semibold py-2 px-4 rounded-lg transition-colors duration-300"
+                    className="bg-[#FAFAF9] hover:bg-[#295567]/10 text-[#295567] font-medium py-2 px-4 rounded-xl transition-all duration-200 border border-[#295567]/30"
                     onClick={handleCreateRecord}
                     disabled={loading}
                   >
                     {loading ? 'Saving...' : 'Save'}
                   </button>
                   <button 
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-300"
+                    className="bg-[#295567] hover:bg-[#295567]/90 text-white font-medium py-2 px-4 rounded-xl transition-all duration-200 shadow-sm"
                     onClick={handleNextPatient}
                     disabled={currentPatientIndex >= patientsData.length - 1}
                   >
@@ -594,8 +639,11 @@ function DashboardPage() {
                 </div>
               </>
             ) : (
-              <div className="flex items-center justify-center h-full">
-                <p className="text-xl text-gray-500">Select a patient to view details</p>
+              <div className="flex flex-col items-center justify-center h-full">
+                <div className="bg-[#295567]/10 rounded-full p-6 mb-4">
+                  <ChevronLeft size={36} className="text-[#295567]" />
+                </div>
+                <p className="text-lg text-gray-500">Select a patient to view details</p>
               </div>
             )}
           </div>
