@@ -25,6 +25,7 @@ function SchedulePage() {
   const [bookedSlotsCount, setBookedSlotsCount] = useState(0);
   const [daynumber, setDayNumber] = useState(0);
   const [dayname, setDayName] = useState(0);
+  const [monthname, setMonthName] = useState('');
   
   const [selectedDate, setSelectedDate] = useState(null);
   const [bookedDates, setBookedDates] = useState([]);
@@ -143,10 +144,12 @@ function SchedulePage() {
 
     const dateObj = new Date(currentSession.date); 
     const dayNumber = dateObj.getDate();
-    const dayName = dateObj.toLocaleDateString("en-US", { weekday: "short" });
+    const dayName = dateObj.toLocaleDateString("en-US", { weekday: "long" });
+    const monthName = dateObj.toLocaleDateString("en-US", { month: "short" });
 
     setDayNumber(dayNumber);
     setDayName(dayName);
+    setMonthName(monthName);
     setAvailableSlotsCount(availableCount);
     setBookedSlotsCount(bookedCount);
     setCurrentSlots(currentSlots);
@@ -155,7 +158,7 @@ function SchedulePage() {
     console.log("Current Slots:", currentSlots);
     console.log("Booked Slots:", bookedCount);
     console.log("Available Slots:", availableCount);
-    console.log(`Date Number: ${dayNumber}, Day Name: ${dayName}`); 
+    console.log(`Date Number: ${dayNumber}, Day Name: ${dayName}, Month: ${monthName}`); 
   }
 
   const fetchSlots = async () => {
@@ -203,72 +206,69 @@ function SchedulePage() {
     )
   }
   
-  if(loading){
-    return (
-      <div className="flex items-center justify-center h-full w-full bg-white">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#295567]"></div>
-      </div>
-    )
-  }
-  
   return (
     <div className="flex h-full w-full bg-[#FAFAF9] overflow-hidden font-['Raleway'] animate-pageTransition">
       {/* Left side - Session info and slots */}
       <div className="w-3/5 h-full border-r border-gray-200 bg-white rounded-tl-3xl shadow-md flex flex-col">
         {/* Header with session info */}
-        <div className="p-4 border-b border-gray-200 bg-white rounded-tl-3xl">
+        <div className="p-6 border-b border-gray-200 bg-white rounded-tl-3xl">
           <div className="flex justify-between items-center">
-            <h2 className="font-bold text-lg text-gray-800">Current Session</h2>
-            <span className="text-sm font-medium text-gray-500 bg-white px-3 py-1 rounded-full shadow-sm">
+            <h2 className="font-bold text-xl text-gray-800">Current Session</h2>
+            <span className="text-sm font-medium text-gray-500 bg-white px-3 py-1 rounded-full shadow-sm border border-gray-100">
               ID: #{!loading && currentSession?._id ? currentSession._id.slice(-6) : "0"}
             </span>
           </div>
           
-          <div className="flex items-center justify-between mt-3">
+          <div className="flex items-center justify-between mt-4">
             {/* Date and session stats */}
-            <div className="flex items-center gap-4">
-              {/* Date display */}
-              <div className="flex flex-col items-center justify-center bg-[#295567] text-white rounded-lg w-14 h-14">
-                <span className="text-xl font-bold">{daynumber}</span>
-                <span className="text-xs">{dayname}</span>
+            <div className="flex items-center gap-6">
+              {/* Enhanced Date display */}
+              <div className="flex flex-col items-center justify-center bg-[#295567] text-white rounded-xl w-24 h-24 shadow-md transition-transform duration-300 hover:scale-105">
+                <span className="text-xs uppercase tracking-wide mt-1">{monthname}</span>
+                <span className="text-3xl font-bold">{daynumber}</span>
+                <span className="text-sm font-medium mb-1">{dayname}</span>
               </div>
               
-              {/* Stats */}
-              <div className="flex gap-2">
-                <span className="px-2 py-0.5 bg-[#295567]/10 rounded-lg text-xs font-medium text-[#295567]">
-                  Total: {availableSlotsCount+bookedSlotsCount}
-                </span>
-                <span className="px-2 py-0.5 bg-green-100 text-green-800 rounded-lg text-xs">
-                  Booked: {bookedSlotsCount}
-                </span>
-                <span className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-lg text-xs">
-                  Available: {availableSlotsCount}
-                </span>
+              {/* Stats with bigger text */}
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2 bg-[#295567]/10 px-4 py-2 rounded-lg">
+                  <Clock className="w-5 h-5 text-[#295567]" />
+                  <span className="text-base font-semibold text-[#295567]">
+                    Total Slots: {availableSlotsCount+bookedSlotsCount}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <span className="px-3 py-2 bg-green-100 text-green-800 rounded-lg text-sm font-medium flex items-center justify-center">
+                    <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                    Booked: {bookedSlotsCount}
+                  </span>
+                  <span className="px-3 py-2 bg-blue-100 text-blue-800 rounded-lg text-sm font-medium flex items-center justify-center">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                    Available: {availableSlotsCount}
+                  </span>
+                </div>
               </div>
             </div>
             
             {/* Session navigation */}
-            <div className="flex space-x-2">
-              <button onClick={previousSession} className="p-1 hover:bg-gray-100 rounded-full transition text-[#295567]">
+            <div className="flex space-x-3">
+              <button onClick={previousSession} className="p-2 hover:bg-gray-100 rounded-full transition text-[#295567] border border-gray-200">
                 <CircleArrowLeft size={20} />
               </button>
-              <button onClick={nextSession} className="p-1 hover:bg-gray-100 rounded-full transition text-[#295567]">
+              <button onClick={nextSession} className="p-2 hover:bg-gray-100 rounded-full transition text-[#295567] border border-gray-200">
                 <CircleArrowRight size={20} />
               </button>
             </div>
           </div>
         </div>
         
-        {/* Slots grid - Smaller height */}
+        {/* Slots grid */}
         <div className="h-[40%] overflow-auto bg-white">
-          <div className="sticky top-0 bg-white z-10 p-3 border-b flex justify-between items-center">
+          <div className="sticky top-0 bg-white z-10 p-4 border-b flex justify-between items-center">
             <h2 className="text-sm font-semibold text-gray-700 flex items-center">
               <Clock className="w-4 h-4 mr-2 text-[#295567]" />
               Available Time Slots
             </h2>
-            <div className="text-xs text-gray-500 bg-[#295567]/5 px-2 py-1 rounded-lg">
-              {currentSlots.length} slots in total
-            </div>
           </div>
           
           {!currentSlots.length ? (
@@ -294,16 +294,16 @@ function SchedulePage() {
                     animationFillMode: 'both'
                   }}
                 >
-                  {/* Status indicator */}
-                  <div className={`absolute top-0 left-0 w-full h-1 ${
+                  {/* Status indicator - made it thicker */}
+                  <div className={`absolute top-0 left-0 w-full h-2 ${
                     el.status === "booked" 
                       ? "bg-red-400" 
                       : "bg-green-400"
                   }`}></div>
                   
-                  {/* Time display */}
-                  <div className="p-2 text-center">
-                    <p className="text-xs font-semibold text-gray-800">
+                  {/* Time display - adjusted to fit better */}
+                  <div className="px-2 py-2 text-center">
+                    <p className="text-xs font-semibold text-gray-800 truncate">
                       {el.startTime} - {el.endTime}
                     </p>
                     <p className={`text-xs mt-1 ${
@@ -317,8 +317,8 @@ function SchedulePage() {
                   
                   {/* Selection indicator */}
                   {SelectedSlot?._id === el._id && (
-                    <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-[#295567] rounded-tl-lg flex items-center justify-center animate-pulse">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-[#295567] rounded-tl-lg flex items-center justify-center animate-pulse">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                         <polyline points="20 6 9 17 4 12"></polyline>
                       </svg>
                     </div>
@@ -343,7 +343,7 @@ function SchedulePage() {
           {SelectedSlot && SelectedSlot._id ? (
             <div className="bg-[#FAFAF9] p-4 rounded-xl border border-gray-100 shadow-sm">
               <div className="flex items-center mb-4">
-                <div className="h-10 w-10 flex-shrink-0 rounded-full flex items-center justify-center text-sm font-medium bg-[#295567] text-white mr-3">
+                <div className="h-12 w-12 flex-shrink-0 rounded-full flex items-center justify-center text-md font-medium bg-[#295567] text-white mr-3">
                   {SelectedSlot.patientName ? SelectedSlot.patientName.charAt(0) : 'S'}
                 </div>
                 <div>
@@ -390,7 +390,7 @@ function SchedulePage() {
       <div className="w-2/5 h-full bg-[#FAFAF9]">
         <form onSubmit={handleSubmit} className="h-full overflow-hidden flex flex-col">
           {/* Header */}
-          <div className="bg-gradient-to-r from-[#295567] to-[#295567]/80 px-4 py-4 border-b border-[#295567]/40 shadow-md rounded-tr-3xl">
+          <div className="bg-gradient-to-r from-[#295567] to-[#295567]/80 px-4 py-5 border-b border-[#295567]/40 shadow-md rounded-tr-3xl">
             <h1 className="text-lg font-bold text-white flex items-center">
               <Clock className="w-5 h-5 mr-2" />
               Schedule Appointment
