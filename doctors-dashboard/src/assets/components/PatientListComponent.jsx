@@ -23,23 +23,10 @@ function PatientListComponent({ patients }) {
       .toUpperCase();
   };
 
-  // Calculate today's date in format similar to the image
-  const today = new Date().toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric'
-  });
-
   return (
     <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-      <div className="flex justify-between items-center px-5 pt-4 pb-2">
+      <div className="px-5 pt-4 pb-2">
         <h2 className="font-medium text-xl text-gray-800">Session's Patient List</h2>
-        <div className="flex items-center">
-          <span className="text-gray-600 text-sm">{today}</span>
-          <svg className="w-4 h-4 ml-1 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        </div>
       </div>
      
       <div className="max-h-[330px] overflow-y-auto p-4 space-y-2">

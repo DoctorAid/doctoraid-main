@@ -535,7 +535,7 @@ function DashboardPage() {
                                 {currentHistory.lastChecked || currentHistory.date || 'Not recorded'}
                               </span>
                               <span className="text-xs bg-[#295567]/10 text-[#295567] px-2 py-0.5 rounded-full">
-                                #{currentHistory.prescriptionId || currentHistory._id?.slice(-6) || 'N/A'}
+                                {currentHistory.prescriptionId || currentHistory._id?.slice(-6) || 'N/A'}
                               </span>
                             </div>
                             <div className="space-y-3">
