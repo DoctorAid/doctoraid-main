@@ -416,9 +416,9 @@ export default function AppointmentScreen({ doctor, onBack }) {
                     <Ionicons name="calendar" size={18} color="#295567" />
                   </View>
                   <View style={styles.detailTextContainer}>
-                    <Text style={styles.detailsLabel}>Date & Time</Text>
+                    <Text style={styles.detailsLabel}>Date</Text>
                     <Text style={styles.detailsValue}>
-                      {bookingDetails ? `${bookingDetails.date}, ${bookingDetails.time}` : 'Not selected'}
+                      {bookingDetails ? bookingDetails.date : 'Not selected'}
                     </Text>
                   </View>
                 </View>
@@ -426,6 +426,18 @@ export default function AppointmentScreen({ doctor, onBack }) {
                 <View style={styles.detailRow}>
                   <View style={styles.detailIconContainer}>
                     <Ionicons name="time" size={18} color="#295567" />
+                  </View>
+                  <View style={styles.detailTextContainer}>
+                    <Text style={styles.detailsLabel}>Time</Text>
+                    <Text style={styles.detailsValue}>
+                      {bookingDetails ? bookingDetails.time : 'Not selected'}
+                    </Text>
+                  </View>
+                </View>
+                
+                <View style={styles.detailRow}>
+                  <View style={styles.detailIconContainer}>
+                    <Ionicons name="medical" size={18} color="#295567" />
                   </View>
                   <View style={styles.detailTextContainer}>
                     <Text style={styles.detailsLabel}>Session</Text>

@@ -18,7 +18,7 @@ const StartPage = () => {
 
   if (isReady) {
     // return <Redirect href="/home" />;
-    return <Redirect href="/UserOnboarding/scene01" />;
+    return <Redirect href="/(Auth)/Sign-in" />;
   }
 
   return (
