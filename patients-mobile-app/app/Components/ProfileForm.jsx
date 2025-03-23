@@ -1,6 +1,6 @@
 // ProfileComponents/ProfileForm.js
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Modal, FlatList } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 const ProfileForm = ({ 
@@ -12,6 +12,18 @@ const ProfileForm = ({
     onRemoveAllergy,
     onChangeImage
 }) => {
+    const [showGenderDropdown, setShowGenderDropdown] = useState(false);
+    
+    const genderOptions = [
+        { id: '1', label: 'Male' },
+        { id: '2', label: 'Female' }
+    ];
+    
+    const handleGenderSelect = (gender) => {
+        onProfileChange({...profile, gender: gender.label});
+        setShowGenderDropdown(true);
+    };
+
     return (
         <View>
             {/* Profile Picture Selection */}
@@ -77,13 +89,16 @@ const ProfileForm = ({
                 placeholder="e.g. 5'3"
             />
 
-            <Text style={styles.inputLabel}>Gender</Text>
-            <TextInput
-                style={styles.input}
-                value={profile.gender}
-                onChangeText={(text) => onProfileChange({...profile, gender: text})}
-                placeholder="e.g. Male, Female"
-            />
+            <Text style={styles.inputLabel}>Gender *</Text>
+            <TouchableOpacity
+                style={styles.dropdownSelector}
+                onPress={() => setShowGenderDropdown(true)}
+            >
+                <Text style={profile.gender ? styles.dropdownSelectedText : styles.dropdownPlaceholder}>
+                    {profile.gender || "Select gender"}
+                </Text>
+                <Feather name="chevron-down" size={18} color="#2C4157" />
+            </TouchableOpacity>
 
             <Text style={styles.inputLabel}>Blood Type</Text>
             <TextInput
@@ -119,6 +134,54 @@ const ProfileForm = ({
                     </View>
                 ))}
             </View>
+
+            {/* Gender Dropdown Modal */}
+            <Modal
+                visible={showGenderDropdown}
+                transparent={true}
+                animationType="fade"
+                onRequestClose={() => setShowGenderDropdown(false)}
+            >
+                <TouchableOpacity 
+                    style={styles.modalOverlay}
+                    activeOpacity={1}
+                    onPress={() => setShowGenderDropdown(false)}
+                >
+                    <View style={styles.dropdownModal}>
+                        <View style={styles.dropdownHeader}>
+                            <Text style={styles.dropdownTitle}>Select Gender</Text>
+                            <TouchableOpacity onPress={() => setShowGenderDropdown(false)}>
+                                <Feather name="x" size={22} color="#2C4157" />
+                            </TouchableOpacity>
+                        </View>
+                        
+                        <FlatList
+                            data={genderOptions}
+                            keyExtractor={(item) => item.id}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity
+                                    style={[
+                                        styles.dropdownItem,
+                                        profile.gender === item.label && styles.dropdownItemSelected
+                                    ]}
+                                    onPress={() => handleGenderSelect(item)}
+                                >
+                                    <Text style={[
+                                        styles.dropdownItemText,
+                                        profile.gender === item.label && styles.dropdownItemTextSelected
+                                    ]}>
+                                        {item.label}
+                                    </Text>
+                                    {profile.gender === item.label && (
+                                        <Feather name="check" size={18} color="#295567" />
+                                    )}
+                                </TouchableOpacity>
+                            )}
+                            ItemSeparatorComponent={() => <View style={styles.separator} />}
+                        />
+                    </View>
+                </TouchableOpacity>
+            </Modal>
         </View>
     );
 };
@@ -164,6 +227,79 @@ const styles = StyleSheet.create({
         backgroundColor: '#F8FBFE',
         marginBottom: 10,
     },
+    // Dropdown styles
+    dropdownSelector: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#E8F1F9',
+        borderRadius: 8,
+        paddingHorizontal: 12,
+        paddingVertical: 12,
+        backgroundColor: '#F8FBFE',
+        marginBottom: 10,
+    },
+    dropdownSelectedText: {
+        fontSize: 16,
+        color: '#2C4157',
+    },
+    dropdownPlaceholder: {
+        fontSize: 16,
+        color: '#A0B0C1',
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    dropdownModal: {
+        width: '80%',
+        backgroundColor: 'white',
+        borderRadius: 12,
+        overflow: 'hidden',
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+    },
+    dropdownHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: '#E8F1F9',
+    },
+    dropdownTitle: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: '#2C4157',
+    },
+    dropdownItem: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 16,
+    },
+    dropdownItemSelected: {
+        backgroundColor: '#E8F1F9',
+    },
+    dropdownItemText: {
+        fontSize: 16,
+        color: '#2C4157',
+    },
+    dropdownItemTextSelected: {
+        fontWeight: '500',
+        color: '#295567',
+    },
+    separator: {
+        height: 1,
+        backgroundColor: '#E8F1F9',
+    },
+    // Allergy styles
     allergyInputContainer: {
         flexDirection: 'row',
         marginBottom: 15,
@@ -176,7 +312,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 10,
         fontSize: 16,
-        backgroundColor: '#295567',
+        backgroundColor: '#F8FBFE',
         marginRight: 10,
     },
     addAllergyButton: {
@@ -195,7 +331,7 @@ const styles = StyleSheet.create({
     allergyChip: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#295567',
+        backgroundColor: '#E8F1F9',
         borderRadius: 20,
         paddingVertical: 6,
         paddingHorizontal: 12,
