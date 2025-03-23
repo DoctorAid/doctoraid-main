@@ -2,6 +2,7 @@ import React from 'react';
 import { useEffect, useState } from "react";
 import { getSessionsByDoctor } from '../api/doctorsAPI';
 import { useUser } from "@clerk/clerk-react";
+import { Link } from 'react-router-dom';
 
 const SessionList = ({ setSession }) => {
   const [sessionsData, setSessionsData] = useState([]);
@@ -98,11 +99,12 @@ const SessionList = ({ setSession }) => {
           </div>
           
           {/* Create New Session Button */}
+          <Link to='../schedule' className="mr-1">
           <button 
             className="w-full bg-blue-400 hover:bg-blue-500 text-white font-medium py-3 rounded-lg transition flex items-center justify-center"
           >
-            <span className="mr-1">+</span> Create New Session
-          </button>
+            +Create New Session
+          </button></Link>  
         </div>
       </div>
     </div>
