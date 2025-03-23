@@ -259,111 +259,97 @@ export const getTotalPatientCountByDoctor = async (req, res) => {
     }
 };
 
-export const getAllPatients = async (req, res) => {
+export const getDoctorPatients = async (req, res) => {
     try {
-        const { doctorId } = req.params;
+        const { id } = req.params; // Doctor ID
         
-        // Validate required parameters
-        if (!doctorId) {
-            return res.status(400).json({ 
+        // Validate if doctor ID exists and is a valid ObjectId
+        if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({
                 success: false,
-                message: "Doctor ID is required." 
+                message: "Valid doctor ID is required."
             });
         }
         
-        // Validate MongoDB ObjectId
-        if (!mongoose.Types.ObjectId.isValid(doctorId)) {
-            return res.status(400).json({ 
-                success: false,
-                message: "Invalid Doctor ID format. Must be a valid MongoDB ObjectID." 
-            });
-        }
-        
-        // Check if doctor exists
-        const doctor = await Doctor.findById(doctorId);
+        // Find the doctor to ensure they exist
+        const doctor = await Doctor.findById(id);
         if (!doctor) {
-            return res.status(404).json({ 
+            return res.status(404).json({
                 success: false,
-                message: "Doctor not found." 
+                message: "Doctor not found."
             });
         }
         
         // Find all families that have subscribed to this doctor
         const subscribedFamilies = await Family.find({
-            "doctors.doctor": mongoose.Types.ObjectId(doctorId)
-        }).populate({
-            path: 'members.patient',
-            select: 'firstName lastName dateOfBirth gender contactNumber email address weight height relation'
+            'doctors.doctor': new mongoose.Types.ObjectId(id)
         });
         
         if (subscribedFamilies.length === 0) {
             return res.status(200).json({
                 success: true,
-                message: "No families are currently subscribed to this doctor.",
+                message: "No subscribed patients found for this doctor.",
                 data: {
-                    doctor: {
-                        id: doctor._id,
-                        name: `Dr. ${doctor.firstName} ${doctor.lastName}`,
-                        specialization: doctor.specialization
-                    },
-                    families: [],
-                    totalPatients: 0
+                    totalPatients: 0,
+                    patients: []
                 }
             });
         }
         
-        // Process and format each family and their patients
-        const formattedFamilies = subscribedFamilies.map(family => {
-            // Format patients data
-            const patients = family.members.map(member => {
-                const patient = member.patient;
-                return {
-                    id: patient._id,
-                    firstName: patient.firstName,
-                    lastName: patient.lastName,
-                    fullName: `${patient.firstName} ${patient.lastName}`,
-                    dateOfBirth: patient.dateOfBirth,
-                    gender: patient.gender,
-                    contactNumber: patient.contactNumber,
-                    email: patient.email,
-                    address: patient.address,
-                    weight: patient.weight,
-                    height: patient.height,
-                    relation: member.relation
-                };
+        // Get array of family IDs
+        const familyIds = subscribedFamilies.map(family => family._id);
+        
+        // Find all patients that belong to these families
+        const patients = await Patient.find({
+            familyId: { $in: familyIds }
+        }).select('_id name gender age bloodGroup allergies familyId email contactNumber dateOfBirth');
+        
+        // For each patient, get their most recent record (if any)
+        const patientsWithRecords = await Promise.all(patients.map(async (patient) => {
+            const latestRecord = await Record.findOne({
+                patientId: patient._id,
+                doctorId: id
+            }).sort({ date: -1 });
+            
+            // Find the most recent appointment/slot
+            const latestSlot = await Slot.findOne({
+                patientId: patient._id
+            })
+            .sort({ createdAt: -1 })
+            .populate({
+                path: 'Session',
+                select: 'date'
             });
             
+            // Format patient data for response
             return {
-                familyId: family.familyId,
-                familyObjectId: family._id,
-                clerkId: family.clerkId,
-                patients: patients
+                _id: patient._id,
+                name: patient.name,
+                gender: patient.gender,
+                age: patient.age,
+                bloodGroup: patient.bloodGroup,
+                allergies: patient.allergies,
+                email: patient.email,
+                contactNumber: patient.contactNumber,
+                dateOfBirth: patient.dateOfBirth,
+                familyId: patient.familyId,
+                lastVisit: latestRecord ? latestRecord.date : (latestSlot?.Session?.date || null),
+                hasMedicalRecords: !!latestRecord,
+                patientNote: latestSlot ? latestSlot.patientNote : null
             };
-        });
-        
-        // Count total patients across all families
-        const totalPatients = formattedFamilies.reduce(
-            (count, family) => count + family.patients.length, 
-            0
-        );
+        }));
         
         return res.status(200).json({
             success: true,
-            message: `Found ${formattedFamilies.length} families with a total of ${totalPatients} patients subscribed to this doctor.`,
+            message: `Found ${patientsWithRecords.length} subscribed patients.`,
             data: {
-                doctor: {
-                    id: doctor._id,
-                    name: `Dr. ${doctor.firstName} ${doctor.lastName}`,
-                    specialization: doctor.specialization,
-                    hospital: doctor.hospital,
-                    location: doctor.ppLocation
-                },
-                families: formattedFamilies,
-                totalPatients: totalPatients
+                totalPatients: patientsWithRecords.length,
+                patients: patientsWithRecords
             }
         });
+        
     } catch (error) {
-        console.error('Error retrieving patients for doctor:', error);
+        console.error('Error retrieving doctor patients:', error);
         return res.status(500).json({
             success: false,
             message: 'Internal server error',

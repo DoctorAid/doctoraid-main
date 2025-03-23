@@ -157,7 +157,6 @@ useEffect(() => {
   // Fetch patient list for the current session
   const fetchPatientList = async () => {
     try {
-      
       setLoading(true);
       console.log("Fetching patient list for session:", activeSessionId);
       const patientListData = await getSessionPatientList(activeSessionId);
@@ -223,10 +222,12 @@ useEffect(() => {
   // Initial data loading
   useEffect(() => {
     // Load data when component mounts using the active session ID
-    fetchSlots();
-    fetchWaitingList();
-    fetchPatientList();
-  }, [activeSessionId]);  // Empty dependency array means this runs once on mount
+    if (activeSessionId) {
+      fetchSlots();
+      fetchWaitingList();
+      fetchPatientList();
+    }
+  }, [activeSessionId]);
 
   // Fetch patient details and records when current patient changes
   useEffect(() => {
@@ -237,11 +238,11 @@ useEffect(() => {
         fetchPatientRecords(currentPatient._id);
       }
     }
-  }, [waitingList, currentPatientIndex,activeSessionId]);
+  }, [waitingList, currentPatientIndex, activeSessionId]);
 
-  // Handle record creation - UPDATED to match API requirements
+  // Handle record creation
   const handleCreateRecord = async () => {
-    if (!currentPatient || !currentPatient._id) {
+    if (!waitingList[currentPatientIndex] || !waitingList[currentPatientIndex]._id) {
       setMessage('No patient selected or invalid patient ID');
       return;
     }
@@ -250,7 +251,9 @@ useEffect(() => {
       setLoading(true);
       setMessage('');
 
-      // Get the slot ID if available (either from the patient object or from the current slot)
+      const currentPatient = waitingList[currentPatientIndex];
+      
+      // Get the slot ID if available
       let slotId = null;
       if (currentPatient.slotId) {
         slotId = currentPatient.slotId;
@@ -269,7 +272,7 @@ useEffect(() => {
         patientId: currentPatient._id,
         prescription: formData.prescription,
         observation: formData.observation,
-        notes: formData.notes, // Previously was "note"
+        notes: formData.notes,
         date: new Date().toISOString().split('T')[0],
         slotId: slotId
       };
@@ -282,7 +285,7 @@ useEffect(() => {
       setMessage('Record created successfully!');
 
       // Clear the form
-      setFormData({ observation: "", prescription: "", notes: "" }); // Updated from "note" to "notes"
+      setFormData({ observation: "", prescription: "", notes: "" });
       
       // Refresh patient records
       if (currentPatient._id) {
@@ -312,71 +315,9 @@ useEffect(() => {
     }
   };
 
-  // Mock patient data to use as fallback
-  const mockPatientsData = [
-    {
-      name: "Denzel White", 
-      date: "2024-02-01", 
-      time: "09:00 AM",
-      _id: "200 - 01",
-      age: 28,
-      sex: "Male",
-      bloodType: "O+",
-      allergies: ["Lorem ipsum dolor sit amet", "Lorem ipsum dolor sit amet"],
-      addedComplaints: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis.",
-      history: [
-        {
-          lastChecked: "21 April 2021",
-          prescriptionId: "2J983KT0",
-          observation: "High fever and cough at normal hemoglobin levels.",
-          prescriptions: [
-            "Paracetamol - 2 times a day",
-            "Dizopam - Day and Night before meal",
-            "Wikoryl",
-          ],
-          note: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-        },
-        {
-          lastChecked: "05 May 2021",
-          prescriptionId: "3H75GKL2",
-          observation: "Mild headache and dizziness.",
-          prescriptions: ["Ibuprofen - Morning and Evening", "Vitamin D supplement"],
-          note: "Continue hydration and rest. Avoid caffeine.",
-        },
-      ]
-    },
-    {
-      name: "Stacy Mitchell", 
-      date: "2024-02-01", 
-      time: "09:15 AM",
-      _id: "220 - 02",
-      age: 34,
-      sex: "Female",
-      bloodType: "A+",
-      allergies: ["Penicillin", "Dairy products"],
-      addedComplaints: "Persistent cough and mild fever for the past three days. Reports difficulty sleeping due to cough.",
-      history: [
-        {
-          lastChecked: "15 March 2021",
-          prescriptionId: "4K751LP3",
-          observation: "Seasonal allergies with congestion.",
-          prescriptions: [
-            "Cetirizine - Once daily",
-            "Nasal spray - Morning and evening",
-          ],
-          note: "Follow up in two weeks if symptoms persist.",
-        }
-      ]
-    }
-  ];
-
-  // Use API data or fallbacks
-  const patientsData = waitingList.length > 0 ? waitingList : mockPatientsData;
-  const currentPatient = patientDetails || (patientsData.length > 0 ? patientsData[currentPatientIndex] : null);
-
   // Navigation functions for patient history
   const nextHistory = () => {
-    const historyLength = patientRecords.length || (currentPatient?.history?.length || 0);
+    const historyLength = patientRecords.length;
     if (currentHistoryIndex < historyLength - 1) {
       setCurrentHistoryIndex(currentHistoryIndex + 1);
     }
@@ -390,10 +331,10 @@ useEffect(() => {
 
   // Navigation function for patients
   const handleNextPatient = () => {
-    if (currentPatientIndex < patientsData.length - 1) {
+    if (currentPatientIndex < waitingList.length - 1) {
       setCurrentPatientIndex(currentPatientIndex + 1);
       // Reset form and history index for the new patient
-      setFormData({ observation: "", prescription: "", notes: "" }); // Updated from "note" to "notes"
+      setFormData({ observation: "", prescription: "", notes: "" });
       setCurrentHistoryIndex(0);
     } else {
       // If we're at the last patient, show a message
@@ -405,12 +346,10 @@ useEffect(() => {
   // Get current history item
   const currentHistory = patientRecords.length > 0 
     ? patientRecords[currentHistoryIndex] 
-    : currentPatient?.history 
-      ? currentPatient.history[currentHistoryIndex]
-      : null;
+    : null;
 
   // Show loading screen during initial data load
-  if (loading && !patientsData.length) {
+  if (loading && !waitingList.length) {
     return (
       <div className="flex items-center justify-center h-screen bg-[#FAFAF9] font-['Raleway',sans-serif]">
         <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#295567]"></div>
@@ -420,8 +359,9 @@ useEffect(() => {
 
   if(activeSessionId == null) {
     return (
-      <SessionList setSession={setActiveSessionId} />)
-  };
+      <SessionList setSession={setActiveSessionId} />
+    );
+  }
 
   // Get today's date in formatted string
   const today = new Date();
@@ -439,7 +379,7 @@ useEffect(() => {
           </div>
           <div className='flex flex-col'>
             <p className="text-gray-900 font-semibold">
-              Welcome back, <span className="text-[#295567]">Dr. Bessie</span>
+              Welcome back, <span className="text-[#295567]">Dr. {user?.firstName || 'Doctor'}</span>
             </p>
             <p className="text-gray-500 text-sm">
               {formattedDate}
@@ -487,10 +427,9 @@ useEffect(() => {
               <div className="font-medium text-base text-gray-800">
                 Waiting List
               </div>
-    
             </div>
             <div className="overflow-y-auto w-full p-3 space-y-2 flex-grow">
-              {patientsData.map((patient, index) => {
+              {waitingList.map((patient, index) => {
                 // Extract first letter of name for avatar
                 const initial = patient.name && typeof patient.name === 'string' ? 
                   patient.name.charAt(0).toUpperCase() : '?';
@@ -523,7 +462,7 @@ useEffect(() => {
                   </div>
                 );
               })}
-              {patientsData.length === 0 && (
+              {waitingList.length === 0 && (
                 <div className="text-center text-gray-500 py-4 text-sm">
                   No patients in waiting list
                 </div>
@@ -540,7 +479,7 @@ useEffect(() => {
         {/* Patient Details - Showing the current patient */}
         <div className="w-full h-full overflow-hidden">
           <div className="p-4 bg-white flex flex-col rounded-xl shadow-sm border border-gray-100 h-full overflow-y-auto">
-            {currentPatient ? (
+            {waitingList.length > 0 && waitingList[currentPatientIndex] ? (
               <>
                 {/* Top Section - Compact header */}
                 <div className="flex justify-between items-center mb-4">
@@ -556,32 +495,32 @@ useEffect(() => {
                     <div className="flex items-center">
                       {/* Patient Avatar */}
                       <div className="h-12 w-12 flex items-center justify-center bg-[#295567]/10 text-[#295567] text-base font-bold rounded-full border border-[#295567]/20">
-                        {currentPatient && currentPatient.name
-                          ? currentPatient.name.charAt(0).toUpperCase()
+                        {patientDetails && patientDetails.name
+                          ? patientDetails.name.charAt(0).toUpperCase()
                           : '?'}
                       </div>
                       <div className="ml-3">
                         <p className="text-base font-bold">
-                          {currentPatient?.name || 'Unknown'}
+                          {patientDetails?.name || 'Unknown'}
                         </p>
-                        <p className="text-gray-500 text-xs">ID: {currentPatient?._id?.slice(-6) || '?'}</p>
+                        <p className="text-gray-500 text-xs">ID: {patientDetails?._id?.slice(-6) || '?'}</p>
                       </div>
                     </div>
 
                     <div className="mt-4 text-gray-700 space-y-1 text-sm">
                       <div className="grid grid-cols-2 gap-1">
-                        <p><span className="font-medium text-gray-600">Sex:</span> {currentPatient?.gender || 'N/A'}</p>
-                        <p><span className="font-medium text-gray-600">Age:</span> {currentPatient?.age || 'N/A'}</p>
+                        <p><span className="font-medium text-gray-600">Sex:</span> {patientDetails?.gender || 'N/A'}</p>
+                        <p><span className="font-medium text-gray-600">Age:</span> {patientDetails?.age || 'N/A'}</p>
                       </div>
                       <div className="grid grid-cols-2 gap-1">
-                        <p><span className="font-medium text-gray-600">Blood:</span> {currentPatient?.bloodGroup || 'N/A'}</p>
-                        <p><span className="font-medium text-gray-600">Contact:</span> {currentPatient?.contactNumber || 'N/A'}</p>
+                        <p><span className="font-medium text-gray-600">Blood:</span> {patientDetails?.bloodGroup || 'N/A'}</p>
+                        <p><span className="font-medium text-gray-600">Contact:</span> {patientDetails?.contactNumber || 'N/A'}</p>
                       </div>
                       <div>
                         <p className="font-medium text-gray-600">Allergies:</p>
                         <div className="flex flex-wrap gap-1 mt-1">
-                          {currentPatient?.allergies && currentPatient.allergies.length > 0 ? (
-                            currentPatient.allergies.map((allergy, index) => (
+                          {patientDetails?.allergies && patientDetails.allergies.length > 0 ? (
+                            patientDetails.allergies.map((allergy, index) => (
                               <span key={index} className="text-xs bg-red-50 text-red-600 px-2 py-0.5 rounded-full border border-red-100">
                                 {allergy}
                               </span>
@@ -598,7 +537,7 @@ useEffect(() => {
                     <div className="mt-4 pt-3 border-t border-gray-100">
                       <h3 className="font-medium text-gray-800 mb-1 text-sm">Complaints</h3>
                       <p className="text-gray-600 text-xs bg-[#FAFAF9] p-2 rounded-lg max-h-20 overflow-y-auto">
-                        {currentPatient?.patientNote || 'No complaints recorded'}
+                        {patientDetails?.patientNote || 'No complaints recorded'}
                       </p>
                     </div>
                   </div>
@@ -606,16 +545,16 @@ useEffect(() => {
                   {/* Right: Consultation History */}
                   <div className="w-full pl-4 border-l border-gray-100">
                     <h2 className="text-sm font-bold text-gray-800 mb-2">Consultation History</h2>
-                    {(patientRecords.length > 0 || (currentPatient.history && currentPatient.history.length > 0)) ? (
+                    {patientRecords.length > 0 ? (
                       <div className="text-gray-700 bg-[#FAFAF9] p-3 rounded-lg border border-gray-100 max-h-40 overflow-y-auto">
                         {currentHistory && (
                           <>
                             <div className="flex justify-between items-center mb-2">
                               <span className="text-xs font-medium text-gray-600">
-                                {currentHistory.lastChecked || currentHistory.date || 'Not recorded'}
+                                {currentHistory.date || 'Not recorded'}
                               </span>
                               <span className="text-xs bg-[#295567]/10 text-[#295567] px-1.5 py-0.5 rounded-full">
-                                {currentHistory.prescriptionId || currentHistory._id?.slice(-6) || 'N/A'}
+                                {currentHistory._id?.slice(-6) || 'N/A'}
                               </span>
                             </div>
                             <div className="space-y-2">
@@ -626,30 +565,23 @@ useEffect(() => {
                               
                               <div>
                                 <p className="text-xs text-gray-500 mb-0.5">Prescription</p>
-                                {currentHistory.prescriptions ? 
-                                  <ul className="space-y-0.5">
-                                    {currentHistory.prescriptions.map((prescription, index) => (
-                                      <li key={index} className="text-xs pl-1.5 border-l-2 border-[#295567]/30">{prescription}</li>
-                                    ))}
-                                  </ul>
-                                  : currentHistory.prescription ? (
-                                    <p className="text-xs pl-1.5 border-l-2 border-[#295567]/30">{currentHistory.prescription}</p>
-                                  ) : (
-                                    <p className="text-xs text-gray-500 italic">No prescriptions</p>
-                                  )
-                                }
+                                {currentHistory.prescription ? (
+                                  <p className="text-xs pl-1.5 border-l-2 border-[#295567]/30">{currentHistory.prescription}</p>
+                                ) : (
+                                  <p className="text-xs text-gray-500 italic">No prescriptions</p>
+                                )}
                               </div>
                               
                               <div>
                                 <p className="text-xs text-gray-500 mb-0.5">Note</p>
-                                <p className="text-xs">{currentHistory.note || currentHistory.notes || 'None'}</p>
+                                <p className="text-xs">{currentHistory.notes || 'None'}</p>
                               </div>
                             </div>
                           </>
                         )}
                         
                         {/* Navigation buttons */}
-                        {(patientRecords.length > 1 || (currentPatient.history && currentPatient.history.length > 1)) && (
+                        {patientRecords.length > 1 && (
                           <div className="flex justify-center space-x-3 mt-2">
                             <button 
                               className={`flex items-center justify-center w-6 h-6 rounded-full ${
@@ -664,16 +596,12 @@ useEffect(() => {
                             </button>
                             <button 
                               className={`flex items-center justify-center w-6 h-6 rounded-full ${
-                                currentHistoryIndex === (patientRecords.length > 0 
-                                  ? patientRecords.length - 1 
-                                  : (currentPatient.history ? currentPatient.history.length - 1 : 0)) 
+                                currentHistoryIndex === patientRecords.length - 1 
                                   ? "text-gray-300 cursor-not-allowed" 
                                   : "text-[#295567] hover:bg-[#295567]/10"
                               } transition-all duration-200`} 
                               onClick={nextHistory}
-                              disabled={currentHistoryIndex === (patientRecords.length > 0 
-                                ? patientRecords.length - 1 
-                                : (currentPatient.history ? currentPatient.history.length - 1 : 0))}
+                              disabled={currentHistoryIndex === patientRecords.length - 1}
                             >
                               <ChevronRight size={14} />
                             </button>
@@ -706,7 +634,7 @@ useEffect(() => {
                       <div>
                         <label className="block text-gray-600 text-xs font-medium mb-1">Prescription:</label>
                         <textarea
-                  className="w-full border border-gray-200 rounded-lg p-2 h-20 focus:ring-2 focus:ring-[#295567]/30 focus:outline-none transition-all duration-200 text-sm"
+                          className="w-full border border-gray-200 rounded-lg p-2 h-20 focus:ring-2 focus:ring-[#295567]/30 focus:outline-none transition-all duration-200 text-sm"
                           value={formData.prescription}
                           onChange={(e) => setFormData({ ...formData, prescription: e.target.value })}
                           placeholder="Enter prescription details"
@@ -742,7 +670,7 @@ useEffect(() => {
                   <button 
                     className="bg-[#295567] hover:bg-[#295567]/90 text-white font-medium py-1.5 px-3 rounded-lg transition-all duration-200 shadow-sm text-sm"
                     onClick={handleNextPatient}
-                    disabled={currentPatientIndex >= patientsData.length - 1}
+                    disabled={currentPatientIndex >= waitingList.length - 1}
                   >
                     Next
                   </button>
