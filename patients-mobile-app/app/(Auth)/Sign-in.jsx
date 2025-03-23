@@ -142,6 +142,15 @@ export default function Page() {
             >
               Login
             </Button>
+            
+            <View style={styles.signUpLinkContainer}>
+              <Text style={styles.signUpText}>
+                Don't have an account?{' '}
+                <Link href="./Sign-up" style={styles.signUpLink}>
+                  Sign Up
+                </Link>
+              </Text>
+            </View>
           </View>
         </ScrollView>
       </Animated.View>
@@ -259,4 +268,19 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: 'center',
   },
+  signUpLinkContainer: {
+    marginTop: 24,
+    alignItems: 'center',
+  },
+  signUpText: {
+    fontSize: 14,
+    color: '#7A8A97',
+    fontFamily: Platform.OS === 'ios' ? 'Raleway-Regular' : 'sans-serif',
+  },
+  signUpLink: {
+    color: '#5591BC',
+    fontWeight: 'bold',
+    textDecorationLine: 'underline',
+    fontFamily: Platform.OS === 'ios' ? 'Raleway-SemiBold' : 'sans-serif-medium',
+  }
 })
