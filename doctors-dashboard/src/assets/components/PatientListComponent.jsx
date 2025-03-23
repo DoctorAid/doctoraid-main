@@ -24,12 +24,12 @@ function PatientListComponent({ patients }) {
   };
 
   return (
-    <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-      <div className="px-5 pt-4 pb-2">
-        <h2 className="font-medium text-xl text-gray-800">Session's Patient List</h2>
+    <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden h-full">
+      <div className="px-3 py-2 border-b border-gray-100">
+        <h2 className="font-medium text-sm text-gray-800">Session's Patient List</h2>
       </div>
      
-      <div className="max-h-[330px] overflow-y-auto p-4 space-y-2">
+      <div className="overflow-y-auto p-2 space-y-1.5 h-[calc(100%-40px)]">
         {sessionPatients && sessionPatients.length > 0 ? (
           sessionPatients.map((patient, index) => {
             // Extract the patient name with proper fallbacks
@@ -42,23 +42,23 @@ function PatientListComponent({ patients }) {
             const patientInitials = getInitials(patientName);
            
             return (
-              <div key={index} className="flex justify-between items-center px-4 py-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
+              <div key={index} className="flex justify-between items-center p-2 rounded-md bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
                 <div className="flex items-center">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#295567]/10 text-[#295567] text-sm font-medium">
+                  <div className="flex items-center justify-center w-7 h-7 rounded-full bg-[#295567]/10 text-[#295567] text-xs font-medium">
                     {patientInitials}
                   </div>
-                  <div className="ml-3">
-                    <h3 className="font-medium text-gray-800">{patientName}</h3>
+                  <div className="ml-2 overflow-hidden">
+                    <h3 className="font-medium text-xs text-gray-800 truncate">{patientName}</h3>
                   </div>
                 </div>
-                <div className="px-3 py-1 bg-[#295567]/10 text-[#295567] rounded-full text-xs font-medium">
+                <div className="min-w-[55px] text-center px-2 py-0.5 bg-[#295567]/10 text-[#295567] rounded-md text-xs font-medium">
                   {startTime}
                 </div>
               </div>
             );
           })
         ) : (
-          <div className="text-center py-6 text-gray-500">
+          <div className="text-center py-4 text-gray-500 text-xs">
             No patients in current session
           </div>
         )}

@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { SignOutButton } from '@clerk/clerk-react';
 import { useClerk, UserButton, useUser } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
-import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
-import DashboardNavigation from '../page_sections/dashboard/DashboardNavigation';
+import { Plus, ChevronLeft, ChevronRight, LogOut, Calendar } from "lucide-react";
 import PatientListComponent from '../components/PatientListComponent';
 import SessionInfo from '../components/SessionInfo';
 import { io } from "socket.io-client";
-import MedicinesPage from './MedicinesPage';
+import SessionList from '../components/SessionList';
 
 // Import API functions
 import {
@@ -24,7 +23,8 @@ function DashboardPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [currentPatientIndex, setCurrentPatientIndex] = useState(0);
-  const [doctorId, setDoctorId] = useState("67d8aff139afa54b845fc507");  const [currentHistoryIndex, setCurrentHistoryIndex] = useState(0);
+  const [doctorId, setDoctorId] = useState("67d8aff139afa54b845fc507");  
+  const [currentHistoryIndex, setCurrentHistoryIndex] = useState(0);
   const [formData, setFormData] = useState({
     observation: "",
     prescription: "",
@@ -46,8 +46,9 @@ function DashboardPage() {
   console.log("clerkId is:", clerkId);
 
   // Use the known active session ID
-  const activeSessionId = "67dc39fb2e1614dc3bce9f6c";
-  const [selectedSession, setSelectedSession] = useState({_id: activeSessionId});
+  
+  const [activeSessionId, setActiveSessionId] = useState(null);
+ // const [selectedSession, setSelectedSession] = useState({_id: activeSessionId});
 
   // Socket connection
   const socket = io("http://localhost:8080", {
@@ -288,6 +289,17 @@ function DashboardPage() {
     }
   };
 
+  // End Session function
+  const handleEndSession = () => {
+    // Show confirmation dialog
+    if (window.confirm("Are you sure you want to end this session? This action cannot be undone.")) {
+      // Add API call to end session here once implemented
+      console.log("Ending session:", activeSessionId);
+      setMessage("Session ended successfully!");
+      // You could redirect or update UI as needed after session end
+    }
+  };
+
   // Mock patient data to use as fallback
   const mockPatientsData = [
     {
@@ -394,15 +406,56 @@ function DashboardPage() {
     );
   }
 
+  if(activeSessionId == null) {
+    return (
+      <SessionList setSession={setActiveSessionId} />)
+  };
+
+  // Get today's date in formatted string
+  const today = new Date();
+  const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+  const formattedDate = today.toLocaleDateString('en-US', options);
+
   return (
-    <div className='flex flex-col h-[100%] gap-5 bg-[#FAFAF9] w-full px-4 py-4 items-start justify-start text-gray-800 animate-pageTransition font-["Raleway",sans-serif]'>
-      <DashboardNavigation />
-      
-      <div className="grid grid-flow-col grid-cols-[350px_minmax(0,1fr)] justify-center align-middle gap-6 w-full">
-        <div className="flex flex-col gap-4 space-y-4 w-full">
+    <div className='flex flex-col h-screen gap-4 bg-[#FAFAF9] w-full px-4 py-4 items-start justify-start text-gray-800 animate-pageTransition font-["Raleway",sans-serif] overflow-hidden'>
+      {/* Custom Navigation Bar */}
+      <div className='flex justify-between w-full items-center px-6 py-3 bg-white border-b border-gray-100 shadow-sm rounded-xl'>
+        {/* Left: Doctor greeting and date */}
+        <div className='flex items-center gap-3'>
+          <div className="flex items-center justify-center w-10 h-10 bg-[#295567]/10 rounded-lg">
+            <Calendar size={20} className="text-[#295567]" />
+          </div>
+          <div className='flex flex-col'>
+            <p className="text-gray-900 font-semibold">
+              Welcome back, <span className="text-[#295567]">Dr. Bessie</span>
+            </p>
+            <p className="text-gray-500 text-sm">
+              {formattedDate}
+            </p>
+          </div>
+        </div>
+        
+        {/* Right: Actions */}
+        <div className='flex items-center gap-3'>
+          {/* End Session button */}
+          <button 
+            onClick={handleEndSession}
+            className="flex items-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 font-medium py-1.5 px-3 rounded-lg transition-all duration-200 border border-red-200"
+          >
+            <LogOut size={16} />
+            End Session
+          </button>
           
-          {/* Session Info */}
-          <div className="pr-2 pl-2">
+          {/* User profile button */}
+          <UserButton afterSignOutUrl="/" />
+        </div>
+      </div>
+      
+      <div className="grid grid-flow-col grid-cols-[300px_minmax(0,1fr)] justify-center align-middle gap-4 w-full overflow-hidden h-[calc(100vh-90px)]">
+        <div className="flex flex-col gap-3 w-full h-full overflow-hidden">
+          
+          {/* Session Info Component */}
+          <div className="w-full">
             <SessionInfo 
               SessionId={activeSessionId.slice(-6)} 
               totalSlots={currentSlots.length} 
@@ -411,11 +464,14 @@ function DashboardPage() {
           </div>
 
           {/* Waiting List - Highlighting the current patient */}
-          <div className="flex rounded-3xl bg-white shadow-sm border border-gray-100 flex-col gap-3 pr-2">
-            <div className="font-medium text-xl pl-5 pt-4 text-gray-800">
-              Waiting List
+          <div className="flex rounded-xl bg-white shadow-sm border border-gray-100 flex-col h-1/2 overflow-hidden">
+            <div className="flex justify-between items-center px-4 py-3 border-b border-gray-100">
+              <div className="font-medium text-base text-gray-800">
+                Waiting List
+              </div>
+    
             </div>
-            <div className="max-h-[250px] overflow-y-auto w-full space-y-3 p-4">
+            <div className="overflow-y-auto w-full p-3 space-y-2 flex-grow">
               {patientsData.map((patient, index) => {
                 // Extract first letter of name for avatar
                 const initial = patient.name && typeof patient.name === 'string' ? 
@@ -428,21 +484,21 @@ function DashboardPage() {
                       index === currentPatientIndex 
                         ? 'bg-[#295567]/10 border border-[#295567]/30' 
                         : 'bg-gray-50 hover:bg-gray-100'
-                    } rounded-xl p-3 w-full cursor-pointer transition-colors duration-200`}
+                    } rounded-lg p-2 w-full cursor-pointer transition-colors duration-200`}
                     onClick={() => setCurrentPatientIndex(index)}
                   >
-                    <div className={`flex items-center justify-center w-10 h-10 ${
+                    <div className={`flex items-center justify-center w-8 h-8 ${
                       index === currentPatientIndex 
                         ? 'bg-[#295567] text-white' 
                         : 'bg-gray-50 text-[#295567]'
-                    } rounded-full text-base font-medium transition-colors duration-200`}>
+                    } rounded-full text-sm font-medium transition-colors duration-200`}>
                       {initial}
                     </div>
-                    <div className="ml-3">
-                      <h3 className="text-gray-800 font-medium">
+                    <div className="ml-2 overflow-hidden">
+                      <h3 className="text-gray-800 font-medium text-sm truncate">
                         {patient.name || 'Unknown'}
                       </h3>
-                      <p className="text-gray-500 text-sm">
+                      <p className="text-gray-500 text-xs">
                         {patient.appointmentTime || 'No time'}
                       </p>
                     </div>
@@ -450,50 +506,62 @@ function DashboardPage() {
                 );
               })}
               {patientsData.length === 0 && (
-                <div className="text-center text-gray-500 py-4">
+                <div className="text-center text-gray-500 py-4 text-sm">
                   No patients in waiting list
                 </div>
               )}
             </div>
           </div>
 
-          {/* Session Patient List Component */}
-          <PatientListComponent patients={patientList} />
+          {/* Patient List Component */}
+          <div className="h-1/2 overflow-hidden">
+            <PatientListComponent patients={patientList} />
+          </div>
         </div>
 
         {/* Patient Details - Showing the current patient */}
-        <div className="w-full h-full">
-          <div className="p-6 bg-white flex flex-col rounded-3xl shadow-sm border border-gray-100 h-full">
+        <div className="w-full h-full overflow-hidden">
+          <div className="p-4 bg-white flex flex-col rounded-xl shadow-sm border border-gray-100 h-full overflow-y-auto">
             {currentPatient ? (
               <>
-                {/* Top Section */}
-                <div className="flex justify-between flex-1">
+                {/* Top Section - Compact header */}
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-lg font-bold text-gray-800">Patient Details</h2>
+                  <div className="text-xs font-medium px-2 py-1 bg-[#295567]/10 text-[#295567] rounded-full">
+                    On-going
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
                   {/* Left: Patient Details */}
-                  <div className="w-1/2 pr-8">
-                    <h2 className="text-xl font-bold text-gray-800">On-going - Patient Details</h2>
-                    <div className="flex items-center mt-4">
+                  <div className="w-full pr-4">
+                    <div className="flex items-center">
                       {/* Patient Avatar */}
-                      <div className="h-14 w-14 flex items-center justify-center bg-[#295567]/10 text-[#295567] text-lg font-bold rounded-full border border-[#295567]/20">
+                      <div className="h-12 w-12 flex items-center justify-center bg-[#295567]/10 text-[#295567] text-base font-bold rounded-full border border-[#295567]/20">
                         {currentPatient && currentPatient.name
                           ? currentPatient.name.charAt(0).toUpperCase()
                           : '?'}
                       </div>
-                      <div className="ml-4">
-                        <p className="text-lg font-bold">
+                      <div className="ml-3">
+                        <p className="text-base font-bold">
                           {currentPatient?.name || 'Unknown'}
                         </p>
-                        {/* <p className="text-gray-500">Patient ID - {currentPatient?._id?.slice(-6) || '?'}</p> */}
+                        <p className="text-gray-500 text-xs">ID: {currentPatient?._id?.slice(-6) || '?'}</p>
                       </div>
                     </div>
 
-                    <div className="mt-6 text-gray-700 space-y-2">
-                      <p><span className="font-medium text-gray-600">Sex:</span> {currentPatient?.gender || 'Not specified'}</p>
-                      <p><span className="font-medium text-gray-600">Age:</span> {currentPatient?.age || 'Not specified'}</p>
-                      <p><span className="font-medium text-gray-600">Blood:</span> {currentPatient?.bloodGroup || 'Not specified'}</p>
-                      <p><span className="font-medium text-gray-600">Contact:</span> {currentPatient?.contactNumber || 'Not specified'}</p>
+                    <div className="mt-4 text-gray-700 space-y-1 text-sm">
+                      <div className="grid grid-cols-2 gap-1">
+                        <p><span className="font-medium text-gray-600">Sex:</span> {currentPatient?.gender || 'N/A'}</p>
+                        <p><span className="font-medium text-gray-600">Age:</span> {currentPatient?.age || 'N/A'}</p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-1">
+                        <p><span className="font-medium text-gray-600">Blood:</span> {currentPatient?.bloodGroup || 'N/A'}</p>
+                        <p><span className="font-medium text-gray-600">Contact:</span> {currentPatient?.contactNumber || 'N/A'}</p>
+                      </div>
                       <div>
                         <p className="font-medium text-gray-600">Allergies:</p>
-                        <div className="flex flex-wrap gap-2 mt-2">
+                        <div className="flex flex-wrap gap-1 mt-1">
                           {currentPatient?.allergies && currentPatient.allergies.length > 0 ? (
                             currentPatient.allergies.map((allergy, index) => (
                               <span key={index} className="text-xs bg-red-50 text-red-600 px-2 py-0.5 rounded-full border border-red-100">
@@ -502,61 +570,61 @@ function DashboardPage() {
                             ))
                           ) : (
                             <span className="text-xs bg-gray-50 text-gray-600 px-2 py-0.5 rounded-full border border-gray-200">
-                              No known allergies
+                              No allergies
                             </span>
                           )}
                         </div>
                       </div>
                     </div>
 
-                    <div className="mt-6 pt-4 border-t border-gray-100">
-                      <h3 className="font-medium text-gray-800 mb-2">Added Complaints</h3>
-                      <p className="text-gray-600 text-sm bg-[#FAFAF9] p-3 rounded-xl">
+                    <div className="mt-4 pt-3 border-t border-gray-100">
+                      <h3 className="font-medium text-gray-800 mb-1 text-sm">Complaints</h3>
+                      <p className="text-gray-600 text-xs bg-[#FAFAF9] p-2 rounded-lg max-h-20 overflow-y-auto">
                         {currentPatient?.patientNote || 'No complaints recorded'}
                       </p>
                     </div>
                   </div>
 
                   {/* Right: Consultation History */}
-                  <div className="w-1/2 pl-8 border-l border-gray-100">
-                    <h2 className="text-xl font-bold text-gray-800">Consultation History</h2>
+                  <div className="w-full pl-4 border-l border-gray-100">
+                    <h2 className="text-sm font-bold text-gray-800 mb-2">Consultation History</h2>
                     {(patientRecords.length > 0 || (currentPatient.history && currentPatient.history.length > 0)) ? (
-                      <div className="mt-4 text-gray-700 bg-[#FAFAF9] p-4 rounded-xl border border-gray-100">
+                      <div className="text-gray-700 bg-[#FAFAF9] p-3 rounded-lg border border-gray-100 max-h-40 overflow-y-auto">
                         {currentHistory && (
                           <>
-                            <div className="flex justify-between items-center mb-3">
-                              <span className="text-sm font-medium text-gray-600">
+                            <div className="flex justify-between items-center mb-2">
+                              <span className="text-xs font-medium text-gray-600">
                                 {currentHistory.lastChecked || currentHistory.date || 'Not recorded'}
                               </span>
-                              <span className="text-xs bg-[#295567]/10 text-[#295567] px-2 py-0.5 rounded-full">
+                              <span className="text-xs bg-[#295567]/10 text-[#295567] px-1.5 py-0.5 rounded-full">
                                 {currentHistory.prescriptionId || currentHistory._id?.slice(-6) || 'N/A'}
                               </span>
                             </div>
-                            <div className="space-y-3">
+                            <div className="space-y-2">
                               <div>
-                                <p className="text-xs text-gray-500 mb-1">Observation</p>
-                                <p className="text-sm">{currentHistory.observation || 'None'}</p>
+                                <p className="text-xs text-gray-500 mb-0.5">Observation</p>
+                                <p className="text-xs">{currentHistory.observation || 'None'}</p>
                               </div>
                               
                               <div>
-                                <p className="text-xs text-gray-500 mb-1">Prescription</p>
+                                <p className="text-xs text-gray-500 mb-0.5">Prescription</p>
                                 {currentHistory.prescriptions ? 
-                                  <ul className="space-y-1">
+                                  <ul className="space-y-0.5">
                                     {currentHistory.prescriptions.map((prescription, index) => (
-                                      <li key={index} className="text-sm pl-2 border-l-2 border-[#295567]/30">{prescription}</li>
+                                      <li key={index} className="text-xs pl-1.5 border-l-2 border-[#295567]/30">{prescription}</li>
                                     ))}
                                   </ul>
                                   : currentHistory.prescription ? (
-                                    <p className="text-sm pl-2 border-l-2 border-[#295567]/30">{currentHistory.prescription}</p>
+                                    <p className="text-xs pl-1.5 border-l-2 border-[#295567]/30">{currentHistory.prescription}</p>
                                   ) : (
-                                    <p className="text-sm text-gray-500 italic">No prescriptions</p>
+                                    <p className="text-xs text-gray-500 italic">No prescriptions</p>
                                   )
                                 }
                               </div>
                               
                               <div>
-                                <p className="text-xs text-gray-500 mb-1">Note</p>
-                                <p className="text-sm">{currentHistory.note || currentHistory.notes || 'None'}</p>
+                                <p className="text-xs text-gray-500 mb-0.5">Note</p>
+                                <p className="text-xs">{currentHistory.note || currentHistory.notes || 'None'}</p>
                               </div>
                             </div>
                           </>
@@ -564,9 +632,9 @@ function DashboardPage() {
                         
                         {/* Navigation buttons */}
                         {(patientRecords.length > 1 || (currentPatient.history && currentPatient.history.length > 1)) && (
-                          <div className="flex justify-center space-x-4 mt-4">
+                          <div className="flex justify-center space-x-3 mt-2">
                             <button 
-                              className={`flex items-center justify-center w-8 h-8 rounded-full ${
+                              className={`flex items-center justify-center w-6 h-6 rounded-full ${
                                 currentHistoryIndex === 0 
                                   ? "text-gray-300 cursor-not-allowed" 
                                   : "text-[#295567] hover:bg-[#295567]/10"
@@ -574,10 +642,10 @@ function DashboardPage() {
                               onClick={prevHistory}
                               disabled={currentHistoryIndex === 0}
                             >
-                              <ChevronLeft size={18} />
+                              <ChevronLeft size={14} />
                             </button>
                             <button 
-                              className={`flex items-center justify-center w-8 h-8 rounded-full ${
+                              className={`flex items-center justify-center w-6 h-6 rounded-full ${
                                 currentHistoryIndex === (patientRecords.length > 0 
                                   ? patientRecords.length - 1 
                                   : (currentPatient.history ? currentPatient.history.length - 1 : 0)) 
@@ -589,13 +657,13 @@ function DashboardPage() {
                                 ? patientRecords.length - 1 
                                 : (currentPatient.history ? currentPatient.history.length - 1 : 0))}
                             >
-                              <ChevronRight size={18} />
+                              <ChevronRight size={14} />
                             </button>
                           </div>
                         )}
                       </div>
                     ) : (
-                      <div className="mt-4 text-gray-500 italic bg-[#FAFAF9] p-4 rounded-xl border border-gray-100">
+                      <div className="mt-2 text-gray-500 italic bg-[#FAFAF9] p-3 rounded-lg border border-gray-100 text-xs">
                         No previous consultations found
                       </div>
                     )}
@@ -603,33 +671,33 @@ function DashboardPage() {
                 </div>
 
                 {/* Ongoing Treatment Inputs */}
-                <div className="mt-8 pt-4 border-t border-gray-100">
-                  <h2 className="text-xl font-bold text-gray-800 mb-4">On-going</h2>
-                  <div className="space-y-4">
+                <div className="mt-6 pt-3 border-t border-gray-100">
+                  <h2 className="text-base font-bold text-gray-800 mb-3">Current Consultation</h2>
+                  <div className="space-y-3">
                     <div>
-                      <label className="block text-gray-600 text-sm font-medium mb-1">Observation:</label>
+                      <label className="block text-gray-600 text-xs font-medium mb-1">Observation:</label>
                       <input
                         type="text"
-                        className="w-full border border-gray-200 rounded-xl p-2 focus:ring-2 focus:ring-[#295567]/30 focus:outline-none transition-all duration-200"
+                        className="w-full border border-gray-200 rounded-lg p-2 focus:ring-2 focus:ring-[#295567]/30 focus:outline-none transition-all duration-200 text-sm"
                         value={formData.observation}
                         onChange={(e) => setFormData({ ...formData, observation: e.target.value })}
                         placeholder="Enter your observation"
                       />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-gray-600 text-sm font-medium mb-1">Prescription:</label>
+                        <label className="block text-gray-600 text-xs font-medium mb-1">Prescription:</label>
                         <textarea
-                          className="w-full border border-gray-200 rounded-xl p-2 h-24 focus:ring-2 focus:ring-[#295567]/30 focus:outline-none transition-all duration-200"
+                  className="w-full border border-gray-200 rounded-lg p-2 h-20 focus:ring-2 focus:ring-[#295567]/30 focus:outline-none transition-all duration-200 text-sm"
                           value={formData.prescription}
                           onChange={(e) => setFormData({ ...formData, prescription: e.target.value })}
                           placeholder="Enter prescription details"
                         />
                       </div>
                       <div>
-                        <label className="block text-gray-600 text-sm font-medium mb-1">Note:</label>
+                        <label className="block text-gray-600 text-xs font-medium mb-1">Note:</label>
                         <textarea
-                          className="w-full border border-gray-200 rounded-xl p-2 h-24 focus:ring-2 focus:ring-[#295567]/30 focus:outline-none transition-all duration-200"
+                          className="w-full border border-gray-200 rounded-lg p-2 h-20 focus:ring-2 focus:ring-[#295567]/30 focus:outline-none transition-all duration-200 text-sm"
                           value={formData.notes}
                           onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                           placeholder="Add additional notes here"
@@ -640,21 +708,21 @@ function DashboardPage() {
                 </div>
 
                 {/* Save & Next Buttons */}
-                <div className="flex justify-end mt-6 space-x-4">
+                <div className="flex justify-end mt-4 space-x-3">
                   {message && (
-                    <div className="text-green-600 self-center mr-auto text-sm bg-green-50 px-3 py-1 rounded-full">
+                    <div className="text-green-600 self-center mr-auto text-xs bg-green-50 px-2 py-1 rounded-full">
                       {message}
                     </div>
                   )}
                   <button 
-                    className="bg-[#FAFAF9] hover:bg-[#295567]/10 text-[#295567] font-medium py-2 px-4 rounded-xl transition-all duration-200 border border-[#295567]/30"
+                    className="bg-[#FAFAF9] hover:bg-[#295567]/10 text-[#295567] font-medium py-1.5 px-3 rounded-lg transition-all duration-200 border border-[#295567]/30 text-sm"
                     onClick={handleCreateRecord}
                     disabled={loading}
                   >
                     {loading ? 'Saving...' : 'Save'}
                   </button>
                   <button 
-                    className="bg-[#295567] hover:bg-[#295567]/90 text-white font-medium py-2 px-4 rounded-xl transition-all duration-200 shadow-sm"
+                    className="bg-[#295567] hover:bg-[#295567]/90 text-white font-medium py-1.5 px-3 rounded-lg transition-all duration-200 shadow-sm text-sm"
                     onClick={handleNextPatient}
                     disabled={currentPatientIndex >= patientsData.length - 1}
                   >
@@ -664,10 +732,10 @@ function DashboardPage() {
               </>
             ) : (
               <div className="flex flex-col items-center justify-center h-full">
-                <div className="bg-[#295567]/10 rounded-full p-6 mb-4">
-                  <ChevronLeft size={36} className="text-[#295567]" />
+                <div className="bg-[#295567]/10 rounded-full p-4 mb-3">
+                  <ChevronLeft size={24} className="text-[#295567]" />
                 </div>
-                <p className="text-lg text-gray-500">Select a patient to view details</p>
+                <p className="text-base text-gray-500">Select a patient to view details</p>
               </div>
             )}
           </div>

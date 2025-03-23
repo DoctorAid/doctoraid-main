@@ -1,8 +1,8 @@
 import React from 'react';
 import { Bell, Settings, Plus, Search, Calendar, MoreHorizontal } from 'lucide-react';
-import { UserButton } from "@clerk/clerk-react";
+import { UserButton,useUser} from "@clerk/clerk-react";
 
-function DashboardNavigation() {
+function DashboardNavigation({ setSession }) {
   const today = new Date();
   const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
   const formattedDate = today.toLocaleDateString('en-US', options);
@@ -16,7 +16,7 @@ function DashboardNavigation() {
         </div>
         <div className='flex flex-col'>
           <p className="text-gray-900 font-semibold">
-            Welcome back, <span className="text-[#295567]">Dr. Bessie</span>
+            Welcome back, <span className="text-[#295567]">Dr.{useUser().lastName}</span>
           </p>
           <p className="text-gray-500 text-sm">
             {formattedDate}
