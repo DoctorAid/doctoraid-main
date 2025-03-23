@@ -402,7 +402,7 @@ function DashboardPage() {
 
   return (
     <div className='flex flex-col h-[100%] gap-5 bg-[#FAFAF9] w-full px-4 py-4 items-start justify-start text-gray-800 animate-pageTransition font-["Raleway",sans-serif]'>
-      <DashboardNavigation />
+      <DashboardNavigation setSession={setActiveSessionId}/>
       
       <div className="grid grid-flow-col grid-cols-[350px_minmax(0,1fr)] justify-center align-middle gap-6 w-full">
         <div className="flex flex-col gap-4 space-y-4 w-full">
