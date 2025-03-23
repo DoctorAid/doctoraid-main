@@ -6,7 +6,7 @@ import { Plus, ChevronLeft, ChevronRight, LogOut, Calendar } from "lucide-react"
 import PatientListComponent from '../components/PatientListComponent';
 import SessionInfo from '../components/SessionInfo';
 import { io } from "socket.io-client";
-import MedicinesPage from './MedicinesPage';
+import SessionList from '../components/SessionList';
 
 // Import API functions
 import {
@@ -46,8 +46,9 @@ function DashboardPage() {
   console.log("clerkId is:", clerkId);
 
   // Use the known active session ID
-  const activeSessionId = "67dc39fb2e1614dc3bce9f6c";
-  const [selectedSession, setSelectedSession] = useState({_id: activeSessionId});
+  
+  const [activeSessionId, setActiveSessionId] = useState(null);
+ // const [selectedSession, setSelectedSession] = useState({_id: activeSessionId});
 
   // Socket connection
   const socket = io("http://localhost:8080", {
@@ -404,6 +405,11 @@ function DashboardPage() {
       </div>
     );
   }
+
+  if(activeSessionId == null) {
+    return (
+      <SessionList setSession={setActiveSessionId} />)
+  };
 
   // Get today's date in formatted string
   const today = new Date();
