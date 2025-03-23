@@ -174,7 +174,7 @@ function SignInPage() {
             <img src={logo} alt="DoctorAid Logo" className="h-5 w-auto" />
           </div>
           <div className="flex space-x-8 text-[20px] font-light text-gray-700">
-            <a href="https://doctoraid.site/early-access" className="hover:text-blue-600">Sign-Up</a>
+            <a href="https://doctoraid.site/" className="hover:text-blue-600">Sign-Up</a>
             <a href="/about" className="hover:text-blue-600">About Us</a>
             <a href="/contact" className="hover:text-blue-600">Contact</a>
           </div>
@@ -195,21 +195,26 @@ function SignInPage() {
             </h1>
 
             <SignIn
-              appearance={{
-                variables: {
-                  colorPrimary: "#1e40af",
-                  colorBackground: "#ffffff",
-                  colorInputText: "#333",
-                  colorText: "#1e293b",
-                  borderRadius: "15px",
-                  colorAccent: "#1e40af",
-                },
-              }}
-              style={{
-                "--clerk-footer-text-color": "#1e40af",
-                "--clerk-footer-background-color": "#e0e7ff",
-              }}
-            />
+                appearance={{
+                  variables: {
+                    colorPrimary: "#1e40af",
+                    colorBackground: "#ffffff",
+                    colorInputText: "#333",
+                    colorText: "#1e293b",
+                    borderRadius: "15px",
+                    colorAccent: "#1e40af",
+                  }
+                }}
+                style={{
+                  "--clerk-footer-text-color": "#1e40af",
+                  "--clerk-footer-background-color": "#e0e7ff",
+                }}
+                
+                // Specify a custom redirect URL for the sign-up link
+                signUpUrl="https://doctoraid.site/"
+                // Alternatively, for more control use afterSignUpUrl
+           
+              />
           </div>
 
           {/* Right side: Click-to-Change Image with Auto Animation */}
