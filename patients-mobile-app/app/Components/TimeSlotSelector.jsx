@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+
 
 const TimeSlotSelector = ({ session, onTimeSelect }) => {
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
@@ -32,12 +32,18 @@ const TimeSlotSelector = ({ session, onTimeSelect }) => {
     let id = 1;
     
     while (currentTime < end) {
-      slots.push({
-        id: id++,
-        time: formatTime(currentTime),
-        available: Math.random() > 0.3, // Random availability for demo
-      });
+      const isAvailable = Math.random() > 0.3; // Random availability for demo
       
+      // Only add available slots
+      if (isAvailable) {
+        slots.push({
+          id: id,
+          time: formatTime(currentTime),
+          available: true,
+        });
+      }
+      
+      id++;
       // Add 10 minutes
       currentTime = new Date(currentTime.getTime() + 10 * 60000);
     }
@@ -77,10 +83,8 @@ const TimeSlotSelector = ({ session, onTimeSelect }) => {
   };
 
   const handleTimeSelect = (timeSlot) => {
-    if (timeSlot.available) {
-      setSelectedTimeSlot(timeSlot);
-      onTimeSelect(timeSlot.time);
-    }
+    setSelectedTimeSlot(timeSlot);
+    onTimeSelect(timeSlot.time);
   };
 
   if (!session) {
@@ -94,56 +98,37 @@ const TimeSlotSelector = ({ session, onTimeSelect }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Select Time Slot</Text>
-      <ScrollView 
-        horizontal 
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        {timeSlots.map((slot) => (
-          <TouchableOpacity
-            key={slot.id}
-            style={[
-              styles.timeSlot,
-              !slot.available && styles.unavailableSlot,
-              selectedTimeSlot?.id === slot.id && styles.selectedTimeSlot
-            ]}
-            onPress={() => handleTimeSelect(slot)}
-            disabled={!slot.available}
-          >
-            <Text 
+      {timeSlots.length > 0 ? (
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {timeSlots.map((slot) => (
+            <TouchableOpacity
+              key={slot.id}
               style={[
-                styles.timeText,
-                !slot.available && styles.unavailableText,
-                selectedTimeSlot?.id === slot.id && styles.selectedText
+                styles.timeSlot,
+                selectedTimeSlot?.id === slot.id && styles.selectedTimeSlot
               ]}
+              onPress={() => handleTimeSelect(slot)}
             >
-              {slot.time}
-            </Text>
-            {slot.available ? (
-              <View style={styles.availabilityIndicator}>
-                <Ionicons 
-                  name="checkmark-circle" 
-                  size={16} 
-                  color={selectedTimeSlot?.id === slot.id ? "#FFFFFF" : "#22C55E"} 
-                />
-                <Text 
-                  style={[
-                    styles.availabilityText,
-                    selectedTimeSlot?.id === slot.id && styles.selectedText
-                  ]}
-                >
-                  Available
-                </Text>
-              </View>
-            ) : (
-              <View style={styles.availabilityIndicator}>
-                <Ionicons name="close-circle" size={16} color="#EF4444" />
-                <Text style={styles.unavailableText}>Booked</Text>
-              </View>
-            )}
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+              <Text 
+                style={[
+                  styles.timeText,
+                  selectedTimeSlot?.id === slot.id && styles.selectedText
+                ]}
+              >
+                {slot.time}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      ) : (
+        <View style={styles.placeholderContainer}>
+          <Text style={styles.placeholderText}>No available time slots for this session</Text>
+        </View>
+      )}
     </View>
   );
 };
@@ -174,30 +159,13 @@ const styles = StyleSheet.create({
   selectedTimeSlot: {
     backgroundColor: '#295567',
   },
-  unavailableSlot: {
-    backgroundColor: '#F1F5F9',
-    opacity: 0.8,
-  },
   timeText: {
     fontSize: 16,
     fontWeight: '600',
     color: '#334155',
     marginBottom: 6,
   },
-  availabilityIndicator: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  availabilityText: {
-    fontSize: 12,
-    color: '#22C55E',
-    marginLeft: 4,
-  },
-  unavailableText: {
-    fontSize: 12,
-    color: '#EF4444',
-    marginLeft: 4,
-  },
+
   selectedText: {
     color: '#FFFFFF',
   },

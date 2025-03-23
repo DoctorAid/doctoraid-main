@@ -6,9 +6,9 @@ import { Calendar, Clock, ChevronRight } from "lucide-react-native";
 const PinEntryCard = ({ onSubmitPin }) => {
   const [pin, setPin] = useState("");
   const appointment = {
-    doctorName: "Dr. Lakee Jayamanne",
-    patientName: "Nimesha",
-    date: "Sunday, 12 June",
+    doctorName: "Dr. Ruchitha Perera",
+    patientName: "Namal Dahanayake",
+    date: "04.03.2025",
     time: "11:00 am - 12:00 pm",
   };
   

@@ -1,36 +1,64 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Edit } from 'lucide-react';
+import { createDoctorProfile } from "../api/settingsPageAPI"; // Import the API function
 
 function SettingsPage() {
   const [userInfo, setUserInfo] = useState({
-    name: "Dr. John Doe",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam velit, vulputate eu pharetra nec, mattis ac neque. Duis vulputate commodo lectus, ac blandit elit tincidunt id. Sed rhoncus, tortor sed eleifend tristique, tortor mauris arcu et leo.",
-    telephone: "0712345678",
-    location: "",
-    weekendOpenTime: "07:00",
-    weekendCloseTime: "17:00",
-    weekdayOpenTime: "15:00",
-    weekdayCloseTime: "18:00",
+    firstName: "John",
+    lastName: "Doe",
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam velit, vulputate eu pharetra nec, mattis ac neque. Duis vulputate commodo lectus, ac blandit elit tincidunt id. Sed rhoncus, tortor sed eleifend tristique, tortor mauris arcu et leo.",
+    contactNumber: "0712345678",
+    email: "john.doe@example.com",
+    ppLocation: "", // Practice location
+    specialization: "", // Added specialization
+    hospital: "", // Added hospital
+    certification: "", // Added certification
+    address: {
+      line1: "",
+      line2: "",
+      city: ""
+    },
+    schedule: {
+      weekdays: "",
+      weekends: ""
+    }
   });
 
   const [profileImage, setProfileImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
-
+  
   const [isEditing, setIsEditing] = useState({
     userInfo: false,
     contact: false,
     businessHours: false,
   });
+  
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
   const fileInputRef = useRef(null);
 
+  // Handle regular input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setUserInfo({
-      ...userInfo,
-      [name]: value,
-    });
+    
+    // Handle nested objects like address and schedule
+    if (name.includes('.')) {
+      const [parent, child] = name.split('.');
+      setUserInfo({
+        ...userInfo,
+        [parent]: {
+          ...userInfo[parent],
+          [child]: value
+        }
+      });
+    } else {
+      setUserInfo({
+        ...userInfo,
+        [name]: value,
+      });
+    }
   };
 
   const handleImageChange = (e) => {
@@ -58,26 +86,96 @@ function SettingsPage() {
     });
   };
 
-  const handleSave = () => {
-    //sending data to the server
-    console.log("Saving user data: ", userInfo);
-    console.log("Profile image: ", profileImage);
-
-    //resetting the editing state
-    setIsEditing({
-      userInfo: false,
-      contact: false,
-      businessHours: false,
-    });
-  };
-
+  // Create a function to format time values for display
   const formatTimeDisplay = (openTime, closeTime) => {
     return `${openTime} - ${closeTime}`;
   };
 
+  // Function to prepare data for the API
+  const prepareDataForAPI = () => {
+    // Update schedule format from weekday/weekend time inputs
+    const scheduleData = {
+      weekdays: userInfo.schedule.weekdays || `${userInfo.weekdayOpenTime} - ${userInfo.weekdayCloseTime}`,
+      weekends: userInfo.schedule.weekends || `${userInfo.weekendOpenTime} - ${userInfo.weekendCloseTime}`
+    };
+    
+    // Prepare complete doctor data
+    return {
+      doctorId: `DR-${Math.floor(10000 + Math.random() * 90000)}`, // Generate a random doctor ID
+      firstName: userInfo.firstName,
+      lastName: userInfo.lastName,
+      email: userInfo.email,
+      contactNumber: userInfo.contactNumber,
+      ppLocation: userInfo.ppLocation || "Colombo", // Default to Colombo if not specified
+      description: userInfo.description,
+      schedule: scheduleData,
+      specialization: userInfo.specialization || "General Medicine", // Default value
+      hospital: userInfo.hospital || "Not specified",
+      address: {
+        line1: userInfo.address.line1 || "",
+        line2: userInfo.address.line2 || "",
+        city: userInfo.address.city || "Colombo" // Default city
+      },
+      certification: userInfo.certification || "SLMC Registration" // Default certification
+    };
+  };
+
+  // Handle save to API
+  const handleSave = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      setSaveSuccess(false);
+      
+      // Prepare data for the API
+      const doctorData = prepareDataForAPI();
+      
+      console.log("Saving doctor data:", doctorData);
+      
+      // Call the API function
+      const result = await createDoctorProfile(doctorData);
+      
+      console.log("API Response:", result);
+      
+      // Set success message
+      setSaveSuccess(true);
+      
+      // Reset editing states
+      setIsEditing({
+        userInfo: false,
+        contact: false,
+        businessHours: false,
+      });
+      
+      // Show success message for 3 seconds
+      setTimeout(() => {
+        setSaveSuccess(false);
+      }, 3000);
+      
+    } catch (err) {
+      console.error("Error saving profile:", err);
+      setError(err.message || "An error occurred while saving your profile");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <div className="flex bg-slate-100  w-full h-full text-gray-800 font-['Raleway',sans-serif] animate-pageTransition overflow-auto">
+    <div className="flex bg-slate-100 w-full h-full text-gray-800 font-['Raleway',sans-serif] animate-pageTransition overflow-auto">
       <div className="w-full max-w-6xl p-6 mx-auto">
+        {/* Status Messages */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl mb-6 shadow-sm">
+            {error}
+          </div>
+        )}
+        
+        {saveSuccess && (
+          <div className="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-xl mb-6 shadow-sm">
+            Doctor profile created successfully!
+          </div>
+        )}
+        
         {/* User Information Section */}
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 mb-6 overflow-hidden">
           <div className="flex justify-between items-center p-6 border-b border-gray-100 bg-gradient-to-r from-[#295567]/5 to-white">
@@ -148,27 +246,100 @@ function SettingsPage() {
 
               {/* User Information Fields */}
               <div className="md:w-2/3">
+                <div className="mb-4 grid grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="firstName" className="block text-gray-600 mb-2 text-sm">
+                      First Name
+                    </label>
+                    <div className={`relative ${isEditing.userInfo ? 'bg-white' : 'bg-[#FAFAF9]'} rounded-xl transition-colors duration-300`}>
+                      <input
+                        type="text"
+                        id="firstName"
+                        name="firstName"
+                        value={userInfo.firstName}
+                        onChange={handleInputChange}
+                        disabled={!isEditing.userInfo}
+                        className={`w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#295567] transition-all duration-300 ${isEditing.userInfo ? 'border-[#295567]/50' : ''}`}
+                      />
+                      {isEditing.userInfo && (
+                        <div className="absolute top-0 right-0 bg-[#295567] text-white text-xs px-2 py-1 rounded-bl-xl rounded-tr-xl">
+                          Editing
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <label htmlFor="lastName" className="block text-gray-600 mb-2 text-sm">
+                      Last Name
+                    </label>
+                    <div className={`relative ${isEditing.userInfo ? 'bg-white' : 'bg-[#FAFAF9]'} rounded-xl transition-colors duration-300`}>
+                      <input
+                        type="text"
+                        id="lastName"
+                        name="lastName"
+                        value={userInfo.lastName}
+                        onChange={handleInputChange}
+                        disabled={!isEditing.userInfo}
+                        className={`w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#295567] transition-all duration-300 ${isEditing.userInfo ? 'border-[#295567]/50' : ''}`}
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 <div className="mb-4">
-                  <label htmlFor="name" className="block text-gray-600 mb-2 text-sm">
-                    Name
+                  <label htmlFor="specialization" className="block text-gray-600 mb-2 text-sm">
+                    Specialization
                   </label>
                   <div className={`relative ${isEditing.userInfo ? 'bg-white' : 'bg-[#FAFAF9]'} rounded-xl transition-colors duration-300`}>
                     <input
                       type="text"
-                      id="name"
-                      name="name"
-                      value={userInfo.name}
+                      id="specialization"
+                      name="specialization"
+                      value={userInfo.specialization}
                       onChange={handleInputChange}
                       disabled={!isEditing.userInfo}
+                      placeholder="E.g. Cardiology, General Medicine, Pediatrics"
                       className={`w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#295567] transition-all duration-300 ${isEditing.userInfo ? 'border-[#295567]/50' : ''}`}
                     />
-                    {isEditing.userInfo && (
-                      <div className="absolute top-0 right-0 bg-[#295567] text-white text-xs px-2 py-1 rounded-bl-xl rounded-tr-xl">
-                        Editing
-                      </div>
-                    )}
                   </div>
                 </div>
+                
+                <div className="mb-4">
+                  <label htmlFor="hospital" className="block text-gray-600 mb-2 text-sm">
+                    Hospital
+                  </label>
+                  <div className={`relative ${isEditing.userInfo ? 'bg-white' : 'bg-[#FAFAF9]'} rounded-xl transition-colors duration-300`}>
+                    <input
+                      type="text"
+                      id="hospital"
+                      name="hospital"
+                      value={userInfo.hospital}
+                      onChange={handleInputChange}
+                      disabled={!isEditing.userInfo}
+                      placeholder="E.g. National Hospital of Sri Lanka"
+                      className={`w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#295567] transition-all duration-300 ${isEditing.userInfo ? 'border-[#295567]/50' : ''}`}
+                    />
+                  </div>
+                </div>
+                
+                <div className="mb-4">
+                  <label htmlFor="certification" className="block text-gray-600 mb-2 text-sm">
+                    Certification
+                  </label>
+                  <div className={`relative ${isEditing.userInfo ? 'bg-white' : 'bg-[#FAFAF9]'} rounded-xl transition-colors duration-300`}>
+                    <input
+                      type="text"
+                      id="certification"
+                      name="certification"
+                      value={userInfo.certification}
+                      onChange={handleInputChange}
+                      disabled={!isEditing.userInfo}
+                      placeholder="E.g. Sri Lanka Medical Council Registration"
+                      className={`w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#295567] transition-all duration-300 ${isEditing.userInfo ? 'border-[#295567]/50' : ''}`}
+                    />
+                  </div>
+                </div>
+                
                 <div>
                   <label
                     htmlFor="description"
@@ -183,7 +354,7 @@ function SettingsPage() {
                       value={userInfo.description}
                       onChange={handleInputChange}
                       disabled={!isEditing.userInfo}
-                      rows="6"
+                      rows="4"
                       className={`w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#295567] transition-all duration-300 ${isEditing.userInfo ? 'border-[#295567]/50' : ''}`}
                     />
                     {isEditing.userInfo && (
@@ -216,17 +387,17 @@ function SettingsPage() {
               <div className="p-6 space-y-4">
                 <div>
                   <label
-                    htmlFor="telephone"
+                    htmlFor="email"
                     className="block text-gray-600 mb-2 text-sm"
                   >
-                    Telephone
+                    Email
                   </label>
                   <div className={`relative ${isEditing.contact ? 'bg-white' : 'bg-[#FAFAF9]'} rounded-xl transition-colors duration-300`}>
                     <input
-                      type="text"
-                      id="telephone"
-                      name="telephone"
-                      value={userInfo.telephone}
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={userInfo.email}
                       onChange={handleInputChange}
                       disabled={!isEditing.contact}
                       className={`w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#295567] transition-all duration-300 ${isEditing.contact ? 'border-[#295567]/50' : ''}`}
@@ -238,29 +409,88 @@ function SettingsPage() {
                     )}
                   </div>
                 </div>
+                
                 <div>
                   <label
-                    htmlFor="location"
+                    htmlFor="contactNumber"
                     className="block text-gray-600 mb-2 text-sm"
                   >
-                    Location
+                    Telephone
                   </label>
                   <div className={`relative ${isEditing.contact ? 'bg-white' : 'bg-[#FAFAF9]'} rounded-xl transition-colors duration-300`}>
                     <input
                       type="text"
-                      id="location"
-                      name="location"
-                      value={userInfo.location}
+                      id="contactNumber"
+                      name="contactNumber"
+                      value={userInfo.contactNumber}
                       onChange={handleInputChange}
                       disabled={!isEditing.contact}
-                      placeholder="Enter your location"
                       className={`w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#295567] transition-all duration-300 ${isEditing.contact ? 'border-[#295567]/50' : ''}`}
                     />
-                    {isEditing.contact && (
-                      <div className="absolute top-0 right-0 bg-[#295567] text-white text-xs px-2 py-1 rounded-bl-xl rounded-tr-xl">
-                        Editing
-                      </div>
-                    )}
+                  </div>
+                </div>
+                
+                <div>
+                  <label
+                    htmlFor="ppLocation"
+                    className="block text-gray-600 mb-2 text-sm"
+                  >
+                    Practice Location
+                  </label>
+                  <div className={`relative ${isEditing.contact ? 'bg-white' : 'bg-[#FAFAF9]'} rounded-xl transition-colors duration-300`}>
+                    <input
+                      type="text"
+                      id="ppLocation"
+                      name="ppLocation"
+                      value={userInfo.ppLocation}
+                      onChange={handleInputChange}
+                      disabled={!isEditing.contact}
+                      placeholder="Enter your practice location"
+                      className={`w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#295567] transition-all duration-300 ${isEditing.contact ? 'border-[#295567]/50' : ''}`}
+                    />
+                  </div>
+                </div>
+                
+                {/* Address Fields */}
+                <div>
+                  <label className="block text-gray-600 mb-2 text-sm">Address</label>
+                  <div className="space-y-2">
+                    <div className={`relative ${isEditing.contact ? 'bg-white' : 'bg-[#FAFAF9]'} rounded-xl transition-colors duration-300`}>
+                      <input
+                        type="text"
+                        id="address.line1"
+                        name="address.line1"
+                        value={userInfo.address.line1}
+                        onChange={handleInputChange}
+                        disabled={!isEditing.contact}
+                        placeholder="Address Line 1"
+                        className={`w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#295567] transition-all duration-300 ${isEditing.contact ? 'border-[#295567]/50' : ''}`}
+                      />
+                    </div>
+                    <div className={`relative ${isEditing.contact ? 'bg-white' : 'bg-[#FAFAF9]'} rounded-xl transition-colors duration-300`}>
+                      <input
+                        type="text"
+                        id="address.line2"
+                        name="address.line2"
+                        value={userInfo.address.line2}
+                        onChange={handleInputChange}
+                        disabled={!isEditing.contact}
+                        placeholder="Address Line 2 (optional)"
+                        className={`w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#295567] transition-all duration-300 ${isEditing.contact ? 'border-[#295567]/50' : ''}`}
+                      />
+                    </div>
+                    <div className={`relative ${isEditing.contact ? 'bg-white' : 'bg-[#FAFAF9]'} rounded-xl transition-colors duration-300`}>
+                      <input
+                        type="text"
+                        id="address.city"
+                        name="address.city"
+                        value={userInfo.address.city}
+                        onChange={handleInputChange}
+                        disabled={!isEditing.contact}
+                        placeholder="City"
+                        className={`w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#295567] transition-all duration-300 ${isEditing.contact ? 'border-[#295567]/50' : ''}`}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -403,9 +633,10 @@ function SettingsPage() {
           <button
             type="button"
             onClick={handleSave}
-            className="px-12 py-2 bg-[#295567] text-white rounded-xl hover:bg-[#295567]/90 transition-all duration-300 shadow-sm"
+            disabled={isLoading}
+            className={`px-12 py-2 ${isLoading ? 'bg-gray-400' : 'bg-[#295567] hover:bg-[#295567]/90'} text-white rounded-xl transition-all duration-300 shadow-sm`}
           >
-            Save
+            {isLoading ? 'Saving...' : 'Save'}
           </button>
         </div>
       </div>

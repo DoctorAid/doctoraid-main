@@ -6,11 +6,12 @@ const OngoingCardType1 = () => {
   const appointmentNo = 7;
   const currentNo = 5;
   const queueCount = 1;
-  const doctorName = "Dr. Lakee Jayamanne";
-  const patientName = "Nimesha";
+  const doctorName = "Dr. Ruchitha Perera";
+  const patientName = "Namal Dahanayake";
   const appointmentTime = "11:00 AM - 12:00 PM";
   const notificationMessage = "No: 6 haven't joined the queue";
   const upNextText = "Up Next"; 
+  const doctorImageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxNMPc0tFsIwbXWYrR_6VR9Whnt3O9ut-8fQ&s";
 
   return (
     <View style={styles.container}>
@@ -24,7 +25,10 @@ const OngoingCardType1 = () => {
       <View style={styles.card}>
         {/* Doctor Info */}
         <View style={styles.header}>  
-          <View style={styles.imagePlaceholder} />
+          <Image 
+            source={{ uri: doctorImageUrl }}
+            style={styles.doctorImage}
+          />
           <View style={styles.textContainer}>
             <Text style={styles.doctorName}>{doctorName}</Text>
             <Text style={styles.forPatient}>
@@ -88,11 +92,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  imagePlaceholder: {
+  doctorImage: {
     width: 50, 
     height: 50, 
-    borderRadius: 25, 
-    backgroundColor: '#AFCDE7',
+    borderRadius: 25,
     marginRight: 10,
   },
   textContainer: {

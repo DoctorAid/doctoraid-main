@@ -1,9 +1,8 @@
 import { Text, View, Image, StyleSheet } from "react-native";
-import { Redirect } from "expo-router";
+import { Redirect, Stack } from "expo-router";
 import { useEffect, useState } from "react";
 
 const StartPage = () => {
-
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
@@ -18,17 +17,19 @@ const StartPage = () => {
 
   if (isReady) {
     // return <Redirect href="/home" />;
-    return <Redirect href="/UserOnboarding/scene01" />;
+    return <Redirect href="/(Auth)/Sign-in" />;
   }
 
   return (
-    <View style={styles.container}>
-      <Image
-        source={require('./Assets/images/Logo.png')} 
-        style={styles.logo}
-      />  
-        
-    </View>
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
+      <View style={styles.container}>
+        <Image
+          source={require('./Assets/images/Logo.png')} 
+          style={styles.logo}
+        />  
+      </View>
+    </>
   );
 };
 
