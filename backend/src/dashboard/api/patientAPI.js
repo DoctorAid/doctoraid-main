@@ -31,5 +31,6 @@ patientRouter.post('/doctors/subscribe', subscribeDoctor); //subscribing to a do
 patientRouter.post('/doctors/unsubscribe', unsubscribeDoctor); //unsubscribing to a doctor   
 patientRouter.get('/doctors/subscribed/:familyId', getSubscribedDoctors); //getting subscribed doctors
 patientRouter.get('/bookings/:familyId', getAllBookings); //getting all bookings
+patientRouter.get('/doctors/subscribed/:familyId', getSubscribedDoctors); //getting subscribed doctors
 
 export default patientRouter;
