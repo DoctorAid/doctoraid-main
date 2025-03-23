@@ -6,8 +6,8 @@ import { useNavigation } from "@react-navigation/native";
 const doctorProfiles = [
   {
     id: "1",
-    name: "Dr. Chanugi",
-    location: "Kandy",
+    name: "Dr. Ruchitha Perera",
+    location: "Matara",
     weekdayHours: "8:00pm - 10:00pm",
     weekendHours: "8:00pm - 10:00pm",
     subscribed: false,
@@ -15,7 +15,7 @@ const doctorProfiles = [
   },
   {
     id: "2",
-    name: "Dr. Perera",
+    name: "Dr. Ganga Tennakoon",
     location: "Colombo",
     weekdayHours: "9:00am - 11:00am",
     weekendHours: "10:00am - 12:00pm",
@@ -24,7 +24,7 @@ const doctorProfiles = [
   },
   {
     id: "3",
-    name: "Dr. Fernando",
+    name: "Dr. Jayashan Madushan",
     location: "Galle",
     weekdayHours: "4:00pm - 6:00pm",
     weekendHours: "3:00pm - 5:00pm",

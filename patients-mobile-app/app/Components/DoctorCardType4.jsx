@@ -22,17 +22,17 @@ const SubscribedDoctors = () => {
       id: '1',
       name: 'Dr.Sandith Rajapakshe',
       location: 'Kandy',
-      imageUrl: '../Assets/images/doctor.jpg', // Replace with actual image URLs
+      imageUrl: 'https://media.licdn.com/dms/image/v2/D5603AQGZ6HrzAxHnSA/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1716024070126?e=2147483647&v=beta&t=vccqthL5_sNDdTlCa_NCHLR1l2wwPfDkEUjoB8pU9Mwg', // Replace with actual image URLs
     },
     {
       id: '2',
-      name: 'Dr.Sandith Rajapakshe',
+      name: 'Dr.Nimal Attanayake',
       location: 'Kandy',
       imageUrl: 'https://example.com/doctor2.jpg',
     },
     {
       id: '3',
-      name: 'Dr.Sandith Rajapakshe',
+      name: 'Dr.Chaman Fonseka',
       location: 'Kandy',
       imageUrl: 'https://example.com/doctor3.jpg',
     },
