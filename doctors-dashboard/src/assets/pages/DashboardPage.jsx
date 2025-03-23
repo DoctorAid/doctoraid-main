@@ -148,6 +148,7 @@ function DashboardPage() {
   // Fetch patient list for the current session
   const fetchPatientList = async () => {
     try {
+      
       setLoading(true);
       console.log("Fetching patient list for session:", activeSessionId);
       const patientListData = await getSessionPatientList(activeSessionId);
