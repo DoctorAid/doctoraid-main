@@ -10,9 +10,12 @@ import DoctorSearch from '../Assets/images/doctsearch.svg';
 // Sample doctor data
 const doctors = [
   { id: '1', name: 'Dr. Ruchitha Perera', location: 'Matara', subscribed: true },
-  { id: '2', name: 'Dr. Jayampathy Dissanayaka', location: 'Kandy', subscribed: false },
+  { id: '2', name: 'Dr. Jayampathy Dissanayaka', location: 'Digana', subscribed: false },
   { id: '3', name: 'Dr. Chirasthi Dias', location: 'Kurunagala', subscribed: false },
-
+  { id: '4', name: 'Dr. Nimal Attanayake', location: 'Kandy', subscribed: false },
+  { id: '5', name: 'Dr. Chaman Fonseka', location: 'Kandy', subscribed: false },
+  { id: '5', name: 'Dr. Ganga Tennakoon', location: 'Colombo', subscribed: true },
+  { id: '5', name: 'Dr. Jayashan Madushan', location: 'Galle', subscribed: true },
 ];
 
 export default function Tab() {
