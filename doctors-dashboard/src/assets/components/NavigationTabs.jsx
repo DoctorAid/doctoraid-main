@@ -14,7 +14,7 @@ function NavigationTabs() {
     { name: 'Dashboard', icon: <Layout size={18} /> },
     { name: 'Schedule', icon: <Calendar size={18} /> },
     { name: 'Patients', icon: <Users size={18} /> },
-    { name: 'Medicines', icon: <Pill size={18} /> },
+    
     { name: 'Settings', icon: <Settings size={18} /> }
   ];
 
