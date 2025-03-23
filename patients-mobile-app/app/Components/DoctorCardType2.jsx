@@ -11,7 +11,6 @@ const doctorProfiles = [
     weekdayHours: "8:00pm - 10:00pm",
     weekendHours: "8:00pm - 10:00pm",
     subscribed: false,
-    // imageUrl: require("./assets/doctor1.png"), // Replace with actual image path
   },
   {
     id: "2",
@@ -20,7 +19,6 @@ const doctorProfiles = [
     weekdayHours: "9:00am - 11:00am",
     weekendHours: "10:00am - 12:00pm",
     subscribed: true,
-    // imageUrl: require("./assets/doctor2.png"), // Replace with actual image path
   },
   {
     id: "3",
@@ -29,12 +27,13 @@ const doctorProfiles = [
     weekdayHours: "4:00pm - 6:00pm",
     weekendHours: "3:00pm - 5:00pm",
     subscribed: false,
-    // imageUrl: require("./assets/doctor3.png"), // Replace with actual image path
   },
 ];
 
 const DoctorCard = ({ doctor }) => {
   const navigation = useNavigation();
+  // Using a constant image URL for all doctors
+  const doctorImageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxNMPc0tFsIwbXWYrR_6VR9Whnt3O9ut-8fQ&s";
   
   const handleViewAppointments = () => {
     // Navigate to AppointmentScreen component with doctor data
@@ -48,9 +47,8 @@ const DoctorCard = ({ doctor }) => {
     <View style={styles.card}>
       <View style={styles.content}>
         <View style={styles.imageContainer}>
-          {/* You can replace this with actual doctor images */}
           <Image 
-            // source={doctor.imageUrl} 
+            source={{ uri: doctorImageUrl }}
             style={styles.doctorImage}
             resizeMode="cover"
           />

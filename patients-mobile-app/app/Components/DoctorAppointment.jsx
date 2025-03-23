@@ -254,21 +254,21 @@ export default function AppointmentScreen({ doctor, onBack }) {
             >
               {/* Top section with image, name and badge */}
               <View style={styles.doctorHeader}>
-                <Image
-                  source={{ uri: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&auto=format&fit=crop&q=60' }}
-                  style={styles.doctorImageLarge}
-                />
-                <View style={styles.doctorHeaderOverlay}>
-                  <View style={styles.doctorNameRow}>
-                    <Text style={styles.doctorNameLarge}>{doctor.name}</Text>
-                    {isSubscribed && (
-                      <View style={styles.subBadgeNew}>
-                        <Ionicons name="checkmark-circle" size={16} color="#FFFFFF" />
-                      </View>
-                    )}
-                  </View>
-                </View>
-              </View>
+  <Image
+    source={{ uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxNMPc0tFsIwbXWYrR_6VR9Whnt3O9ut-8fQ&s' }}
+    style={styles.doctorImageLarge}
+  />
+  <View style={styles.doctorHeaderOverlay}>
+    <View style={styles.doctorNameRow}>
+      <Text style={styles.doctorNameLarge}>{doctor.name}</Text>
+      {isSubscribed && (
+        <View style={styles.subBadgeNew}>
+          <Ionicons name="checkmark-circle" size={16} color="#FFFFFF" />
+        </View>
+      )}
+    </View>
+  </View>
+</View>
               
               {/* Info section */}
               <View style={styles.doctorInfoDetails}>

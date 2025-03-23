@@ -1,12 +1,14 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import docImage from '../Assets/images/doctor.jpg';
 
 const DoctorCard = ({ doctor }) => {
+  // Using a constant image URL for all doctors
+  const doctorImageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxNMPc0tFsIwbXWYrR_6VR9Whnt3O9ut-8fQ&s";
+  
   return (
     <TouchableOpacity style={styles.card}>
       <Image 
-        source={{ uri: doctor.imageUrl }} 
+        source={{ uri: doctorImageUrl }} 
         style={styles.doctorImage} 
       />
       <Text style={styles.doctorName}>{doctor.name}</Text>
@@ -22,19 +24,16 @@ const SubscribedDoctors = () => {
       id: '1',
       name: 'Dr.Sandith Rajapakshe',
       location: 'Kandy',
-      imageUrl: 'https://media.licdn.com/dms/image/v2/D5603AQGZ6HrzAxHnSA/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1716024070126?e=2147483647&v=beta&t=vccqthL5_sNDdTlCa_NCHLR1l2wwPfDkEUjoB8pU9Mwg', // Replace with actual image URLs
     },
     {
       id: '2',
       name: 'Dr.Nimal Attanayake',
       location: 'Kandy',
-      imageUrl: 'https://example.com/doctor2.jpg',
     },
     {
       id: '3',
       name: 'Dr.Chaman Fonseka',
       location: 'Kandy',
-      imageUrl: 'https://example.com/doctor3.jpg',
     },
     // Add more doctors as needed
   ];
