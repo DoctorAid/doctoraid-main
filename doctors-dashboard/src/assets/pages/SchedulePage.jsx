@@ -115,7 +115,7 @@ function SchedulePage() {
     };
 
     fetchSessions();
-  }, [])
+  }, [message]);
 
   function nextSession() {
     if (!currentSession || sessions.length === 0) return;
