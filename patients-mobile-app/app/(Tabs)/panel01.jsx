@@ -14,8 +14,8 @@ const doctors = [
   { id: '3', name: 'Dr. Chirasthi Dias', location: 'Kurunagala', subscribed: false },
   { id: '4', name: 'Dr. Nimal Attanayake', location: 'Kandy', subscribed: false },
   { id: '5', name: 'Dr. Chaman Fonseka', location: 'Kandy', subscribed: false },
-  { id: '5', name: 'Dr. Ganga Tennakoon', location: 'Colombo', subscribed: true },
-  { id: '5', name: 'Dr. Jayashan Madushan', location: 'Galle', subscribed: true },
+  { id: '6', name: 'Dr. Ganga Tennakoon', location: 'Colombo', subscribed: true },
+  { id: '7', name: 'Dr. Jayashan Madushan', location: 'Galle', subscribed: true },
 ];
 
 export default function Tab() {
