@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import { SignOutButton } from '@clerk/clerk-react';
 import { useClerk, UserButton, useUser } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
@@ -48,46 +48,55 @@ function DashboardPage() {
 
   // Use the known active session ID
   
-  const [activeSessionId, setActiveSessionId] = useState(null);
+  const [activeSessionId, setActiveSessionId] = useState(() => {
+    return localStorage.getItem("activeSessionId") || null;
+});
+
+useEffect(() => {
+    if (activeSessionId) {
+        localStorage.setItem("activeSessionId", activeSessionId);
+    } else {
+        localStorage.removeItem("activeSessionId");
+    }
+}, [activeSessionId]);
  // const [selectedSession, setSelectedSession] = useState({_id: activeSessionId});
 
   // Socket connection
-  const socket = io("http://localhost:8080", {
-    transports: ["websocket"],
-    reconnectionAttempts: 5, 
-    reconnectionDelay: 3000,
+  // const socket = io("http://localhost:8080", {
+  //   transports: ["websocket"],
+  //   reconnectionAttempts: 5, 
+  //   reconnectionDelay: 3000,
 
-  });
+  // });
 
   // Socket connection setup
+  const socketRef = useRef(null);
+
   useEffect(() => {
-    socket.on("connect", () => {
-      console.log("Connected to server with ID:", socket.id);
-      socket.emit("process_request", activeSessionId);
-    });
+      if (!socketRef.current) {
+          socketRef.current = io("http://localhost:8080", {
+              transports: ["websocket"],
+              reconnectionAttempts: 5,
+              reconnectionDelay: 3000,
+          });
 
-    socket.on("process_response", (response) => {
-      console.log("Response from server:", response);
-      setCurrentSlots(response);
-    });
+          socketRef.current.on("connect", () => {
+              console.log("Connected with ID:", socketRef.current.id);
+          });
 
-    socket.on("connect_error", (err) => {
-      console.error("Socket connection error:", err);
-    });
+          socketRef.current.on("connect_error", (err) => {
+              console.error("Socket connection error:", err);
+          });
 
-    socket.on("disconnect", () => {
-      console.warn("Disconnected from server. Will attempt reconnect...");
-    });
+          socketRef.current.on("disconnect", () => {
+              console.warn("Disconnected from server.");
+          });
+      }
 
-    // Clean up socket connection on component unmount
-    return () => {
-      socket.off("connect");
-      socket.off("process_response");
-      socket.off("connect_error");
-      socket.off("disconnect");
-      socket.disconnect();
-    };
-  }, [activeSessionId]);
+      return () => {
+          socketRef.current.disconnect();
+      };
+  }, []);
 
   // Filter booked slots
   function getBookedSlots() {
@@ -442,10 +451,16 @@ function DashboardPage() {
         <div className='flex items-center gap-3'>
           {/* End Session button */}
           <button 
-            onClick={handleEndSession}
+            onClick={() => {
+              setActiveSessionId(null);
+              console.log("Session ID set to null");
+          }} 
             className="flex items-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 font-medium py-1.5 px-3 rounded-lg transition-all duration-200 border border-red-200"
           >
-            <LogOut size={16} />
+            <LogOut 
+              size={16} 
+             
+          />
             End Session
           </button>
           
