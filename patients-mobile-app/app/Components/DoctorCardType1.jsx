@@ -18,30 +18,31 @@ import { Calendar, Clock } from "lucide-react-native";
 const appointments = [
   {
     id: '1',
-    doctorName: 'Dr. Lakee Jayamanne',
-    patientName: 'Nimesha',
-    date: 'Sunday, 12 June',
+    doctorName: 'Dr. Ruchitha Perera',
+    patientName: 'Namal Dahanayaka',
+    date: '04.03.2025',
     time: '11:00 AM - 12:00 PM',
   },
   {
     id: '2',
-    doctorName: 'Dr. Sarah Miller',
-    patientName: 'Nimesha',
-    date: 'Monday, 13 June',
+    doctorName: 'Dr. Chirasthi Dias',
+    patientName: 'Namal Dahanayaka',
+    date: '01.04.2025',
     time: '2:00 PM - 3:00 PM',
   },
   {
     id: '3',
-    doctorName: 'Dr. John Roberts',
-    patientName: 'Nimesha',
-    date: 'Wednesday, 15 June',
+    doctorName: 'Dr. Chirasthi Dias',
+    patientName: 'Namal Dahanayaka',
+    date: '21.05.2025',
     time: '9:30 AM - 10:30 AM',
   },
   {
     id: '4',
-    doctorName: 'Dr. Maya Patel',
-    patientName: 'Nimesha',
-    date: 'Friday, 17 June',
+    doctorName: 'Dr. Jayampathy Dissanayaka',
+    patientName: 'Namal Dahanayaka',
+    date: '17.06.2025',
+  
     time: '4:00 PM - 5:00 PM',
   },
 ];

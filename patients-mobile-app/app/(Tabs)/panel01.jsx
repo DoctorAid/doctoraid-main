@@ -9,8 +9,10 @@ import DoctorSearch from '../Assets/images/doctsearch.svg';
 
 // Sample doctor data
 const doctors = [
-  { id: '1', name: 'Dr. uuuuu Jayamanne', location: 'Kandy', subscribed: true },
-  { id: '2', name: 'Dr. Jagath Lokuhewa', location: 'Nugegoda', subscribed: false },
+  { id: '1', name: 'Dr. Ruchitha Perera', location: 'Matara', subscribed: true },
+  { id: '2', name: 'Dr. Jayampathy Dissanayaka', location: 'Kandy', subscribed: false },
+  { id: '3', name: 'Dr. Chirasthi Dias', location: 'Kurunagala', subscribed: false },
+
 ];
 
 export default function Tab() {

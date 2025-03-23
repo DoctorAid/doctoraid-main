@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
 const users = [
-  { id: "1", name: "Subasinghe Family" },
+  { id: "1", name: "Dahanayaka Family" },
   { id: "2", name: "Fernando Family" },
   { id: "3", name: "Perera Family" },
 ];
