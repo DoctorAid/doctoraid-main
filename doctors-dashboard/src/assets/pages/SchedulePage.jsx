@@ -213,7 +213,7 @@ function SchedulePage() {
         {/* Header with session info */}
         <div className="p-6 border-b border-gray-200 bg-white rounded-tl-3xl">
           <div className="flex justify-between items-center">
-            <h2 className="font-bold text-xl text-gray-800">Current Session</h2>
+            <h2 className="font-bold text-xl text-gray-800">Sessions</h2>
             <span className="text-sm font-medium text-gray-500 bg-white px-3 py-1 rounded-full shadow-sm border border-gray-100">
               ID: #{!loading && currentSession?._id ? currentSession._id.slice(-6) : "0"}
             </span>
