@@ -24,7 +24,9 @@ function DashboardPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [currentPatientIndex, setCurrentPatientIndex] = useState(0);
-  const [doctorId, setDoctorId] = useState("67d8aff139afa54b845fc507");  const [currentHistoryIndex, setCurrentHistoryIndex] = useState(0);
+  
+  const [doctorId, setDoctorId] = useState("67d8aff139afa54b845fc507");  
+  const [currentHistoryIndex, setCurrentHistoryIndex] = useState(0);
   const [formData, setFormData] = useState({
     observation: "",
     prescription: "",
@@ -55,6 +57,7 @@ function DashboardPage() {
     transports: ["websocket"],
     reconnectionAttempts: 5, 
     reconnectionDelay: 3000,
+
   });
 
   // Socket connection setup
@@ -85,7 +88,7 @@ function DashboardPage() {
       socket.off("disconnect");
       socket.disconnect();
     };
-  }, []);
+  }, [activeSessionId]);
 
   // Filter booked slots
   function getBookedSlots() {
@@ -214,7 +217,7 @@ function DashboardPage() {
     fetchSlots();
     fetchWaitingList();
     fetchPatientList();
-  }, []);  // Empty dependency array means this runs once on mount
+  }, [activeSessionId]);  // Empty dependency array means this runs once on mount
 
   // Fetch patient details and records when current patient changes
   useEffect(() => {
@@ -225,7 +228,7 @@ function DashboardPage() {
         fetchPatientRecords(currentPatient._id);
       }
     }
-  }, [waitingList, currentPatientIndex]);
+  }, [waitingList, currentPatientIndex,activeSessionId]);
 
   // Handle record creation - UPDATED to match API requirements
   const handleCreateRecord = async () => {

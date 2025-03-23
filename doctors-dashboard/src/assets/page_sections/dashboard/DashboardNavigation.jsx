@@ -16,7 +16,7 @@ function DashboardNavigation({ setSession }) {
         </div>
         <div className='flex flex-col'>
           <p className="text-gray-900 font-semibold">
-            Welcome back, <span className="text-[#295567]">Dr.{useUser().lastName}</span>
+            Welcome back, <span className="text-[#295567]">Dr.{useUser().firstName}</span>
           </p>
           <p className="text-gray-500 text-sm">
             {formattedDate}
