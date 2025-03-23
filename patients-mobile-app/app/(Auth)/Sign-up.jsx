@@ -396,6 +396,7 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   buttonText: {
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
     fontFamily: Platform.OS === 'ios' ? 'Raleway-SemiBold' : 'sans-serif-medium',
