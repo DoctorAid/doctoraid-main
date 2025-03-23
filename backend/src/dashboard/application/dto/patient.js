@@ -25,7 +25,7 @@ export const createPatients = async (req, res) => {
         } = req.body;
        
         // Validate required fields
-        if ( !name || !dateOfBirth || !gender || !age || !contactNumber || !email || !weight || !bloodGroup || !allergies || !height || !relation) {
+        if (!name || !dateOfBirth || !gender || !age || !contactNumber || !email || !weight || !bloodGroup || !allergies || !height || !relation) {
             return res.status(400).json({ message: "All required fields must be provided." });
         }
        
@@ -47,23 +47,18 @@ export const createPatients = async (req, res) => {
         }
        
         // Validate relation
-        const validRelations = ['Father', 'Mother', 'Son', 'Daughter', 'Husband', 'Wife', 'Grandfather', 'Grandmother'];
+        const validRelations = ['Father', 'Mother', 'Son', 'Daughter', 'Husband', 'Wife', 'Grandfather', 'Grandmother', 'Sibling', 'Other'];
         if (!validRelations.includes(relation)) {
             return res.status(400).json({ message: "Invalid relation value." });
         }
         
-        // Generate a temporary familyId before creating the Family document
-        const tempId = new mongoose.Types.ObjectId();
-        const formattedFamilyId = `FM${tempId.toString().slice(-4)}`;
-        
-        // Create a new Family document with the familyId already set
+        // Create a new Family document
         const newFamily = new Family({
-            familyId: formattedFamilyId,
             clerkId: clerkId || email.toLowerCase(), // Use email as userId if not provided
             members: [] // Empty initially
         });
         
-        // Save the family with the pre-generated familyId
+        // Save the family
         const savedFamily = await newFamily.save();
         
         // Create new patient with the family reference
@@ -84,7 +79,7 @@ export const createPatients = async (req, res) => {
             bloodGroup,
             allergies,
             relation,
-            familyId: formattedFamilyId,
+            familyId: savedFamily._id, // Use the ObjectId directly
         });
        
         // Save patient
@@ -107,10 +102,7 @@ export const createPatients = async (req, res) => {
         return res.status(201).json({
             message: "Patient and family created successfully",
             patient: savedPatient,
-            family: {
-                familyId: formattedFamilyId,
-                _id: savedFamily._id
-            }
+            family: savedFamily
         });
     } catch (error) {
         console.error('Error creating patient and family:', error);
@@ -140,7 +132,7 @@ export const addPatient = async (req, res) => {
         } = req.body;
        
         // Validate required fields
-        if (! name || !dateOfBirth || !gender ||!age || !contactNumber || !email || !weight || !bloodGroup || !allergies || !height || !relation || !familyId) {
+        if (!name || !dateOfBirth || !gender || !age || !contactNumber || !email || !weight || !bloodGroup || !allergies || !height || !relation || !familyId) {
             return res.status(400).json({ message: "All required fields must be provided." });
         }
        
@@ -162,21 +154,20 @@ export const addPatient = async (req, res) => {
         }
        
         // Validate relation
-        const validRelations = ['Father', 'Mother', 'Son', 'Daughter', 'Husband', 'Wife', 'Grandfather', 'Grandmother'];
+        const validRelations = ['Father', 'Mother', 'Son', 'Daughter', 'Husband', 'Wife', 'Grandfather', 'Grandmother', 'Sibling', 'Other'];
         if (!validRelations.includes(relation)) {
             return res.status(400).json({ message: "Invalid relation value." });
         }
-        
-        // Check if family exists with the provided familyId
-        const existingFamily = await Family.findOne({ familyId });
+       
+        // Check if family exists with the provided familyId (MongoDB ObjectId)
+        const existingFamily = await Family.findById(familyId);
         if (!existingFamily) {
             return res.status(404).json({ message: "Family not found." });
         }
-        
+       
         // Create new patient
         const newPatient = new Patient({
-            firstName,
-            lastName,
+            name,
             dateOfBirth,
             gender,
             age,
@@ -192,12 +183,12 @@ export const addPatient = async (req, res) => {
             bloodGroup,
             allergies,
             relation,
-            familyId
+            familyId // This is already the ObjectId
         });
        
         // Save patient
         const savedPatient = await newPatient.save();
-        
+       
         // Update family members array with the new patient
         await Family.findByIdAndUpdate(
             existingFamily._id,
@@ -210,7 +201,7 @@ export const addPatient = async (req, res) => {
                 }
             }
         );
-        
+       
         // Return success response
         return res.status(201).json({
             message: "Patient added successfully to existing family",
@@ -351,56 +342,58 @@ export const getNearbyDoctors = async (req, res) => {
 export const bookSlot = async (req, res) => {
     try {
         const { slotId } = req.params;  // Get slotId from URL params
-        const { patientId, familyId, patientNote } = req.body;
+        const { patientId, patientNote } = req.body;
        
         // Validate required fields
-        if (!patientId || !familyId) {
-            return res.status(400).json({ 
+        if (!patientId) {
+            return res.status(400).json({
                 success: false,
-                message: "Patient ID and Family ID are required." 
+                message: "Patient ID is required."
             });
         }
        
-        // Validate MongoDB ObjectIds for all IDs
+        // Validate MongoDB ObjectIds
         if (!mongoose.Types.ObjectId.isValid(slotId) ||
-            !mongoose.Types.ObjectId.isValid(patientId) ||
-            !mongoose.Types.ObjectId.isValid(familyId)) {
-            return res.status(400).json({ 
+            !mongoose.Types.ObjectId.isValid(patientId)) {
+            return res.status(400).json({
                 success: false,
-                message: "Invalid ID format. All IDs must be valid MongoDB ObjectIDs." 
+                message: "Invalid ID format. All IDs must be valid MongoDB ObjectIDs."
             });
         }
        
+        // Find the slot
         const slot = await Slot.findById(slotId);
         if (!slot) {
-            return res.status(404).json({ 
+            return res.status(404).json({
                 success: false,
-                message: "Slot not found." 
+                message: "Slot not found."
             });
         }
        
+        // Check if slot is available
         if (slot.status !== 'available') {
-            return res.status(400).json({ 
+            return res.status(400).json({
                 success: false,
-                message: "This slot is already booked." 
+                message: "This slot is already booked."
             });
         }
        
-        // Find patient to get their name
+        // Find patient to get their name and family ID
         const patient = await Patient.findById(patientId);
         if (!patient) {
-            return res.status(404).json({ 
+            return res.status(404).json({
                 success: false,
-                message: "Patient not found." 
+                message: "Patient not found."
             });
         }
        
-        // Verify the family exists
-        const family = await Family.findById(familyId);
-        if (!family) {
-            return res.status(404).json({ 
+        // Get familyId from patient document
+        const familyId = patient.familyId;
+        
+        if (!familyId) {
+            return res.status(404).json({
                 success: false,
-                message: "Family not found." 
+                message: "Patient doesn't have an associated family."
             });
         }
        
@@ -410,26 +403,26 @@ export const bookSlot = async (req, res) => {
             patientId: patientId,
             familyId: familyId,
             patientNote: patientNote || '',
-            patientName: `${patient.firstName} ${patient.lastName}`
+            patientName: patient.name  // Use name directly from the patient schema
         };
-        
+       
         // Use findByIdAndUpdate to ensure all fields are updated
         const updatedSlot = await Slot.findByIdAndUpdate(
             slotId,
             updateData,
             { new: true, runValidators: true }
         );
-        
+       
         if (!updatedSlot) {
-            return res.status(500).json({ 
+            return res.status(500).json({
                 success: false,
-                message: "Failed to update slot." 
+                message: "Failed to update slot."
             });
         }
-        
+       
         // Retrieve session details for the response
         const session = await mongoose.model('Session').findById(slot.Session);
-        
+       
         return res.status(200).json({
             success: true,
             message: "Appointment booked successfully",
@@ -956,39 +949,39 @@ export const getAllBookings = async (req, res) => {
 export const getDetails = async (req, res) => {
     try {
         const { id } = req.params;
-        
+       
         // Validate if id exists and is a valid ObjectId
         if (!id || !mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(400).json({ 
+            return res.status(400).json({
                 success: false,
-                message: "Valid patient ID is required." 
+                message: "Valid patient ID is required."
             });
         }
-        
+       
         // Find the patient by MongoDB ObjectId
         const patient = await Patient.findById(id);
         if (!patient) {
-            return res.status(404).json({ 
+            return res.status(404).json({
                 success: false,
-                message: "Patient not found." 
+                message: "Patient not found."
             });
         }
-        
+       
         // Find the latest appointment slot for this patient to get patient notes
         // Sort by createdAt in descending order to get the most recent one
-        const latestSlot = await Slot.findOne({ 
-            patientId: mongoose.Types.ObjectId(id) 
+        const latestSlot = await Slot.findOne({
+            patientId: id  // No need to create a new ObjectId, Mongoose will convert it
         })
         .sort({ createdAt: -1 })
         .populate({
             path: 'Session',
             select: 'date'
         });
-        
+       
         // Create response with required details
         const patientDetails = {
-            id: patient._id,
-            name: `${patient.firstName} ${patient.lastName}`,
+            _id: patient._id,  // Use _id to match your frontend expectations
+            name: patient.name, // Using the single name field based on your schema
             gender: patient.gender,
             age: patient.age,
             bloodGroup: patient.bloodGroup,
@@ -1006,13 +999,13 @@ export const getDetails = async (req, res) => {
             // Include last appointment date if available
             lastAppointment: latestSlot?.Session?.date || null
         };
-        
+       
         return res.status(200).json({
             success: true,
             message: "Patient details retrieved successfully",
-            patient: patientDetails
+            data: patientDetails  // Changed to data to match your other API responses
         });
-        
+       
     } catch (error) {
         console.error('Error retrieving patient details:', error);
         return res.status(500).json({

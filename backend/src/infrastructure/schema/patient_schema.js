@@ -1,13 +1,13 @@
 import mongoose from 'mongoose';
 
 const patientsSchema = new mongoose.Schema({
-    firstName: {
+    name: {
         type: String,
         required: true
     },
-    lastName: {
-        type: String,
-        required: true
+    familyId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Family',
     },
     dateOfBirth: {
         type: Date,
@@ -58,16 +58,12 @@ const patientsSchema = new mongoose.Schema({
         required: true
     },
     allergies: {
-        type: String,
+        type: [String],
         required: true
     },
     relation: {
         type: String,
         enum: ['Father', 'Mother', 'Son', 'Daughter', 'Husband', 'Wife', 'Sibling', 'Other'],
-        required: true
-    },
-    familyId: {
-        type: String,
         required: true
     }
 });

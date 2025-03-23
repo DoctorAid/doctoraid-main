@@ -4,48 +4,66 @@ import Record from "../../../infrastructure/schema/records_schema.js";
 import Patient from "../../../infrastructure/schema/patient_schema.js";
 import Doctor from "../../../infrastructure/schema/doctor_schema.js";
 import Family from "../../../infrastructure/schema/family_schema.js";
-
+import Slot from "../../../infrastructure/schema/slots_schema.js";
 export const createRecord = async (req, res) => {
     try {
-        const { prescription, patientId, observation, notes, date } = req.body;
+        const { prescription, patientId, observation, notes, date, slotId } = req.body;
         const { doctorId } = req.params; // Get doctorId from route params
-
+        
         // Validate required fields
         if (!prescription || !patientId || !doctorId || !observation || !date) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
-
-        // Convert string IDs to MongoDB ObjectIds
-        const patientObjectId = new mongoose.Types.ObjectId(patientId);
-        const doctorObjectId = new mongoose.Types.ObjectId(doctorId);
         
         // Verify the patient exists
-        const patientExists = await Patient.findById(patientObjectId);
+        const patientExists = await Patient.findById(patientId);
         if (!patientExists) {
             return res.status(404).json({ message: 'Patient not found' });
         }
-        
+       
         // Verify the doctor exists
-        const doctorExists = await Doctor.findById(doctorObjectId);
+        const doctorExists = await Doctor.findById(doctorId);
         if (!doctorExists) {
             return res.status(404).json({ message: 'Doctor not found' });
         }
-
-        // Get the familyId from the patient
-        const familyId = patientExists.familyId;
         
+        // Get the familyId from the patient (already an ObjectId)
+        const familyId = patientExists.familyId;
+       
         // Create new record
         const newRecord = new Record({
-            patientId: patientObjectId,
-            doctorId: doctorObjectId,
-            familyId, // Add familyId to the record
+            patientId,
+            doctorId,
+            familyId,
             prescription,
             observation,
             notes: notes || null,
             date: new Date(date)
         });
-        
+       
         const savedRecord = await newRecord.save();
+        
+        // Update the slot if slotId is provided
+        if (slotId) {
+            const updatedSlot = await Slot.findByIdAndUpdate(
+                slotId,
+                {
+                    status: 'booked',
+                    familyId: patientExists.familyId,
+                    patientId,
+                    patientName: patientExists.name,
+                    recordId: savedRecord._id,
+                    activated: true
+                },
+                { new: true }
+            );
+            
+            if (!updatedSlot) {
+                console.warn(`Slot with ID ${slotId} not found for update`);
+                // Continue with the response even if slot update fails
+            }
+        }
+        
         return res.status(201).json(savedRecord);
     } catch (error) {
         console.error('Error creating record:', error);

@@ -24,12 +24,11 @@ function DashboardPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [currentPatientIndex, setCurrentPatientIndex] = useState(0);
-  const [doctorId, setDoctorId] = useState("12345"); // This would typically come from auth
-  const [currentHistoryIndex, setCurrentHistoryIndex] = useState(0);
+  const [doctorId, setDoctorId] = useState("67d8aff139afa54b845fc507");  const [currentHistoryIndex, setCurrentHistoryIndex] = useState(0);
   const [formData, setFormData] = useState({
     observation: "",
     prescription: "",
-    note: "",
+    notes: "", // Changed from "note" to "notes" to match API expectation
   });
 
   // API data states
@@ -47,7 +46,7 @@ function DashboardPage() {
   console.log("clerkId is:", clerkId);
 
   // Use the known active session ID
-  const activeSessionId = "67de8e3da59adc9e14b1a348";
+  const activeSessionId = "67dc39fb2e1614dc3bce9f6c";
   const [selectedSession, setSelectedSession] = useState({_id: activeSessionId});
 
   // Socket connection
@@ -220,12 +219,74 @@ function DashboardPage() {
   useEffect(() => {
     if (waitingList.length > 0 && currentPatientIndex >= 0 && currentPatientIndex < waitingList.length) {
       const currentPatient = waitingList[currentPatientIndex];
-      if (currentPatient && currentPatient.patientId) {
-        fetchPatientDetails(currentPatient.patientId);
-        fetchPatientRecords(currentPatient.patientId);
+      if (currentPatient && currentPatient._id) {
+        fetchPatientDetails(currentPatient._id);
+        fetchPatientRecords(currentPatient._id);
       }
     }
   }, [waitingList, currentPatientIndex]);
+
+  // Handle record creation - UPDATED to match API requirements
+  const handleCreateRecord = async () => {
+    if (!currentPatient || !currentPatient._id) {
+      setMessage('No patient selected or invalid patient ID');
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      setMessage('');
+
+      // Get the slot ID if available (either from the patient object or from the current slot)
+      let slotId = null;
+      if (currentPatient.slotId) {
+        slotId = currentPatient.slotId;
+      } else if (bookedSlots.length > 0) {
+        // Try to find a matching slot for the current patient
+        const matchingSlot = bookedSlots.find(slot => 
+          slot.patientId === currentPatient._id
+        );
+        if (matchingSlot) {
+          slotId = matchingSlot._id;
+        }
+      }
+
+      // Prepare the record data to match the backend API requirements
+      const recordData = {
+        patientId: currentPatient._id,
+        prescription: formData.prescription,
+        observation: formData.observation,
+        notes: formData.notes, // Previously was "note"
+        date: new Date().toISOString().split('T')[0],
+        slotId: slotId
+      };
+
+      console.log('Sending record data:', recordData);
+
+      // Use the API function to create the record
+      const data = await createRecord(doctorId, recordData);
+      console.log('Record created:', data);
+      setMessage('Record created successfully!');
+
+      // Clear the form
+      setFormData({ observation: "", prescription: "", notes: "" }); // Updated from "note" to "notes"
+      
+      // Refresh patient records
+      if (currentPatient._id) {
+        fetchPatientRecords(currentPatient._id);
+      }
+      
+      // Move to next patient after saving
+      handleNextPatient();
+
+      return data;
+    } catch (error) {
+      setMessage(error.message || 'Failed to create record');
+      console.error('Error creating record:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Mock patient data to use as fallback
   const mockPatientsData = [
@@ -233,7 +294,7 @@ function DashboardPage() {
       name: "Denzel White", 
       date: "2024-02-01", 
       time: "09:00 AM",
-      patientId: "200 - 01",
+      _id: "200 - 01",
       age: 28,
       sex: "Male",
       bloodType: "O+",
@@ -264,7 +325,7 @@ function DashboardPage() {
       name: "Stacy Mitchell", 
       date: "2024-02-01", 
       time: "09:15 AM",
-      patientId: "220 - 02",
+      _id: "220 - 02",
       age: 34,
       sex: "Female",
       bloodType: "A+",
@@ -289,47 +350,6 @@ function DashboardPage() {
   const patientsData = waitingList.length > 0 ? waitingList : mockPatientsData;
   const currentPatient = patientDetails || (patientsData.length > 0 ? patientsData[currentPatientIndex] : null);
 
-  // Handle record creation
-  const handleCreateRecord = async () => {
-    if (!currentPatient) return;
-    
-    try {
-      setLoading(true);
-      setMessage('');
-
-      // Prepare the record data
-      const recordData = {
-        ...formData,
-        doctorId: doctorId,
-        date: new Date().toISOString().split('T')[0],
-        patientId: currentPatient.patientId
-      };
-
-      // Use the API function to create the record
-      const data = await createRecord(doctorId, recordData);
-      console.log('Record created:', data);
-      setMessage('Record created successfully!');
-
-      // Clear the form
-      setFormData({ observation: "", prescription: "", note: "" });
-      
-      // Move to next patient after saving
-      handleNextPatient();
-
-      // Refresh patient records
-      if (currentPatient.patientId) {
-        fetchPatientRecords(currentPatient.patientId);
-      }
-
-      return data;
-    } catch (error) {
-      setMessage(error.message || 'Failed to create record');
-      console.error('Error creating record:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   // Navigation functions for patient history
   const nextHistory = () => {
     const historyLength = patientRecords.length || (currentPatient?.history?.length || 0);
@@ -349,7 +369,7 @@ function DashboardPage() {
     if (currentPatientIndex < patientsData.length - 1) {
       setCurrentPatientIndex(currentPatientIndex + 1);
       // Reset form and history index for the new patient
-      setFormData({ observation: "", prescription: "", note: "" });
+      setFormData({ observation: "", prescription: "", notes: "" }); // Updated from "note" to "notes"
       setCurrentHistoryIndex(0);
     } else {
       // If we're at the last patient, show a message
@@ -396,33 +416,39 @@ function DashboardPage() {
               Waiting List
             </div>
             <div className="max-h-[250px] overflow-y-auto w-full space-y-3 p-4">
-              {patientsData.map((patient, index) => (
-                <div 
-                  key={index} 
-                  className={`flex items-center ${
-                    index === currentPatientIndex 
-                      ? 'bg-[#295567]/10 border border-[#295567]/30' 
-                      : 'bg-gray-50 hover:bg-gray-100'
-                  } rounded-xl p-3 w-full cursor-pointer transition-colors duration-200`}
-                  onClick={() => setCurrentPatientIndex(index)}
-                >
-                  <div className={`flex items-center justify-center w-10 h-10 ${
-                    index === currentPatientIndex 
-                      ? 'bg-[#295567] text-white' 
-                      : 'bg-[#295567]/20 text-[#295567]'
-                  } rounded-full text-base font-medium transition-colors duration-200`}>
-                    {patient.name ? patient.name.charAt(0) : (patient.firstName ? patient.firstName.charAt(0) : '?')}
+              {patientsData.map((patient, index) => {
+                // Extract first letter of name for avatar
+                const initial = patient.name && typeof patient.name === 'string' ? 
+                  patient.name.charAt(0).toUpperCase() : '?';
+                  
+                return (
+                  <div 
+                    key={patient._id || index} 
+                    className={`flex items-center ${
+                      index === currentPatientIndex 
+                        ? 'bg-[#295567]/10 border border-[#295567]/30' 
+                        : 'bg-gray-50 hover:bg-gray-100'
+                    } rounded-xl p-3 w-full cursor-pointer transition-colors duration-200`}
+                    onClick={() => setCurrentPatientIndex(index)}
+                  >
+                    <div className={`flex items-center justify-center w-10 h-10 ${
+                      index === currentPatientIndex 
+                        ? 'bg-[#295567] text-white' 
+                        : 'bg-gray-50 text-[#295567]'
+                    } rounded-full text-base font-medium transition-colors duration-200`}>
+                      {initial}
+                    </div>
+                    <div className="ml-3">
+                      <h3 className="text-gray-800 font-medium">
+                        {patient.name || 'Unknown'}
+                      </h3>
+                      <p className="text-gray-500 text-sm">
+                        {patient.appointmentTime || 'No time'}
+                      </p>
+                    </div>
                   </div>
-                  <div className="ml-3">
-                    <h3 className="text-gray-800 font-medium">
-                      {patient.name || (patient.firstName && patient.lastName ? `${patient.firstName} ${patient.lastName}` : 'Unknown')}
-                    </h3>
-                    <p className="text-gray-500 text-sm">
-                      {patient.date} <span className="mx-1">•</span> {patient.time || patient.contactNumber}
-                    </p>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
               {patientsData.length === 0 && (
                 <div className="text-center text-gray-500 py-4">
                   No patients in waiting list
@@ -448,29 +474,27 @@ function DashboardPage() {
                     <div className="flex items-center mt-4">
                       {/* Patient Avatar */}
                       <div className="h-14 w-14 flex items-center justify-center bg-[#295567]/10 text-[#295567] text-lg font-bold rounded-full border border-[#295567]/20">
-                        {currentPatient.name
-                          ? currentPatient.name.split(" ").map((part) => part[0]).join("").toUpperCase()
-                          : (currentPatient.firstName
-                              ? currentPatient.firstName.charAt(0).toUpperCase() + (currentPatient.lastName ? currentPatient.lastName.charAt(0).toUpperCase() : '')
-                              : '?')}
+                        {currentPatient && currentPatient.name
+                          ? currentPatient.name.charAt(0).toUpperCase()
+                          : '?'}
                       </div>
                       <div className="ml-4">
                         <p className="text-lg font-bold">
-                          {currentPatient.name || (currentPatient.firstName && currentPatient.lastName ? `${currentPatient.firstName} ${currentPatient.lastName}` : 'Unknown')}
+                          {currentPatient?.name || 'Unknown'}
                         </p>
-                        <p className="text-gray-500">Patient ID - {currentPatient.patientId || currentPatient._id}</p>
+                        {/* <p className="text-gray-500">Patient ID - {currentPatient?._id?.slice(-6) || '?'}</p> */}
                       </div>
                     </div>
 
                     <div className="mt-6 text-gray-700 space-y-2">
-                      <p><span className="font-medium text-gray-600">Sex:</span> {currentPatient.sex || 'Not specified'}</p>
-                      <p><span className="font-medium text-gray-600">Age:</span> {currentPatient.age || 'Not specified'}</p>
-                      <p><span className="font-medium text-gray-600">Blood:</span> {currentPatient.bloodType || 'Not specified'}</p>
-                      <p><span className="font-medium text-gray-600">Contact:</span> {currentPatient.contactNumber || 'Not specified'}</p>
+                      <p><span className="font-medium text-gray-600">Sex:</span> {currentPatient?.gender || 'Not specified'}</p>
+                      <p><span className="font-medium text-gray-600">Age:</span> {currentPatient?.age || 'Not specified'}</p>
+                      <p><span className="font-medium text-gray-600">Blood:</span> {currentPatient?.bloodGroup || 'Not specified'}</p>
+                      <p><span className="font-medium text-gray-600">Contact:</span> {currentPatient?.contactNumber || 'Not specified'}</p>
                       <div>
                         <p className="font-medium text-gray-600">Allergies:</p>
                         <div className="flex flex-wrap gap-2 mt-2">
-                          {currentPatient.allergies && currentPatient.allergies.length > 0 ? (
+                          {currentPatient?.allergies && currentPatient.allergies.length > 0 ? (
                             currentPatient.allergies.map((allergy, index) => (
                               <span key={index} className="text-xs bg-red-50 text-red-600 px-2 py-0.5 rounded-full border border-red-100">
                                 {allergy}
@@ -488,7 +512,7 @@ function DashboardPage() {
                     <div className="mt-6 pt-4 border-t border-gray-100">
                       <h3 className="font-medium text-gray-800 mb-2">Added Complaints</h3>
                       <p className="text-gray-600 text-sm bg-[#FAFAF9] p-3 rounded-xl">
-                        {currentPatient.addedComplaints || 'No complaints recorded'}
+                        {currentPatient?.patientNote || 'No complaints recorded'}
                       </p>
                     </div>
                   </div>
@@ -532,7 +556,7 @@ function DashboardPage() {
                               
                               <div>
                                 <p className="text-xs text-gray-500 mb-1">Note</p>
-                                <p className="text-sm">{currentHistory.note || 'None'}</p>
+                                <p className="text-sm">{currentHistory.note || currentHistory.notes || 'None'}</p>
                               </div>
                             </div>
                           </>
@@ -606,8 +630,8 @@ function DashboardPage() {
                         <label className="block text-gray-600 text-sm font-medium mb-1">Note:</label>
                         <textarea
                           className="w-full border border-gray-200 rounded-xl p-2 h-24 focus:ring-2 focus:ring-[#295567]/30 focus:outline-none transition-all duration-200"
-                          value={formData.note}
-                          onChange={(e) => setFormData({ ...formData, note: e.target.value })}
+                          value={formData.notes}
+                          onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                           placeholder="Add additional notes here"
                         />
                       </div>
