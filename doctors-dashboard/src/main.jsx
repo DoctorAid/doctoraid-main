@@ -6,7 +6,6 @@ import {createBrowserRouter,RouterProvider} from 'react-router-dom'
 import RootLayout from './assets/layouts/RootLayout.jsx'
 import SchedulePage from './assets/pages/SchedulePage.jsx'
 import SettingsPage from './assets/pages/SettingsPage.jsx'
-import MedicinesPage from './assets/pages/MedicinesPage.jsx'
 import PatientsPage from './assets/pages/PatientsPage.jsx'
 import SignInPage from './assets/pages/Auth/SignInPage.jsx'
 import ErrorPage from './assets/pages/ErrorPage.jsx'
@@ -68,9 +67,7 @@ const router = createBrowserRouter(
               <SettingsPage/>
             </ProtectedRoute>),
         },
-        { path:"/medicines",
-          element:<MedicinesPage/>
-        },
+       
         
         
     ]
