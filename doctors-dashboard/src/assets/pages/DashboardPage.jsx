@@ -7,7 +7,7 @@ import DashboardNavigation from '../page_sections/dashboard/DashboardNavigation'
 import PatientListComponent from '../components/PatientListComponent';
 import SessionInfo from '../components/SessionInfo';
 import { io } from "socket.io-client";
-import MedicinesPage from './MedicinesPage';
+import SessionList from '../components/SessionList';
 
 // Import API functions
 import {
@@ -46,8 +46,9 @@ function DashboardPage() {
   console.log("clerkId is:", clerkId);
 
   // Use the known active session ID
-  const activeSessionId = "67dc39fb2e1614dc3bce9f6c";
-  const [selectedSession, setSelectedSession] = useState({_id: activeSessionId});
+  
+  const [activeSessionId, setActiveSessionId] = useState(null);
+ // const [selectedSession, setSelectedSession] = useState({_id: activeSessionId});
 
   // Socket connection
   const socket = io("http://localhost:8080", {
@@ -393,6 +394,11 @@ function DashboardPage() {
       </div>
     );
   }
+
+  if(activeSessionId == null) {
+    return (
+      <SessionList setSession={setActiveSessionId} />)
+  };
 
   return (
     <div className='flex flex-col h-[100%] gap-5 bg-[#FAFAF9] w-full px-4 py-4 items-start justify-start text-gray-800 animate-pageTransition font-["Raleway",sans-serif]'>
