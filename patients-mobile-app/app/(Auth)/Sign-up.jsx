@@ -115,7 +115,7 @@ export default function SignUpScreen() {
           useNativeDriver: true,
         }).start(() => {
           setActive({ session: signUpAttempt.createdSessionId })
-          router.replace('../(Tabs)/home')
+          router.replace('../UserOnboarding/scene01')
         })
       } else {
         console.error(JSON.stringify(signUpAttempt, null, 2))
