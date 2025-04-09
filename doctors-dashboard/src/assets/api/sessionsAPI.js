@@ -2,7 +2,7 @@ export const getSessionsByDocId = async (id) => {
     //const token = await window.Clerk?.session?.getToken();
     console.log("getSessionsByDocId API called");
   
-    const res = await fetch(`http://localhost:8080/api/sessions/get/${id}`, {
+    const res = await fetch(`https://doctor-aid-backend.onrender.com/api/sessions/get/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -17,7 +17,7 @@ export const getAllSessions = async () => {
   //const token = await window.Clerk?.session?.getToken();
   console.log("getAllSessions API called"); // Debugging log  
 
-  const res = await fetch("http://localhost:8080/api/sessions/get", {
+  const res = await fetch("https://doctor-aid-backend.onrender.com/api/sessions/get", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

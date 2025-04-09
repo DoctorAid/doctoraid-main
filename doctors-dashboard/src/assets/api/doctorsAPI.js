@@ -1,5 +1,5 @@
 
-const API_BASE_URL = "http://localhost:8080/api/doctors";
+const API_BASE_URL = "https://doctor-aid-backend.onrender.com/api/doctors";
 
 /**
  * Fetches all doctor details

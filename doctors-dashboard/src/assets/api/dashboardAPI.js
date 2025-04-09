@@ -1,5 +1,5 @@
 // Base API URL
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = 'https://doctor-aid-backend.onrender.com/api';
 
 /**
  * ===== RECORD API FUNCTIONS =====

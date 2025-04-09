@@ -1,7 +1,7 @@
 
 // patient API.js - Frontend API service for patient data
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://doctor-aid-backend.onrender.com/api';
 
 /**
  * Create a new patient
