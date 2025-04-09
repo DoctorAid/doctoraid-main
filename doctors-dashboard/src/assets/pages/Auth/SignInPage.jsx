@@ -175,8 +175,8 @@ function SignInPage() {
           </div>
           <div className="flex space-x-8 text-[20px] font-light text-gray-700">
             <a href="https://doctoraid.site/" className="hover:text-blue-600">Sign-Up</a>
-            <a href="/about" className="hover:text-blue-600">About Us</a>
-            <a href="/contact" className="hover:text-blue-600">Contact</a>
+            <a href="https://doctoraid.site/" className="hover:text-blue-600">About Us</a>
+            <a href="https://doctoraid.site/" className="hover:text-blue-600">Contact</a>
           </div>
         </nav>
 
@@ -211,7 +211,7 @@ function SignInPage() {
                 }}
                 
                 // Specify a custom redirect URL for the sign-up link
-                signUpUrl="https://doctoraid.site/"
+                signUpUrl="https://doctoraid.site/early-access"
                 // Alternatively, for more control use afterSignUpUrl
            
               />
@@ -253,39 +253,15 @@ function SignInPage() {
               </p>
             </div>
 
-            {/* Quick Links */}
-            <div className="mb-6 md:mb-0">
-              <h3 className="text-lg font-semibold mb-2">Quick Links</h3>
-              <ul className="text-gray-300 text-sm space-y-2">
-                <li><a href="/services" className="hover:text-blue-300">Services</a></li>
-                <li><a href="/pricing" className="hover:text-blue-300">Pricing</a></li>
-                <li><a href="/faq" className="hover:text-blue-300">FAQs</a></li>
-                <li><a href="/contact" className="hover:text-blue-300">Contact</a></li>
-              </ul>
-            </div>
+            \
 
             {/* Contact Information */}
             <div>
-              <h3 className="text-lg font-semibold mb-2">Contact Us</h3>
+              
               <p className="text-gray-300 text-sm flex items-center">
-                <Phone className="mr-2 text-blue-300" size={18} /> +1 234 567 890
+                <Mail className="mr-2 text-blue-300" size={18} /> doctoraid.health@gmail.com
               </p>
-              <p className="text-gray-300 text-sm flex items-center">
-                <Mail className="mr-2 text-blue-300" size={18} /> support@doctoraid.com
-              </p>
-
-              {/* Social Media Links */}
-              <div className="flex space-x-4 mt-3">
-                <a href="https://facebook.com" className="text-gray-300 hover:text-blue-300">
-                  <Facebook size={20} />
-                </a>
-                <a href="https://twitter.com" className="text-gray-300 hover:text-blue-300">
-                  <Twitter size={20} />
-                </a>
-                <a href="https://linkedin.com" className="text-gray-300 hover:text-blue-300">
-                  <Linkedin size={20} />
-                </a>
-              </div>
+              
             </div>
           </div>
 
