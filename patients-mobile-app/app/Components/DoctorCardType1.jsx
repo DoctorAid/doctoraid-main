@@ -9,7 +9,8 @@ import {
   Animated, 
   ScrollView, 
   Dimensions,
-  Easing
+  Easing,
+  Image
 } from 'react-native';
 import { ChevronRight, ChevronDown } from 'lucide-react-native';
 import { Calendar, Clock } from "lucide-react-native";
@@ -18,30 +19,30 @@ import { Calendar, Clock } from "lucide-react-native";
 const appointments = [
   {
     id: '1',
-    doctorName: 'Dr. Lakee Jayamanne',
-    patientName: 'Nimesha',
-    date: 'Sunday, 12 June',
+    doctorName: 'Dr. Ruchitha Perera',
+    patientName: 'Namal Dahanayaka',
+    date: '04.03.2025',
     time: '11:00 AM - 12:00 PM',
   },
   {
     id: '2',
-    doctorName: 'Dr. Sarah Miller',
-    patientName: 'Nimesha',
-    date: 'Monday, 13 June',
+    doctorName: 'Dr. Chirasthi Dias',
+    patientName: 'Namal Dahanayaka',
+    date: '01.04.2025',
     time: '2:00 PM - 3:00 PM',
   },
   {
     id: '3',
-    doctorName: 'Dr. John Roberts',
-    patientName: 'Nimesha',
-    date: 'Wednesday, 15 June',
+    doctorName: 'Dr. Chirasthi Dias',
+    patientName: 'Namal Dahanayaka',
+    date: '21.05.2025',
     time: '9:30 AM - 10:30 AM',
   },
   {
     id: '4',
-    doctorName: 'Dr. Maya Patel',
-    patientName: 'Nimesha',
-    date: 'Friday, 17 June',
+    doctorName: 'Dr. Jayampathy Dissanayaka',
+    patientName: 'Namal Dahanayaka',
+    date: '17.06.2025',
     time: '4:00 PM - 5:00 PM',
   },
 ];
@@ -53,6 +54,8 @@ const DoctorCard = ({ doctorName, patientName, date, time, onPress, isExpanded, 
   const [pin, setPin] = useState("");
   const expandAnim = useRef(new Animated.Value(0)).current;
   const rotateAnim = useRef(new Animated.Value(0)).current;
+  // Doctor image URL
+  const doctorImageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxNMPc0tFsIwbXWYrR_6VR9Whnt3O9ut-8fQ&s";
   
   React.useEffect(() => {
     if (isExpanded) {
@@ -118,7 +121,11 @@ const DoctorCard = ({ doctorName, patientName, date, time, onPress, isExpanded, 
       activeOpacity={0.9}
     >
       <View style={styles.header}>  
-        <View style={styles.imagePlaceholder} />
+        <Image 
+          source={{ uri: doctorImageUrl }}
+          style={styles.doctorImage}
+          resizeMode="cover"
+        />
         <View style={styles.textContainer}>
           <Text style={styles.doctorName}>{doctorName}</Text>
           <Text style={styles.forPatient}>
@@ -316,11 +323,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  imagePlaceholder: {
+  doctorImage: {
     width: 45, 
     height: 45, 
-    borderRadius: 22.5, 
-    backgroundColor: '#AFCDE7',
+    borderRadius: 22.5,
     marginRight: 10,
   },
   textContainer: {

@@ -115,7 +115,7 @@ export default function SignUpScreen() {
           useNativeDriver: true,
         }).start(() => {
           setActive({ session: signUpAttempt.createdSessionId })
-          router.replace('../(Tabs)/home')
+          router.replace('../UserOnboarding/scene01')
         })
       } else {
         console.error(JSON.stringify(signUpAttempt, null, 2))
@@ -396,6 +396,7 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   buttonText: {
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
     fontFamily: Platform.OS === 'ios' ? 'Raleway-SemiBold' : 'sans-serif-medium',

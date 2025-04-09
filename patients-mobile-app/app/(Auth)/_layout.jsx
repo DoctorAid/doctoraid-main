@@ -16,9 +16,9 @@ export default function AuthLayout() {
   }, [isSignedIn]);
 
   return (
-    <Stack>
-      <Stack.Screen name="Sign-in" options={{ headerShown: false }} />
-      <Stack.Screen name="Sign-up" options={{ headerShown: false }} />
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Sign-in" />
+      <Stack.Screen name="Sign-up" />
     </Stack>
   );
 }

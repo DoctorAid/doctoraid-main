@@ -5,24 +5,24 @@ import { Clock, Calendar } from "lucide-react-native"; // Lucide Icons
 
 export const records = [
   {
-    patientName: "For Nimesha",
-    doctorName: "Dr. David",
+    patientName: "Namal Dahanayaka",
+    doctorName: "Dr. Ruchitha Perera",
     time: "12:00 PM",
-    date: "Sunday, 12 June",
+    date: "24.02.2025",
     presentingComplaint: "Coughing\nFever",
     diagnosis: "Dengue",
-    instructions: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.",
-    prescription: "Lorem ipsum dolor sit 1 day amet.\nLorem ipsum dolor sit 2 times adipiscing elit.\nLorem ipsum dolor sit 10 times sit amet."
+    instructions: "Get plenty of rest and drink fluids like water, king coconut water, and fruit juices to stay hydrated. Take Paracetamol 500mg every 6 hours for fever and body aches, but avoid ibuprofen or aspirin. Eat light meals like porridge and soups, and avoid oily or spicy foods. Watch for warning signs like severe abdominal pain, vomiting, or bleeding, and seek medical help if they occur.",
+    prescription: "Paracetamol 500mg.\nPanadol"
   },
   {
-    patientName: "For Nimesha",
-    doctorName: "Dr. David",
-    time: "12:00 PM",
-    date: "Sunday, 12 June",
-    presentingComplaint: "Coughing\nFever",
-    diagnosis: "Dengue",
-    instructions: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.",
-    prescription: "Lorem ipsum dolor sit 1 day amet.\nLorem ipsum dolor sit 2 times adipiscing elit.\nLorem ipsum dolor sit 10 times sit amet."
+    patientName: "For Namal Dahanayaka",
+    doctorName: "Dr. Ruchitha Perera",
+    time: "9:00 PM",
+    date: "20.01.2025",
+    presentingComplaint: "Headache",
+    diagnosis: "Viral Flu",
+    instructions: "Take plenty of rest and stay hydrated by drinking warm fluids like water, soups, and herbal tea. Take Paracetamol 500mg every 6 hours if you have fever or body pain. Eat light, nutritious meals and avoid cold, oily, and processed foods. If you have a runny nose, take Cetirizine 10mg at night. Monitor your symptoms, avoid close contact with others, and seek medical help if your condition worsens or persists beyond five days",
+    prescription: "Vitamin C supplements\nParacetamol"
   },
   // Add more records as needed
 ];

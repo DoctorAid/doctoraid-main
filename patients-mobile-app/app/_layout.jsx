@@ -6,10 +6,19 @@ const Layout = () => {
   
   return (
     <ClerkProvider publishableKey={publishableKey}>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(Tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="UserOnboarding" options={{ headerShown: false }} />
+      <Stack screenOptions={{ 
+        headerShown: false,
+        animation: 'none'
+      }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen 
+          name="(Tabs)" 
+          options={{
+            headerShown: false,
+            tabBarStyle: { display: 'none' }
+          }}
+        />
+        <Stack.Screen name="UserOnboarding" />
         {/* Add other Stack.Screen components as needed */}
       </Stack>
     </ClerkProvider>

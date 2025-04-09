@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
     View, 
     Text, 
@@ -9,10 +9,82 @@ import {
     ScrollView, 
     Image,
     KeyboardAvoidingView,
-    Platform
+    Platform,
+    FlatList
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import RelationDropdown from './Users_RelationDropdown';
+
+// Gender Dropdown Component
+const GenderDropdown = ({ selectedGender, onGenderChange }) => {
+    const [showDropdown, setShowDropdown] = useState(false);
+    
+    const genderOptions = [
+        { id: '1', label: 'Male' },
+        { id: '2', label: 'Female' }
+    ];
+    
+    const handleSelect = (gender) => {
+        onGenderChange(gender.label);
+        setShowDropdown(false);
+    };
+    
+    return (
+        <View>
+            <TouchableOpacity 
+                style={styles.dropdownSelector}
+                onPress={() => setShowDropdown(true)}
+            >
+                <Text style={selectedGender ? styles.dropdownText : styles.dropdownPlaceholder}>
+                    {selectedGender || "Select gender"}
+                </Text>
+                <Ionicons name="chevron-down" size={20} color="#666" />
+            </TouchableOpacity>
+            
+            <Modal
+                visible={showDropdown}
+                transparent={true}
+                animationType="fade"
+                onRequestClose={() => setShowDropdown(false)}
+            >
+                <TouchableOpacity 
+                    style={styles.dropdownOverlay}
+                    activeOpacity={1}
+                    onPress={() => setShowDropdown(false)}
+                >
+                    <View style={styles.dropdownContainer}>
+                        <View style={styles.dropdownHeader}>
+                            <Text style={styles.dropdownTitle}>Select Gender</Text>
+                            <TouchableOpacity onPress={() => setShowDropdown(false)}>
+                                <Ionicons name="close" size={22} color="#333" />
+                            </TouchableOpacity>
+                        </View>
+                        
+                        <FlatList
+                            data={genderOptions}
+                            keyExtractor={(item) => item.id}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity
+                                    style={[
+                                        styles.dropdownItem,
+                                        selectedGender === item.label && styles.dropdownItemSelected
+                                    ]}
+                                    onPress={() => handleSelect(item)}
+                                >
+                                    <Text style={styles.dropdownItemText}>{item.label}</Text>
+                                    {selectedGender === item.label && (
+                                        <Ionicons name="checkmark" size={20} color="#295567" />
+                                    )}
+                                </TouchableOpacity>
+                            )}
+                            ItemSeparatorComponent={() => <View style={styles.separator} />}
+                        />
+                    </View>
+                </TouchableOpacity>
+            </Modal>
+        </View>
+    );
+};
 
 const AddProfileModal = ({ 
     visible, 
@@ -81,7 +153,7 @@ const AddProfileModal = ({
                             <RelationDropdown
                                 selectedRelation={newProfile.relation}
                                 onRelationChange={(relation) => onProfileChange({...newProfile, relation})}
-                                style={{}}  // Remove custom styling so it uses its own consistent style
+                                style={{}}  
                             />
                         </View>
                         
@@ -128,12 +200,10 @@ const AddProfileModal = ({
                         </View>
                         
                         <View style={styles.inputGroup}>
-                            <Text style={styles.label}>Gender</Text>
-                            <TextInput
-                                style={styles.input}
-                                value={newProfile.gender}
-                                onChangeText={(text) => onProfileChange({...newProfile, gender: text})}
-                                placeholder="E.g., Female"
+                            <Text style={styles.label}>Gender*</Text>
+                            <GenderDropdown
+                                selectedGender={newProfile.gender}
+                                onGenderChange={(gender) => onProfileChange({...newProfile, gender})}
                             />
                         </View>
                         
@@ -272,6 +342,74 @@ const styles = StyleSheet.create({
         fontSize: 16,
         backgroundColor: '#FFFFFF',
     },
+    // Gender dropdown styles
+    dropdownSelector: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#E0E0E0',
+        borderRadius: 8,
+        padding: 12,
+        backgroundColor: '#FFFFFF',
+    },
+    dropdownText: {
+        fontSize: 16,
+        color: '#333',
+    },
+    dropdownPlaceholder: {
+        fontSize: 16,
+        color: '#999',
+    },
+    dropdownOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    dropdownContainer: {
+        width: '80%',
+        backgroundColor: 'white',
+        borderRadius: 12,
+        overflow: 'hidden',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    dropdownHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: '#EEEEEE',
+    },
+    dropdownTitle: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#333',
+    },
+    dropdownItem: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 16,
+    },
+    dropdownItemSelected: {
+        backgroundColor: '#F5F5F5',
+    },
+    dropdownItemText: {
+        fontSize: 16,
+        color: '#333',
+    },
+    separator: {
+        height: 1,
+        backgroundColor: '#EEEEEE',
+        marginHorizontal: 10,
+    },
+    // Allergy styles
     allergyInputContainer: {
         flexDirection: 'row',
         alignItems: 'center',

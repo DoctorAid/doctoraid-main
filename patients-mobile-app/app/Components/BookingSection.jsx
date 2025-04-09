@@ -96,7 +96,7 @@ const BookingSection = ({ onBookingComplete, fadeAnim, buttonScaleAnim }) => {
       onBookingComplete({
         session: selectedSession,
         time: selectedTime,
-        date: new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
+        date: selectedSession.date || new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
       });
     }
   };
@@ -131,10 +131,18 @@ const BookingSection = ({ onBookingComplete, fadeAnim, buttonScaleAnim }) => {
       <View style={styles.selectedInfoContainer}>
         {selectedSession && selectedTime ? (
           <View style={styles.selectionSummary}>
-            <Ionicons name="calendar-outline" size={18} color="#295567" />
-            <Text style={styles.selectionText}>
-              {selectedSession.name} - {selectedTime}
-            </Text>
+            <View style={styles.infoRow}>
+              <Ionicons name="calendar-outline" size={18} color="#295567" />
+              <Text style={styles.selectionText}>
+                {selectedSession.date}
+              </Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Ionicons name="time-outline" size={18} color="#295567" />
+              <Text style={styles.selectionText}>
+                {selectedSession.name} - {selectedTime}
+              </Text>
+            </View>
           </View>
         ) : null}
       </View>
@@ -206,13 +214,16 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   selectionSummary: {
-    flexDirection: 'row',
-    alignItems: 'center',
     backgroundColor: '#E6F4F1',
     borderRadius: 8,
     padding: 12,
     borderLeftWidth: 3,
     borderLeftColor: '#295567',
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
   },
   selectionText: {
     color: '#295567',
