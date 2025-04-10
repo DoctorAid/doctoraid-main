@@ -74,7 +74,7 @@ useEffect(() => {
 
   useEffect(() => {
       if (!socketRef.current) {
-          socketRef.current = io("http://localhost:8080", {
+          socketRef.current = io("https://doctor-aid-backend.onrender.com", {
               transports: ["websocket"],
               reconnectionAttempts: 5,
               reconnectionDelay: 3000,

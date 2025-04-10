@@ -210,9 +210,9 @@ function SignInPage() {
                   "--clerk-footer-background-color": "#e0e7ff",
                 }}
                 
-                // Specify a custom redirect URL for the sign-up link
+                //custom redirect URL for the sign-up link
                 signUpUrl="https://doctoraid.site/"
-                // Alternatively, for more control use afterSignUpUrl
+                
            
               />
           </div>

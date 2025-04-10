@@ -13,7 +13,7 @@ export const createDoctorProfile = async (doctorData) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // Include auth token if your API requires authentication
+         
           // 'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify(doctorData)

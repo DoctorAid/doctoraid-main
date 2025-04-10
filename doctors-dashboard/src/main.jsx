@@ -66,10 +66,7 @@ const router = createBrowserRouter(
             <ProtectedRoute>
               <SettingsPage/>
             </ProtectedRoute>),
-        },
-       
-        
-        
+        },   
     ]
   }]
 )
