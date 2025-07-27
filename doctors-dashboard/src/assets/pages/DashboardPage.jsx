@@ -61,42 +61,145 @@ useEffect(() => {
 }, [activeSessionId]);
  // const [selectedSession, setSelectedSession] = useState({_id: activeSessionId});
 
-  // Socket connection
-  // const socket = io("http://localhost:8080", {
-  //   transports: ["websocket"],
-  //   reconnectionAttempts: 5, 
-  //   reconnectionDelay: 3000,
-
-  // });
-
   // Socket connection setup
-  const socketRef = useRef(null);
+   const socketRef = useRef(null);
+    
+    console.log("Socket connection reference:", socketRef.current);
 
-  useEffect(() => {
-      if (!socketRef.current) {
-          socketRef.current = io("https://doctor-aid-backend.onrender.com", {
-              transports: ["websocket"],
-              reconnectionAttempts: 5,
-              reconnectionDelay: 3000,
-          });
+    useEffect(() => {
+        console.log("Setting up socket connection...");
+        
+        if (!socketRef.current) {
+            // More permissive connection options for debugging
+            socketRef.current = io("http://localhost:8080", {
+                // Allow both polling and websocket (remove transports restriction)
+                // transports: ["websocket"], // Comment this out temporarily
+                reconnectionAttempts: 5,
+                reconnectionDelay: 3000,
+                timeout: 20000,
+                forceNew: true,
+                // Add additional debugging options
+                autoConnect: true,
+            });
 
-          socketRef.current.on("connect", () => {
-              console.log("Connected with ID:", socketRef.current.id);
-          });
+            socketRef.current.on("connect", () => {
+                console.log("✅ Connected with ID:", socketRef.current.id);
+                console.log("Transport:", socketRef.current.io.engine.transport.name);
+                
+                // Watch the active session for slot updates
+                if (activeSessionId) {
+                    console.log("👁️ Starting to watch session:", activeSessionId);
+                    socketRef.current.emit("watch_session", activeSessionId);
+                }
+            });
 
-          socketRef.current.on("connect_error", (err) => {
-              console.error("Socket connection error:", err);
-          });
+            socketRef.current.on("connect_error", (err) => {
+                console.error("❌ Socket connection error:", err);
+                console.error("Error details:", {
+                    message: err.message,
+                    description: err.description,
+                    context: err.context,
+                    type: err.type
+                });
+            });
 
-          socketRef.current.on("disconnect", () => {
-              console.warn("Disconnected from server.");
-          });
-      }
+            socketRef.current.on("disconnect", (reason) => {
+                console.warn("⚠️ Disconnected from server. Reason:", reason);
+            });
 
-      return () => {
-          socketRef.current.disconnect();
-      };
-  }, []);
+            // Listen for slot updates from the server
+            socketRef.current.on("slot_update", (data) => {
+                console.log("📥 Received slot update from server:", data);
+                
+                // Check if this update is for the current active session
+                if (data.sessionId === activeSessionId) {
+                    console.log("🔄 Updating slots for current session");
+                    
+                    // Update the current slots state with the new data
+                    if (data.slots && Array.isArray(data.slots)) {
+                        setCurrentSlots(data.slots);
+                        console.log(`✅ Updated ${data.slots.length} slots for session ${activeSessionId}`);
+                        
+                        // Show a brief message about the update
+                        if (data.changeType === 'delete') {
+                            setMessage('Slot deleted - data updated');
+                            setTimeout(() => setMessage(''), 3000);
+                        }
+                    }
+                    
+                    // Optionally refresh waiting list and patient list as well
+                    // since slot changes might affect these lists
+                    if (data.changeType === 'delete' || data.changeType === 'insert') {
+                        console.log("🔄 Refreshing related data due to slot change");
+                        fetchWaitingList();
+                        fetchPatientList();
+                    }
+                }
+            });
+
+            // Listen for watch errors
+            socketRef.current.on("watch_error", (error) => {
+                console.error("📥 Received watch error from server:", error);
+                setMessage(`Error watching session: ${error.error}`);
+            });
+
+            // Listen for slot data responses
+            socketRef.current.on("slots_data", (data) => {
+                console.log("📥 Received slots data:", data);
+                if (data.sessionId === activeSessionId && data.slots) {
+                    setCurrentSlots(data.slots);
+                }
+            });
+
+            // Listen for slots errors
+            socketRef.current.on("slots_error", (error) => {
+                console.error("📥 Received slots error:", error);
+            });
+
+            // Additional debugging events
+            socketRef.current.on("reconnect", (attemptNumber) => {
+                console.log("🔄 Reconnected after", attemptNumber, "attempts");
+                // Re-watch the session after reconnection
+                if (activeSessionId) {
+                    socketRef.current.emit("watch_session", activeSessionId);
+                }
+            });
+
+            socketRef.current.on("reconnect_attempt", (attemptNumber) => {
+                console.log("🔄 Reconnection attempt", attemptNumber);
+            });
+
+            socketRef.current.on("reconnect_error", (error) => {
+                console.error("🔄 Reconnection error:", error);
+            });
+
+            socketRef.current.on("reconnect_failed", () => {
+                console.error("🔄 Failed to reconnect");
+            });
+        }
+
+        return () => {
+            if (socketRef.current) {
+                console.log("🧹 Cleaning up socket connection...");
+                // Unwatch the session before disconnecting
+                if (activeSessionId) {
+                    socketRef.current.emit("unwatch_session", activeSessionId);
+                }
+                socketRef.current.disconnect();
+                socketRef.current = null;
+            }
+        };
+    }, []);
+
+    // Watch for activeSessionId changes and update socket subscription
+    useEffect(() => {
+        if (socketRef.current && socketRef.current.connected) {
+            if (activeSessionId) {
+                console.log("👁️ Starting to watch new session:", activeSessionId);
+                socketRef.current.emit("watch_session", activeSessionId);
+            }
+        }
+    }, [activeSessionId]);
 
   // Filter booked slots
   function getBookedSlots() {

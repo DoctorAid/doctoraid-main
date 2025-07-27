@@ -110,6 +110,37 @@ export const getSlotsbySession = async (req, res) => {
     }
 };
 
+export const getSlotsBySessionId = async (sessionId) => {
+    try {
+        console.log("Checking session existence for:", sessionId);
+        
+        // Check if the session ID exists
+        const sessionExists = await Session.exists({ _id: sessionId });
+        if (!sessionExists) {
+            console.log("Session not found:", sessionId);
+            throw new Error('Session not found');
+        }
+
+        console.log("Session exists, finding slots...");
+        
+        // Find slots linked to the session
+        const slots = await Slot.find({ Session: sessionId }).populate('Session');
+        
+        console.log("Slots query completed, found:", slots.length, "slots");
+        
+        return {
+            success: true,
+            slots: slots,
+            count: slots.length,
+            message: slots.length === 0 ? 'No slots found for this session' : 'Slots retrieved successfully'
+        };
+        
+    } catch (error) {
+        console.error("Error in getSlotsBySessionId:", error.message);
+        throw error;
+    }
+};
+
 
 //cancelling appointment using session id
 export const cancelAppointment = async (req, res) => {
